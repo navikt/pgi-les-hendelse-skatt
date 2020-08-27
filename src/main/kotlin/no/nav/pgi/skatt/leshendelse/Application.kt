@@ -6,9 +6,6 @@ import io.ktor.server.netty.*
 
 fun main() {
     createApplication().apply {
-        val username: String = System.getenv()["USERNAME"]!!
-        val password: String = System.getenv()["PASSWORD"]!!
-
         start(wait = false)
     }
 }

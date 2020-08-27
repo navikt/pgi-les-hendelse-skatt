@@ -10,7 +10,7 @@ spec:
   team: pensjonsamhandling
   port: 8080
   envFrom:
-    - secret: pgi-les-hendelse-skatt
+    - secret: pgi-les-hendelse-skatt-secrets
   liveness:
     path: isAlive
     initialDelay: 30
