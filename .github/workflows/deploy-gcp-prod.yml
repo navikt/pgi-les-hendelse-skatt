@@ -46,7 +46,7 @@ jobs:
         run: "docker push $(cat .docker_image):$(cat .docker_tag)"
 
       # Deploy to GCP dev
-      - name: Deploy pgi-les-hendelse-skatt (dev-gco)
+      - name: Deploy pgi-les-hendelse-skatt (dev-gcp)
         uses: nais/deploy/actions/deploy@v1
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
