@@ -12,7 +12,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal object Test {
+internal object PgiLesHendelseSkatt {
 
     private const val SERVER_PORT = 8080
     private const val HOST = "http://localhost:$SERVER_PORT"

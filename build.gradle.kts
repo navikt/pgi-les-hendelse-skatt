@@ -7,6 +7,9 @@ val micrometerVersion = "1.3.5"
 val slf4jVersion = "1.7.30"
 val log4jVersion = "2.13.3"
 
+val kafkaVersion = "2.3.0"
+val kafkaEmbeddedEnvVersion = "2.4.0"
+
 group = "no.nav.pgi"
 
 plugins {
@@ -27,6 +30,8 @@ dependencies {
 
     implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
+    implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
+
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
@@ -35,6 +40,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedEnvVersion") {
+        exclude(group = "org.slf4j", module = "slf4j-log4j12")
+    }
 
 }
 

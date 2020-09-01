@@ -16,5 +16,8 @@ internal fun createApplication(serverPort: Int = 8080) =
 private fun createApplicationEnvironment(serverPort: Int) =
         applicationEngineEnvironment {
             connector { port = serverPort }
-            module { liveness() }
+            module {
+                liveness()
+                hendelseSkatt()
+            }
         }
