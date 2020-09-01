@@ -6,9 +6,10 @@ val ktorVersion = "1.3.2-1.4.0-rc"
 val micrometerVersion = "1.3.5"
 val slf4jVersion = "1.7.30"
 val log4jVersion = "2.13.3"
+val wiremockVersion = "2.27.1"
 
-val kafkaVersion = "2.3.0"
-val kafkaEmbeddedEnvVersion = "2.4.0"
+val kafkaVersion = "2.5.0"
+val kafkaEmbeddedEnvVersion = "2.5.0"
 
 group = "no.nav.pgi"
 
@@ -21,6 +22,7 @@ repositories {
     jcenter()
     mavenCentral()
     maven("https://packages.confluent.io/maven/")
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -36,13 +38,18 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    testImplementation("com.github.tomakehurst:wiremock:$wiremockVersion")
     testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedEnvVersion") {
         exclude(group = "org.slf4j", module = "slf4j-log4j12")
     }
+
+
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+
 
 }
 

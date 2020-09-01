@@ -24,12 +24,8 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
     private fun createSaslJaasConfig(username: String, password: String) =
             """org.apache.kafka.common.security.plain.PlainLoginModule required username="$username" password="$password";"""
 
-    internal fun hendelseProducer() = KafkaProducer<String, String>(
-            mapOf(
-                    BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
-                    SECURITY_PROTOCOL_CONFIG to securityProtocol,
-                    SaslConfigs.SASL_MECHANISM to saslMechanism,
-                    SaslConfigs.SASL_JAAS_CONFIG to saslJaasConfig,
+    internal fun nextSekvensnummerProducer() = KafkaProducer<String, String>(
+            commonConfig() + mapOf(
                     KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
                     VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
                     ACKS_CONFIG to "all",
@@ -37,15 +33,18 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
             )
     )
 
-    internal fun hendelseConsumer() = KafkaConsumer<String, String>(
-            mapOf(
-                    BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
-                    SECURITY_PROTOCOL_CONFIG to securityProtocol,
-                    SaslConfigs.SASL_MECHANISM to saslMechanism,
-                    SaslConfigs.SASL_JAAS_CONFIG to saslJaasConfig,
+    internal fun nextSekvensnummerConsumer() = KafkaConsumer<String, String>(
+            commonConfig() + mapOf(
                     KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
                     VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
-                    )
+            )
+    )
+
+    private fun commonConfig() = mapOf(
+            BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
+            SECURITY_PROTOCOL_CONFIG to securityProtocol,
+            SaslConfigs.SASL_MECHANISM to saslMechanism,
+            SaslConfigs.SASL_JAAS_CONFIG to saslJaasConfig
     )
 
     companion object {
@@ -54,6 +53,6 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
         const val PASSWORD_ENV_KEY = "PASSWORD"
         const val SASL_MECHANISM_ENV_KEY = "KAFKA_SASL_MECHANISM"
         const val SECURITY_PROTOCOL_ENV_KEY = "KAFKA_SECURITY_PROTOCOL"
-        const val SPORINGSLOGG_TOPIC = "aapen-sporingslogg-loggmeldingMottatt"
+        const val NEXT_SEKVENSNUMMER_TOPIC = "privat-pgi-nextSekvensnummer"
     }
 }
