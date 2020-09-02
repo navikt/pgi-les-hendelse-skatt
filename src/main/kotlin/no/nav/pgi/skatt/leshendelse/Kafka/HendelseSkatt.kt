@@ -1,9 +1,11 @@
-package no.nav.pgi.skatt.leshendelse
+package no.nav.pgi.skatt.leshendelse.Kafka
 
 import io.ktor.application.*
 
 
 internal fun Application.hendelseSkatt() {
+
+
     //Kafka konsumer
     //Kafka produsent
     //Http klient

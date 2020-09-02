@@ -26,6 +26,7 @@ repositories {
 }
 
 dependencies {
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-metrics-micrometer:$ktorVersion")
@@ -52,7 +53,6 @@ dependencies {
 
 
 }
-
 
 java {
     sourceCompatibility = JavaVersion.VERSION_14

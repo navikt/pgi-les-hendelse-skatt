@@ -5,8 +5,10 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 
 internal const val SKATT_API_PORT = 8084
 internal const val SKATT_FIRST_HENDELSE_URL = "/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse/start"
+internal const val SKATT_FIRST_SEKVENSNUMMER = 1
 
-internal class SekvensnummerMock {
+internal class FirstSekvensnummerMock {
+
 
     private val skattApiMock = WireMockServer(SKATT_API_PORT)
 
@@ -14,13 +16,13 @@ internal class SekvensnummerMock {
         skattApiMock.start()
     }
 
-
-    internal fun `stub first sekvensnummer from skatt`() {
+    internal fun `stub first sekvensnummer endepunkt skatt`() {
         skattApiMock.stubFor(get(urlPathEqualTo(SKATT_FIRST_HENDELSE_URL))
-                .willReturn(ok()))
+                .willReturn(okJson("{\"sekvensnummer\": " + SKATT_FIRST_SEKVENSNUMMER + "}")))
     }
 
     internal fun stop() {
         skattApiMock.stop()
     }
 }
+

@@ -2,6 +2,7 @@ package no.nav.pgi.skatt.leshendelse
 
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import no.nav.pgi.skatt.leshendelse.Kafka.hendelseSkatt
 
 
 fun main() {
