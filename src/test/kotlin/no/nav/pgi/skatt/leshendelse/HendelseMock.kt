@@ -16,6 +16,7 @@ internal class HendelseMock {
         skattApiMock.start()
     }
 
+    // region Stubs
     internal fun `stub hendelse endepunkt skatt`() {
         skattApiMock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_URL)).willReturn(
                 aResponse()
@@ -23,6 +24,7 @@ internal class HendelseMock {
                         .withStatus(200)
         ))
     }
+    // endregion
 
     internal fun stop() {
         skattApiMock.stop()
