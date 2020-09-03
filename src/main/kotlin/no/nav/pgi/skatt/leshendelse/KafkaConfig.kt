@@ -21,23 +21,22 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
             environment.getVal(PASSWORD_ENV_KEY)
     )
 
-    private fun createSaslJaasConfig(username: String, password: String) =
-            """org.apache.kafka.common.security.plain.PlainLoginModule required username="$username" password="$password";"""
-
     internal fun nextSekvensnummerProducer() = KafkaProducer<String, String>(
-            commonConfig() + mapOf(
-                    KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
-                    VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
-                    ACKS_CONFIG to "all",
-                    RETRIES_CONFIG to MAX_VALUE
-            )
-    )
+            commonConfig() + sekvensnummerProducerConfig())
 
     internal fun nextSekvensnummerConsumer() = KafkaConsumer<String, String>(
-            commonConfig() + mapOf(
-                    KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-                    VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
-            )
+            commonConfig() + sekvensnummerConsumerConfig())
+
+    private fun sekvensnummerConsumerConfig() = mapOf(
+            KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+            VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
+    )
+
+    private fun sekvensnummerProducerConfig() = mapOf(
+            KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
+            VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
+            ACKS_CONFIG to "all",
+            RETRIES_CONFIG to MAX_VALUE
     )
 
     private fun commonConfig() = mapOf(
@@ -46,6 +45,9 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
             SaslConfigs.SASL_MECHANISM to saslMechanism,
             SaslConfigs.SASL_JAAS_CONFIG to saslJaasConfig
     )
+
+    private fun createSaslJaasConfig(username: String, password: String) =
+            """org.apache.kafka.common.security.plain.PlainLoginModule required username="$username" password="$password";"""
 
     companion object {
         const val BOOTSTRAP_SERVERS_ENV_KEY = "KAFKA_BOOTSTRAP_SERVERS"
