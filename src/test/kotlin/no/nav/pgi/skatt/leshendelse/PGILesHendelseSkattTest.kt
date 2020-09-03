@@ -3,6 +3,7 @@ package no.nav.pgi.skatt.leshendelse
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.http.*
 import no.nav.pgi.skatt.leshendelse.hendelserskatt.Hendelser
+import org.apache.kafka.clients.producer.ProducerRecord
 import org.json.JSONObject
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -43,19 +44,20 @@ internal object PGILesHendelseSkattTest {
         hendelseMock.stop()
     }
 
-    //region Tests
     @Test
-    fun TestMockhentSekvensnummerFraTopic() {
-        val httpRequest = createGetRequest(HOST, SKATT_API_PORT, SKATT_FIRST_HENDELSE_URL)
+    fun `Get first sekvensnummer skatt`() {
+        val httpRequest = createGetRequest(SKATT_API_PORT, SKATT_FIRST_HENDELSE_URL)
         val response = client.send(httpRequest, ofString())
 
         assertEquals(HttpStatusCode.OK.value, response.statusCode())
         assertEquals(1, JSONObject(response.body()).getInt("sekvensnummer"))
     }
 
+    //TODO hent sekvensnummer fra topic
+
     @Test
-    fun TestMockHendelser() {
-        val httpRequest = createGetRequest(HOST, HENDELSE_PORT, HENDELSE_URL)
+    fun `Get hendelser from skatt`() {
+        val httpRequest = createGetRequest(HENDELSE_PORT, HENDELSE_URL)
         val response = client.send(httpRequest, ofString())
 
         println(response.body())
@@ -67,20 +69,46 @@ internal object PGILesHendelseSkattTest {
     }
 
     @Test
+    fun `Write pgi hendelse to topic`() {
+        //TODO implementer med hendeser
+        val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaEnvVariables())
+
+        val record = ProducerRecord(KafkaConfig.PGI_HENDELSE_TOPIC, "", "Hendelse")
+        kafkaConfig.hendelseProducer().send(record
+        ) { metadata, exception ->
+            println(if (metadata == null) exception.toString() else "Value size: " + metadata.serializedValueSize())
+        }
+
+        kafkaConfig.nextSekvensnummerProducer().flush()
+    }
+
+    @Test
+    fun `Write sekvensnummer to topic`() {
+        val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaEnvVariables())
+
+        val record = ProducerRecord(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, "", "134234234")
+        kafkaConfig.nextSekvensnummerProducer().send(record
+        ) { metadata, exception ->
+            println(if (metadata == null) exception.toString() else "Value size: " + metadata.serializedValueSize())
+        }
+
+        kafkaConfig.nextSekvensnummerProducer().flush()
+    }
+
+    @Test
     fun isAlive() {
-        val response = client.send(createGetRequest(HOST, APPLICATION_PORT, IS_ALIVE_PATH), ofString())
+        val response = client.send(createGetRequest(APPLICATION_PORT, IS_ALIVE_PATH), ofString())
         assertEquals(HttpStatusCode.OK.value, response.statusCode())
     }
 
     @Test
     fun isReady() {
-        val response = client.send(createGetRequest(HOST, APPLICATION_PORT, IS_READY_PATH), ofString())
+        val response = client.send(createGetRequest(APPLICATION_PORT, IS_READY_PATH), ofString())
         assertEquals(HttpStatusCode.OK.value, response.statusCode())
     }
-    //endregion
 
-    private fun createGetRequest(host: String, port: Int, url: String) = HttpRequest.newBuilder()
-            .uri(URI.create("$host:$port$url"))
+    private fun createGetRequest(port: Int, url: String) = HttpRequest.newBuilder()
+            .uri(URI.create("$HOST:$port$url"))
             .GET()
             .build()
 }

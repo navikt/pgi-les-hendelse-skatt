@@ -8,14 +8,17 @@ import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig.*
 import org.apache.kafka.common.config.SaslConfigs
+import org.apache.kafka.common.security.auth.SecurityProtocol.SASL_SSL
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import java.lang.Integer.MAX_VALUE
 
+
 internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
+
     private val bootstrapServers = environment.getVal(BOOTSTRAP_SERVERS_ENV_KEY)
     private val saslMechanism = environment.getVal(SASL_MECHANISM_ENV_KEY, "PLAIN")
-    private val securityProtocol = environment.getVal(SECURITY_PROTOCOL_ENV_KEY, "SASL_SSL")
+    private val securityProtocol = environment.getVal(SECURITY_PROTOCOL_ENV_KEY, SASL_SSL.name)
     private val saslJaasConfig = createSaslJaasConfig(
             environment.getVal(USERNAME_ENV_KEY),
             environment.getVal(PASSWORD_ENV_KEY)
@@ -32,7 +35,7 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
 
     private fun sekvensnummerConsumerConfig() = mapOf(
             KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-            VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
+            VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
     )
 
     private fun sekvensnummerProducerConfig() = mapOf(
@@ -66,5 +69,6 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
         const val SASL_MECHANISM_ENV_KEY = "KAFKA_SASL_MECHANISM"
         const val SECURITY_PROTOCOL_ENV_KEY = "KAFKA_SECURITY_PROTOCOL"
         const val NEXT_SEKVENSNUMMER_TOPIC = "privat-pgi-nextSekvensnummer"
+        const val PGI_HENDELSE_TOPIC = "privat-pgi-hendelse"
     }
 }
