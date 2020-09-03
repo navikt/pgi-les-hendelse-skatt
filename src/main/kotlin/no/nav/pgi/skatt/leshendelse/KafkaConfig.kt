@@ -24,6 +24,9 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
     internal fun nextSekvensnummerProducer() = KafkaProducer<String, String>(
             commonConfig() + sekvensnummerProducerConfig())
 
+    internal fun hendelseProducer() = KafkaProducer<String, String>(
+            commonConfig() + hendelseProducerConfig())
+
     internal fun nextSekvensnummerConsumer() = KafkaConsumer<String, String>(
             commonConfig() + sekvensnummerConsumerConfig())
 
@@ -33,6 +36,13 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
     )
 
     private fun sekvensnummerProducerConfig() = mapOf(
+            KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
+            VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
+            ACKS_CONFIG to "all",
+            RETRIES_CONFIG to MAX_VALUE
+    )
+
+    private fun hendelseProducerConfig() = mapOf(
             KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
             VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
             ACKS_CONFIG to "all",
