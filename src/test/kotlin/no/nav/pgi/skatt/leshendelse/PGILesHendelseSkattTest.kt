@@ -15,12 +15,13 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers.ofString
+import java.time.Duration
+import java.time.Duration.*
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal object PGILesHendelseSkattTest {
 
-    private const val APPLICATION_PORT = 8080
     private const val HOST = "http://localhost"
     private val application = createApplication()
     private val client = HttpClient.newHttpClient()
@@ -53,8 +54,6 @@ internal object PGILesHendelseSkattTest {
         assertEquals(1, JSONObject(response.body()).getInt("sekvensnummer"))
     }
 
-    //TODO hent sekvensnummer fra topic
-
     @Test
     fun `Get hendelser from skatt`() {
         val httpRequest = createGetRequest(HENDELSE_PORT, HENDELSE_URL)
@@ -70,16 +69,17 @@ internal object PGILesHendelseSkattTest {
 
     @Test
     fun `Write pgi hendelse to topic`() {
-        //TODO implementer med hendeser
         val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaEnvVariables())
 
         val record = ProducerRecord(KafkaConfig.PGI_HENDELSE_TOPIC, "", "Hendelse")
-        kafkaConfig.hendelseProducer().send(record
-        ) { metadata, exception ->
+        kafkaConfig.hendelseProducer().send(record) { metadata, exception ->
             println(if (metadata == null) exception.toString() else "Value size: " + metadata.serializedValueSize())
         }
+        kafkaConfig.hendelseProducer().flush()
 
-        kafkaConfig.nextSekvensnummerProducer().flush()
+
+        assertEquals("Hendelse", kafkaTestEnvironment.getFirstRecordOnTopic().value())
+
     }
 
     @Test
