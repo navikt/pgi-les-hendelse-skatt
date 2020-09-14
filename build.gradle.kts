@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.*
 
 val junitJupiterVersion = "5.6.0"
 val ktorVersion = "1.3.2-1.4.0-rc"
+val ktorSupportVersion ="0.0.3"
 val micrometerVersion = "1.3.5"
 val slf4jVersion = "1.7.30"
 val log4jVersion = "2.13.3"
@@ -23,6 +24,12 @@ repositories {
     mavenCentral()
     maven("https://packages.confluent.io/maven/")
     maven("https://jitpack.io")
+    maven("https://maven.pkg.github.com/navikt/pensjon-samhandling-ktor-support"){
+        credentials {
+            username = System.getenv("GITHUB_ACTOR")
+            password = System.getenv("GITHUB_TOKEN")
+        }
+    }
 }
 
 dependencies {
@@ -30,6 +37,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-metrics-micrometer:$ktorVersion")
+    implementation("no.nav.pensjonsamhandling:pensjon-samhandling-ktor-support:0.0.3")
 
     implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 

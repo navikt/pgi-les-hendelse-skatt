@@ -2,5 +2,5 @@
 .gradle
 build
 out
-gradle.properties
+gradle.properties.kts
 
