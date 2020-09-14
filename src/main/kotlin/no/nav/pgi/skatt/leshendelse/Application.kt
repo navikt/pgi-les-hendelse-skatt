@@ -2,7 +2,11 @@ package no.nav.pgi.skatt.leshendelse
 
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import no.nav.pensjon.samhandling.liveness.isAlive
+import no.nav.pensjon.samhandling.liveness.isReady
+import no.nav.pensjon.samhandling.metrics.metrics
 import no.nav.pgi.skatt.leshendelse.Kafka.hendelseSkatt
+
 
 
 fun main() {
@@ -18,7 +22,9 @@ private fun createApplicationEnvironment(serverPort: Int) =
         applicationEngineEnvironment {
             connector { port = serverPort }
             module {
-                liveness()
+                isAlive()
+                isReady()
+                metrics()
                 hendelseSkatt()
             }
         }

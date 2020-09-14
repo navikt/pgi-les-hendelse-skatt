@@ -95,18 +95,6 @@ internal object PGILesHendelseSkattTest {
         kafkaConfig.nextSekvensnummerProducer().flush()
     }
 
-    @Test
-    fun isAlive() {
-        val response = client.send(createGetRequest(APPLICATION_PORT, IS_ALIVE_PATH), ofString())
-        assertEquals(HttpStatusCode.OK.value, response.statusCode())
-    }
-
-    @Test
-    fun isReady() {
-        val response = client.send(createGetRequest(APPLICATION_PORT, IS_READY_PATH), ofString())
-        assertEquals(HttpStatusCode.OK.value, response.statusCode())
-    }
-
     private fun createGetRequest(port: Int, url: String) = HttpRequest.newBuilder()
             .uri(URI.create("$HOST:$port$url"))
             .GET()
