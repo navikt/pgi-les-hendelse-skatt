@@ -42,7 +42,8 @@ class KafkaTestEnvironment {
             )
     )
 
-    fun consumeHendelseTopic(): List<ConsumerRecord<String, String>> = hendelseTestConsumer.poll(Duration.ofMillis(1500L)).records(KafkaConfig.PGI_HENDELSE_TOPIC).toList()
+    //Duration 4 seconds to allow for hendelse to be added to topic
+    fun consumeHendelseTopic(): List<ConsumerRecord<String, String>> = hendelseTestConsumer.poll(Duration.ofSeconds(4)).records(KafkaConfig.PGI_HENDELSE_TOPIC).toList()
 
     fun getFirstRecordOnTopic() = consumeHendelseTopic()[0]
 }

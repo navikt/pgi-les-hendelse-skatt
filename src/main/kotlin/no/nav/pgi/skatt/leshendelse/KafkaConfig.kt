@@ -2,8 +2,7 @@ package no.nav.pgi.skatt.leshendelse
 
 import org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG
 import org.apache.kafka.clients.CommonClientConfigs.SECURITY_PROTOCOL_CONFIG
-import org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG
-import org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG
+import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig.*
@@ -13,6 +12,7 @@ import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import java.lang.Integer.MAX_VALUE
 
+internal const val GROUP_ID = "pgi-sekvensnummer-consumer-group"
 
 internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
 
@@ -36,6 +36,10 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
     private fun sekvensnummerConsumerConfig() = mapOf(
             KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
             VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+            GROUP_ID_CONFIG to GROUP_ID,
+            ENABLE_AUTO_COMMIT_CONFIG to false,
+            AUTO_OFFSET_RESET_CONFIG to "earliest"
+
     )
 
     private fun sekvensnummerProducerConfig() = mapOf(
