@@ -3,6 +3,7 @@ package no.nav.pgi.skatt.leshendelse
 import org.apache.kafka.common.TopicPartition
 import java.time.Duration.ofSeconds
 
+private const val POLLING_DURATION_SECONDS = 4L
 
 internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topicPartition: TopicPartition) {
     private val sekvensnummerConsumer = kafkaConfig.nextSekvensnummerConsumer()
@@ -16,7 +17,7 @@ internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topic
         return getSekvensnummerRecords().last().value()
     }
 
-    private fun getSekvensnummerRecords() = sekvensnummerConsumer.poll(ofSeconds(4)).records(topicPartition).toList()
+    private fun getSekvensnummerRecords() = sekvensnummerConsumer.poll(ofSeconds(POLLING_DURATION_SECONDS)).records(topicPartition).toList()
 
     private fun assignPartitionToConsumer() = sekvensnummerConsumer.assign(listOf(topicPartition))
 
