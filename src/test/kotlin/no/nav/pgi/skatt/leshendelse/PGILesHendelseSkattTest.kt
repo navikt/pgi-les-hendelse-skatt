@@ -17,13 +17,14 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers.ofString
-import java.time.Duration
+import java.time.Duration.ofSeconds
 
+
+private const val HOST = "http://localhost"
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal object PGILesHendelseSkattTest {
+internal class PGILesHendelseSkattTest {
 
-    private const val HOST = "http://localhost"
     private val application = createApplication()
     private val client = HttpClient.newHttpClient()
     private val kafkaTestEnvironment = KafkaTestEnvironment()
@@ -56,33 +57,43 @@ internal object PGILesHendelseSkattTest {
     }
 
     @Test
-    fun `Get sekvensnummer from topic`() {
+    fun `get last sekvensnummer from populated topic`() {
         val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaEnvVariables())
+        val sekvensnummerConsumer = kafkaConfig.nextSekvensnummerConsumer()
+
+        val topicPartition = TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0)
+        sekvensnummerConsumer.assign(listOf(topicPartition))
+
         addSekvensnummerToTopic(kafkaConfig, "1111")
         addSekvensnummerToTopic(kafkaConfig, "2222")
         addSekvensnummerToTopic(kafkaConfig, "3333")
+        addSekvensnummerToTopic(kafkaConfig, "3333")
+        addSekvensnummerToTopic(kafkaConfig, "3333")
 
-        val sekvensnummerConsumer = kafkaConfig.nextSekvensnummerConsumer()
-        sekvensnummerConsumer.subscribe(listOf(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC))
-
-        //TODO forsett her Pål
-        //sekvensnummerConsumer.listTopics()[KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC]?.forEach {
-        //    sekvensnummerConsumer.seekToEnd(listOf(TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, it.partition())))
-        //}
-
-        val records: List<ConsumerRecord<String, String>> = sekvensnummerConsumer.poll(Duration.ofSeconds(4)).records(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC).toList()
+        val valueOfLastRecord = "4444"
+        addSekvensnummerToTopic(kafkaConfig, valueOfLastRecord)
 
 
+        val partitionSet = sekvensnummerConsumer.assignment()
+        val usedPartition = partitionSet.elementAt(0)
+        val endOffsets = sekvensnummerConsumer.endOffsets(partitionSet)
+        val nextOffsetToBeCommitted: Long = endOffsets.entries.iterator().next().value.toLong()
+
+        sekvensnummerConsumer.seek(usedPartition, nextOffsetToBeCommitted - 1)
+        val records: List<ConsumerRecord<String, String>> = sekvensnummerConsumer.poll(ofSeconds(4)).records(topicPartition).toList()
+
+        assertEquals(valueOfLastRecord, records.last().value())
     }
 
+
     @Test
-    fun `Get sekvensnummer from topic when there is non`() {
+    fun `Get sekvensnummer from topic when there is none`() {
         val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaEnvVariables())
 
         val sekvensnummerConsumer = kafkaConfig.nextSekvensnummerConsumer()
         sekvensnummerConsumer.subscribe(listOf(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC))
-        sekvensnummerConsumer.poll(Duration.ofSeconds(4)).records(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC).toList()
-
+        sekvensnummerConsumer.poll(ofSeconds(4)).records(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC).toList()
+        sekvensnummerConsumer.close()
     }
 
     @Test
