@@ -39,7 +39,6 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
             GROUP_ID_CONFIG to GROUP_ID,
             ENABLE_AUTO_COMMIT_CONFIG to false,
             AUTO_OFFSET_RESET_CONFIG to "earliest"
-
     )
 
     private fun sekvensnummerProducerConfig() = mapOf(

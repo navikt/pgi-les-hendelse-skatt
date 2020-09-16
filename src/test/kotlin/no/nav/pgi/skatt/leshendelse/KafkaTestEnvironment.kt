@@ -1,6 +1,7 @@
 package no.nav.pgi.skatt.leshendelse
 
 import no.nav.common.KafkaEnvironment
+import no.nav.common.KafkaEnvironment.TopicInfo
 import org.apache.kafka.clients.CommonClientConfigs
 
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
@@ -15,8 +16,13 @@ const val KAFKA_TEST_PASSWORD = "opensourcedPassword"
 
 class KafkaTestEnvironment {
 
-    private val kafkaTestEnvironment: KafkaEnvironment = KafkaEnvironment(topicNames = listOf(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, KafkaConfig.PGI_HENDELSE_TOPIC))
-    internal val hendelseTestConsumer = hendelseTestConsumer()
+    private val kafkaTestEnvironment: KafkaEnvironment = KafkaEnvironment(
+            topicInfos = listOf(
+                    TopicInfo(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, partitions = 1),
+                    TopicInfo(KafkaConfig.PGI_HENDELSE_TOPIC)
+            )
+    )
+    private val hendelseTestConsumer = hendelseTestConsumer()
 
     init {
         kafkaTestEnvironment.start()
