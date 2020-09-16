@@ -5,8 +5,6 @@ import io.ktor.server.netty.*
 import no.nav.pensjon.samhandling.liveness.isAlive
 import no.nav.pensjon.samhandling.liveness.isReady
 import no.nav.pensjon.samhandling.metrics.metrics
-import no.nav.pgi.skatt.leshendelse.Kafka.hendelseSkatt
-
 
 
 fun main() {

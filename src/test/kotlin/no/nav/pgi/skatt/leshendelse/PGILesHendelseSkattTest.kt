@@ -3,7 +3,6 @@ package no.nav.pgi.skatt.leshendelse
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.http.*
 import no.nav.pgi.skatt.leshendelse.hendelserskatt.Hendelser
-import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.TopicPartition
 import org.json.JSONObject
@@ -59,32 +58,20 @@ internal class PGILesHendelseSkattTest {
     @Test
     fun `get last sekvensnummer from populated topic`() {
         val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaEnvVariables())
-        val sekvensnummerConsumer = kafkaConfig.nextSekvensnummerConsumer()
-
         val topicPartition = TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0)
-        sekvensnummerConsumer.assign(listOf(topicPartition))
+        val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, topicPartition)
 
         addSekvensnummerToTopic(kafkaConfig, "1111")
         addSekvensnummerToTopic(kafkaConfig, "2222")
         addSekvensnummerToTopic(kafkaConfig, "3333")
         addSekvensnummerToTopic(kafkaConfig, "3333")
         addSekvensnummerToTopic(kafkaConfig, "3333")
-
         val valueOfLastRecord = "4444"
         addSekvensnummerToTopic(kafkaConfig, valueOfLastRecord)
 
+        assertEquals(valueOfLastRecord, sekvensnummerConsumer.getLastSekvensnummer())
 
-        val partitionSet = sekvensnummerConsumer.assignment()
-        val usedPartition = partitionSet.elementAt(0)
-        val endOffsets = sekvensnummerConsumer.endOffsets(partitionSet)
-        val nextOffsetToBeCommitted: Long = endOffsets.entries.iterator().next().value.toLong()
-
-        sekvensnummerConsumer.seek(usedPartition, nextOffsetToBeCommitted - 1)
-        val records: List<ConsumerRecord<String, String>> = sekvensnummerConsumer.poll(ofSeconds(4)).records(topicPartition).toList()
-
-        assertEquals(valueOfLastRecord, records.last().value())
     }
-
 
     @Test
     fun `Get sekvensnummer from topic when there is none`() {
