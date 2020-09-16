@@ -31,11 +31,12 @@ class KafkaTestEnvironment {
 
     internal fun tearDown() = kafkaTestEnvironment.tearDown()
 
-    internal fun kafkaEnvVariables() = mapOf<String, String>(
+    internal fun testConfiguration() = mapOf<String, String>(
             KafkaConfig.BOOTSTRAP_SERVERS_ENV_KEY to kafkaTestEnvironment.brokersURL,
             KafkaConfig.USERNAME_ENV_KEY to KAFKA_TEST_USERNAME,
             KafkaConfig.PASSWORD_ENV_KEY to KAFKA_TEST_PASSWORD,
-            KafkaConfig.SECURITY_PROTOCOL_ENV_KEY to SecurityProtocol.PLAINTEXT.name)
+            KafkaConfig.SECURITY_PROTOCOL_ENV_KEY to SecurityProtocol.PLAINTEXT.name
+    )
 
     private fun hendelseTestConsumer() = KafkaConsumer<String, String>(
             mapOf(

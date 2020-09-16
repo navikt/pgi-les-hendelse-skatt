@@ -27,7 +27,7 @@ internal class PGILesHendelseSkattTest {
     private val application = createApplication()
     private val client = HttpClient.newHttpClient()
     private val kafkaTestEnvironment = KafkaTestEnvironment()
-
+    private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.testConfiguration())
     private val sekvensnummerMock = FirstSekvensnummerMock()
     private val hendelseMock = HendelseMock()
 
@@ -57,26 +57,21 @@ internal class PGILesHendelseSkattTest {
 
     @Test
     fun `get last sekvensnummer from populated topic`() {
-        val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaEnvVariables())
-        val topicPartition = TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0)
-        val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, topicPartition)
+        val sekvensnummerConsumer = SekvensnummerConsumer(
+                kafkaConfig,
+                TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0)
+        )
 
-        addSekvensnummerToTopic(kafkaConfig, "1111")
-        addSekvensnummerToTopic(kafkaConfig, "2222")
-        addSekvensnummerToTopic(kafkaConfig, "3333")
-        addSekvensnummerToTopic(kafkaConfig, "3333")
-        addSekvensnummerToTopic(kafkaConfig, "3333")
-        val valueOfLastRecord = "4444"
-        addSekvensnummerToTopic(kafkaConfig, valueOfLastRecord)
+        val lastSekvensnummer = "4444"
+        addListOfSekvensnummerToTopic(listOf("1111", "2222", "3333", lastSekvensnummer))
 
-        assertEquals(valueOfLastRecord, sekvensnummerConsumer.getLastSekvensnummer())
+        assertEquals(lastSekvensnummer, sekvensnummerConsumer.getLastSekvensnummer())
 
     }
 
+
     @Test
     fun `Get sekvensnummer from topic when there is none`() {
-        val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaEnvVariables())
-
         val sekvensnummerConsumer = kafkaConfig.nextSekvensnummerConsumer()
         sekvensnummerConsumer.subscribe(listOf(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC))
         sekvensnummerConsumer.poll(ofSeconds(4)).records(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC).toList()
@@ -88,8 +83,6 @@ internal class PGILesHendelseSkattTest {
         val httpRequest = createGetRequest(HENDELSE_PORT, HENDELSE_URL)
         val response = client.send(httpRequest, ofString())
 
-        println(response.body())
-
         assertEquals(HttpStatusCode.OK.value, response.statusCode())
 
         val hendelser = ObjectMapper().readValue(response.body(), Hendelser::class.java)
@@ -98,27 +91,24 @@ internal class PGILesHendelseSkattTest {
 
     @Test
     fun `Write pgi hendelse to topic`() {
-        val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaEnvVariables())
-
         val record = ProducerRecord(KafkaConfig.PGI_HENDELSE_TOPIC, "", "Hendelse")
-        kafkaConfig.hendelseProducer().send(record) { metadata, exception ->
-            println(if (metadata == null) exception.toString() else "Value size: " + metadata.serializedValueSize())
-        }
+        kafkaConfig.hendelseProducer().send(record)
         kafkaConfig.hendelseProducer().flush()
-
         assertEquals("Hendelse", kafkaTestEnvironment.getFirstRecordOnTopic().value())
-
     }
 
     @Test
     fun `Write sekvensnummer to topic`() {
-        val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaEnvVariables())
-        addSekvensnummerToTopic(kafkaConfig, "134234234")
+        addSekvensnummerToTopic("134234234")
 
         kafkaConfig.nextSekvensnummerProducer().flush()
     }
 
-    private fun addSekvensnummerToTopic(kafkaConfig: KafkaConfig, sekvensnummer: String) {
+    private fun addListOfSekvensnummerToTopic(sekvensnummerList: List<String>) {
+        sekvensnummerList.indices.forEach { i -> addSekvensnummerToTopic(sekvensnummerList[i]) }
+    }
+
+    private fun addSekvensnummerToTopic(sekvensnummer: String) {
         val record = ProducerRecord(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, "", sekvensnummer)
         kafkaConfig.nextSekvensnummerProducer().send(record).get()
     }
