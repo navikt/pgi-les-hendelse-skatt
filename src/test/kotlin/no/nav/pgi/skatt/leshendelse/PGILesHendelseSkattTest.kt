@@ -6,21 +6,18 @@ import no.nav.pgi.skatt.leshendelse.hendelserskatt.Hendelser
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.TopicPartition
 import org.json.JSONObject
-import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers.ofString
-import java.time.Duration.ofSeconds
 
 
 private const val HOST = "http://localhost"
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class PGILesHendelseSkattTest {
 
@@ -47,15 +44,7 @@ internal class PGILesHendelseSkattTest {
     }
 
     @Test
-    fun `get first sekvensnummer skatt`() {
-        val httpRequest = createGetRequest(SKATT_API_PORT, SKATT_FIRST_HENDELSE_URL)
-        val response = client.send(httpRequest, ofString())
-
-        assertEquals(HttpStatusCode.OK.value, response.statusCode())
-        assertEquals(1, JSONObject(response.body()).getInt("sekvensnummer"))
-    }
-
-    @Test
+    @Order(1)
     fun `get first sekvensnummer empty, call Skatteetaten REST service`() {
         val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0))
         var sekvensnummer = sekvensnummerConsumer.getLastSekvensnummer()
@@ -66,17 +55,29 @@ internal class PGILesHendelseSkattTest {
         }
 
         assertEquals("1", sekvensnummer)
-
+        sekvensnummerConsumer.close()
     }
+
+    @Test
+    fun `get first sekvensnummer skatt`() {
+        val httpRequest = createGetRequest(SKATT_API_PORT, SKATT_FIRST_HENDELSE_URL)
+        val response = client.send(httpRequest, ofString())
+
+        assertEquals(HttpStatusCode.OK.value, response.statusCode())
+        assertEquals(1, JSONObject(response.body()).getInt("sekvensnummer"))
+    }
+
 
     @Test
     fun `get last sekvensnummer from topic`() {
         val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0))
 
         val lastSekvensnummer = "5"
-        addListOfSekvensnummerToTopic(listOf("1","2","3","4",lastSekvensnummer))
+        addListOfSekvensnummerToTopic(listOf("1", "2", "3", "4", lastSekvensnummer))
 
         assertEquals(lastSekvensnummer, sekvensnummerConsumer.getLastSekvensnummer())
+        sekvensnummerConsumer.close()
+
     }
 
     @Test
@@ -84,14 +85,8 @@ internal class PGILesHendelseSkattTest {
         val sekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
         val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0))
         sekvensnummerProducer.writeSekvensnummer("1234")
-        assertEquals("1234", sekvensnummerConsumer.getLastSekvensnummer())
-    }
 
-    @Test
-    fun `get sekvensnummer from topic when there is none`() {
-        val sekvensnummerConsumer = kafkaConfig.nextSekvensnummerConsumer()
-        sekvensnummerConsumer.subscribe(listOf(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC))
-        sekvensnummerConsumer.poll(ofSeconds(4)).records(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC).toList()
+        assertEquals("1234", sekvensnummerConsumer.getLastSekvensnummer())
         sekvensnummerConsumer.close()
     }
 

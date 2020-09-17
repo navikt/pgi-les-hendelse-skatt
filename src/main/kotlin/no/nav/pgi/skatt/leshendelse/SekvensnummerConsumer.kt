@@ -6,32 +6,34 @@ import java.time.Duration.ofSeconds
 private const val POLLING_DURATION_SECONDS = 4L
 
 internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topicPartition: TopicPartition) {
-    private val sekvensnummerConsumer = kafkaConfig.nextSekvensnummerConsumer()
+    private val consumer = kafkaConfig.nextSekvensnummerConsumer()
 
     init {
-        assignPartitionToConsumer()
+        assignConsumerToPartition()
     }
 
     internal fun getLastSekvensnummer(): String? {
         pointToLastSekvensnummer()
-        val sekvensnummerRecords = getSekvensnummerRecords()
-        return if (sekvensnummerRecords.isEmpty()) null else getSekvensnummerRecords().last().value()
+        val sekvensnummerRecords = pollRecords()
+        return if (sekvensnummerRecords.isEmpty()) null else sekvensnummerRecords.last().value()
     }
 
-    private fun getSekvensnummerRecords() = sekvensnummerConsumer.poll(ofSeconds(POLLING_DURATION_SECONDS)).records(topicPartition).toList()
+    internal fun close() = consumer.close()
 
-    private fun assignPartitionToConsumer() = sekvensnummerConsumer.assign(listOf(topicPartition))
+    private fun assignConsumerToPartition() = consumer.assign(listOf(topicPartition))
 
-    private fun pointToLastSekvensnummer() = sekvensnummerConsumer.seek(topicPartition, getLastSekvensnummerOffset())
+    private fun pointToLastSekvensnummer() = consumer.seek(topicPartition, getOffsetOfLastRecord())
 
-    private fun getLastSekvensnummerOffset() : Long {
-        val endOffset = endOffsets().entries.iterator().next().value
-        return when {
-            endOffset > 0 -> endOffset - 1L
-            else -> endOffset
-        }
+    private fun getOffsetOfLastRecord(): Long {
+        val endOffset = endOffset()
+        return if (endOffset > 0) endOffset - 1L else endOffset
     }
 
-    private fun endOffsets() = sekvensnummerConsumer.endOffsets(mutableSetOf(topicPartition))
+    private fun endOffset(): Long = consumer.endOffsets(mutableSetOf(topicPartition)).getLastRecordValue()
 
+    private fun pollRecords() = consumer.poll(ofSeconds(POLLING_DURATION_SECONDS)).records(topicPartition).toList()
 }
+
+
+fun Map<TopicPartition, Long>.getLastRecordValue(): Long = entries.iterator().next().value
+
