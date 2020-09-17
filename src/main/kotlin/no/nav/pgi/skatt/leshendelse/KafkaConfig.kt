@@ -27,11 +27,11 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
     internal fun nextSekvensnummerProducer() = KafkaProducer<Nothing, String>(
             commonConfig() + sekvensnummerProducerConfig())
 
+    internal fun nextSekvensnummerConsumer() = KafkaConsumer<Nothing, String>(
+            commonConfig() + sekvensnummerConsumerConfig())
+
     internal fun hendelseProducer() = KafkaProducer<String, String>(
             commonConfig() + hendelseProducerConfig())
-
-    internal fun nextSekvensnummerConsumer() = KafkaConsumer<String, String>(
-            commonConfig() + sekvensnummerConsumerConfig())
 
     private fun sekvensnummerConsumerConfig() = mapOf(
             KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
