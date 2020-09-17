@@ -47,7 +47,7 @@ internal class PGILesHendelseSkattTest {
     }
 
     @Test
-    fun `Get first sekvensnummer skatt`() {
+    fun `get first sekvensnummer skatt`() {
         val httpRequest = createGetRequest(SKATT_API_PORT, SKATT_FIRST_HENDELSE_URL)
         val response = client.send(httpRequest, ofString())
 
@@ -56,29 +56,33 @@ internal class PGILesHendelseSkattTest {
     }
 
     @Test
-    fun `get last sekvensnummer from populated topic`() {
-        val sekvensnummerConsumer = SekvensnummerConsumer(
-                kafkaConfig,
-                TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0)
-        )
+    fun `get last sekvensnummer from topic`() {
+        val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0))
 
         val lastSekvensnummer = "4444"
         addListOfSekvensnummerToTopic(listOf("1111", "2222", "3333", lastSekvensnummer))
-
         assertEquals(lastSekvensnummer, sekvensnummerConsumer.getLastSekvensnummer())
     }
 
+    @Test
+    fun `write sekvensnummer to topic`() {
+        val sekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
+        val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0))
+        sekvensnummerProducer.writeSekvensnummer("1234")
+        assertEquals("1234", sekvensnummerConsumer.getLastSekvensnummer())
+    }
 
     @Test
-    fun `Get sekvensnummer from topic when there is none`() {
+    fun `get sekvensnummer from topic when there is none`() {
         val sekvensnummerConsumer = kafkaConfig.nextSekvensnummerConsumer()
         sekvensnummerConsumer.subscribe(listOf(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC))
         sekvensnummerConsumer.poll(ofSeconds(4)).records(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC).toList()
         sekvensnummerConsumer.close()
     }
 
+
     @Test
-    fun `Get hendelser from skatt`() {
+    fun `get hendelser from skatt`() {
         val httpRequest = createGetRequest(HENDELSE_PORT, HENDELSE_URL)
         val response = client.send(httpRequest, ofString())
 
@@ -89,18 +93,11 @@ internal class PGILesHendelseSkattTest {
     }
 
     @Test
-    fun `Write pgi hendelse to topic`() {
+    fun `write pgi hendelse to topic`() {
         val record = ProducerRecord(KafkaConfig.PGI_HENDELSE_TOPIC, "", "Hendelse")
         kafkaConfig.hendelseProducer().send(record)
         kafkaConfig.hendelseProducer().flush()
         assertEquals("Hendelse", kafkaTestEnvironment.getFirstRecordOnTopic().value())
-    }
-
-    @Test
-    fun `Write sekvensnummer to topic`() {
-        addSekvensnummerToTopic("134234234")
-
-        kafkaConfig.nextSekvensnummerProducer().flush()
     }
 
     private fun addListOfSekvensnummerToTopic(sekvensnummerList: List<String>) {
