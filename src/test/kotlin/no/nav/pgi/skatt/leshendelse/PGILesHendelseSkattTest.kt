@@ -105,7 +105,7 @@ internal class PGILesHendelseSkattTest {
     }
 
     private fun addSekvensnummerToTopic(sekvensnummer: String) {
-        val record = ProducerRecord(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, "", sekvensnummer)
+        val record = ProducerRecord(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, null, sekvensnummer)
         kafkaConfig.nextSekvensnummerProducer().send(record).get()
     }
 

@@ -7,7 +7,7 @@ internal class SekvensnummerProducer(kafkaConfig: KafkaConfig) {
     private val sekvensnummerProducer = kafkaConfig.nextSekvensnummerProducer()
 
     internal fun writeSekvensnummer(sekvensnummer: String) {
-        val record = ProducerRecord(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, "", sekvensnummer)
+        val record = ProducerRecord(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, null, sekvensnummer)
         sekvensnummerProducer.send(record).get()
     }
 }

@@ -24,7 +24,7 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
             environment.getVal(PASSWORD_ENV_KEY)
     )
 
-    internal fun nextSekvensnummerProducer() = KafkaProducer<String, String>(
+    internal fun nextSekvensnummerProducer() = KafkaProducer<Nothing, String>(
             commonConfig() + sekvensnummerProducerConfig())
 
     internal fun hendelseProducer() = KafkaProducer<String, String>(
