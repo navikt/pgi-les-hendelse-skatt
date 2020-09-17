@@ -3,7 +3,6 @@ package no.nav.pgi.skatt.leshendelse
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.http.*
 import no.nav.pgi.skatt.leshendelse.hendelserskatt.Hendelser
-import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.TopicPartition
 import org.json.JSONObject
 import org.junit.jupiter.api.*
@@ -26,6 +25,7 @@ internal class PGILesHendelseSkattTest {
     private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.testConfiguration())
     private val sekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
     private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0))
+    private val hendelseProducer = HendelseProducer(kafkaConfig)
     private val application = createApplication(kafkaConfig = kafkaConfig)
     private val sekvensnummerMock = FirstSekvensnummerMock()
     private val hendelseMock = HendelseMock()
@@ -97,10 +97,9 @@ internal class PGILesHendelseSkattTest {
 
     @Test
     fun `write pgi hendelse to topic`() {
-        val record = ProducerRecord(KafkaConfig.PGI_HENDELSE_TOPIC, "", "Hendelse")
-        kafkaConfig.hendelseProducer().send(record)
-        kafkaConfig.hendelseProducer().flush()
-        assertEquals("Hendelse", kafkaTestEnvironment.getFirstRecordOnTopic().value())
+        val hendelse = "hendelse"
+        hendelseProducer.writeHendelse(hendelse)
+        assertEquals(hendelse, kafkaTestEnvironment.getFirstRecordOnTopic().value())
     }
 
     private fun addListOfSekvensnummerToTopic(sekvensnummerList: List<String>) {
