@@ -3,7 +3,7 @@ package no.nav.pgi.skatt.leshendelse
 import io.ktor.application.*
 
 
-internal fun Application.hendelseSkatt() {
+internal fun Application.hendelseSkatt(kafkaConfig: KafkaConfig) {
 
 
     //Kafka konsumer

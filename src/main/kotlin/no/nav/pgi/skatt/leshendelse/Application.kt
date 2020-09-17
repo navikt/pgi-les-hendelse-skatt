@@ -13,16 +13,16 @@ fun main() {
     }
 }
 
-internal fun createApplication(serverPort: Int = 8080) =
-        embeddedServer(Netty, createApplicationEnvironment(serverPort))
+internal fun createApplication(serverPort: Int = 8080, kafkaConfig: KafkaConfig = KafkaConfig()) =
+        embeddedServer(Netty, createApplicationEnvironment(serverPort, kafkaConfig))
 
-private fun createApplicationEnvironment(serverPort: Int) =
+private fun createApplicationEnvironment(serverPort: Int, kafkaConfig: KafkaConfig) =
         applicationEngineEnvironment {
             connector { port = serverPort }
             module {
                 isAlive()
                 isReady()
                 metrics()
-                hendelseSkatt()
+                hendelseSkatt(kafkaConfig)
             }
         }

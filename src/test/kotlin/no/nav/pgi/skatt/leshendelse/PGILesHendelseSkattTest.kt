@@ -24,10 +24,10 @@ private const val HOST = "http://localhost"
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class PGILesHendelseSkattTest {
 
-    private val application = createApplication()
     private val client = HttpClient.newHttpClient()
     private val kafkaTestEnvironment = KafkaTestEnvironment()
     private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.testConfiguration())
+    private val application = createApplication(kafkaConfig = kafkaConfig)
     private val sekvensnummerMock = FirstSekvensnummerMock()
     private val hendelseMock = HendelseMock()
 
@@ -66,7 +66,6 @@ internal class PGILesHendelseSkattTest {
         addListOfSekvensnummerToTopic(listOf("1111", "2222", "3333", lastSekvensnummer))
 
         assertEquals(lastSekvensnummer, sekvensnummerConsumer.getLastSekvensnummer())
-
     }
 
 
