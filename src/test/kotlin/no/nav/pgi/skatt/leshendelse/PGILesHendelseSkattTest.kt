@@ -4,15 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.http.*
 import no.nav.pgi.skatt.leshendelse.skatt.Hendelse
 import no.nav.pgi.skatt.leshendelse.skatt.Hendelser
+import no.nav.pgi.skatt.leshendelse.skatt.SkattClient
 import org.apache.kafka.common.TopicPartition
 import org.json.JSONObject
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse.BodyHandlers.ofString
 
 
 private const val HOST = "http://localhost"
@@ -21,7 +18,7 @@ private const val HOST = "http://localhost"
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class PGILesHendelseSkattTest {
 
-    private val client = HttpClient.newHttpClient()
+    private val client = SkattClient()
     private val kafkaTestEnvironment = KafkaTestEnvironment()
     private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.testConfiguration())
     private val sekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
@@ -52,8 +49,8 @@ internal class PGILesHendelseSkattTest {
     fun `get first sekvensnummer empty, call Skatteetaten REST service`() {
         var sekvensnummer = sekvensnummerConsumer.getLastSekvensnummer()
         if (sekvensnummer == null) {
-            val httpRequest = createGetRequest(SKATT_API_PORT, SKATT_FIRST_HENDELSE_URL)
-            val response = client.send(httpRequest, ofString())
+            val httpRequest = client.createGetRequest("$HOST:$SKATT_API_PORT$SKATT_FIRST_HENDELSE_URL")
+            val response = client.send(httpRequest)
             sekvensnummer = JSONObject(response.body()).getInt("sekvensnummer").toString()
         }
 
@@ -62,8 +59,8 @@ internal class PGILesHendelseSkattTest {
 
     @Test
     fun `get first sekvensnummer skatt`() {
-        val httpRequest = createGetRequest(SKATT_API_PORT, SKATT_FIRST_HENDELSE_URL)
-        val response = client.send(httpRequest, ofString())
+        val httpRequest = client.createGetRequest("$HOST:$SKATT_API_PORT$SKATT_FIRST_HENDELSE_URL")
+        val response = client.send(httpRequest)
 
         assertEquals(HttpStatusCode.OK.value, response.statusCode())
         assertEquals(1, JSONObject(response.body()).getInt("sekvensnummer"))
@@ -87,8 +84,8 @@ internal class PGILesHendelseSkattTest {
 
     @Test
     fun `get hendelser from skatt`() {
-        val httpRequest = createGetRequest(HENDELSE_PORT, HENDELSE_URL)
-        val response = client.send(httpRequest, ofString())
+        val httpRequest = client.createGetRequest("$HOST:$HENDELSE_PORT$HENDELSE_URL")
+        val response = client.send(httpRequest)
 
         assertEquals(HttpStatusCode.OK.value, response.statusCode())
 
@@ -99,16 +96,11 @@ internal class PGILesHendelseSkattTest {
     @Test
     fun `write pgi hendelse to topic`() {
         val hendelse = Hendelse(1, "12345", "1234")
-        hendelseProducer.writeHendelse(Hendelse(1, "12345", "1234"))
+        hendelseProducer.writeHendelse(hendelse)
         assertEquals(hendelse.toString(), kafkaTestEnvironment.getFirstRecordOnTopic().value())
     }
 
     private fun addListOfSekvensnummerToTopic(sekvensnummerList: List<String>) {
         sekvensnummerList.indices.forEach { i -> sekvensnummerProducer.writeSekvensnummer(sekvensnummerList[i]) }
     }
-
-    private fun createGetRequest(port: Int, url: String) = HttpRequest.newBuilder()
-            .uri(URI.create("$HOST:$port$url"))
-            .GET()
-            .build()
 }
