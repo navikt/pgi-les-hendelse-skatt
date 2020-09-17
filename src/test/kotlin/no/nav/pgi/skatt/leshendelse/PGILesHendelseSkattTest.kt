@@ -56,6 +56,20 @@ internal class PGILesHendelseSkattTest {
     }
 
     @Test
+    fun `get first sekvensnummer empty, call Skatteetaten REST service`() {
+        val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0))
+        var sekvensnummer = sekvensnummerConsumer.getLastSekvensnummer()
+        if (sekvensnummer == null) {
+            val httpRequest = createGetRequest(SKATT_API_PORT, SKATT_FIRST_HENDELSE_URL)
+            val response = client.send(httpRequest, ofString())
+            sekvensnummer = JSONObject(response.body()).getInt("sekvensnummer").toString()
+        }
+
+        assertEquals("1", sekvensnummer)
+
+    }
+
+    @Test
     fun `get last sekvensnummer from topic`() {
         val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0))
 
