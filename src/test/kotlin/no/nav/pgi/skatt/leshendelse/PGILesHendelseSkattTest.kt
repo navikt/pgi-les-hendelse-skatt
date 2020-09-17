@@ -2,7 +2,8 @@ package no.nav.pgi.skatt.leshendelse
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.http.*
-import no.nav.pgi.skatt.leshendelse.hendelserskatt.Hendelser
+import no.nav.pgi.skatt.leshendelse.skatt.Hendelse
+import no.nav.pgi.skatt.leshendelse.skatt.Hendelser
 import org.apache.kafka.common.TopicPartition
 import org.json.JSONObject
 import org.junit.jupiter.api.*
@@ -97,9 +98,9 @@ internal class PGILesHendelseSkattTest {
 
     @Test
     fun `write pgi hendelse to topic`() {
-        val hendelse = "hendelse"
-        hendelseProducer.writeHendelse(hendelse)
-        assertEquals(hendelse, kafkaTestEnvironment.getFirstRecordOnTopic().value())
+        val hendelse = Hendelse(1, "12345", "1234")
+        hendelseProducer.writeHendelse(Hendelse(1, "12345", "1234"))
+        assertEquals(hendelse.toString(), kafkaTestEnvironment.getFirstRecordOnTopic().value())
     }
 
     private fun addListOfSekvensnummerToTopic(sekvensnummerList: List<String>) {
