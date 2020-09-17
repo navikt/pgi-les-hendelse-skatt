@@ -59,8 +59,9 @@ internal class PGILesHendelseSkattTest {
     fun `get last sekvensnummer from topic`() {
         val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0))
 
-        val lastSekvensnummer = "4444"
-        addListOfSekvensnummerToTopic(listOf("1111", "2222", "3333", lastSekvensnummer))
+        val lastSekvensnummer = "5"
+        addListOfSekvensnummerToTopic(listOf("1","2","3","4",lastSekvensnummer))
+
         assertEquals(lastSekvensnummer, sekvensnummerConsumer.getLastSekvensnummer())
     }
 
@@ -105,8 +106,8 @@ internal class PGILesHendelseSkattTest {
     }
 
     private fun addSekvensnummerToTopic(sekvensnummer: String) {
-        val record = ProducerRecord(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, null, sekvensnummer)
-        kafkaConfig.nextSekvensnummerProducer().send(record).get()
+        val sekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
+        sekvensnummerProducer.writeSekvensnummer(sekvensnummer)
     }
 
     private fun createGetRequest(port: Int, url: String) = HttpRequest.newBuilder()
