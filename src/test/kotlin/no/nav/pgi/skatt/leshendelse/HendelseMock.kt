@@ -6,7 +6,8 @@ import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 
 
 internal const val HENDELSE_PORT = 8085
-internal const val HENDELSE_URL = "/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse/start"
+internal const val HENDELSE_PATH = "/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse/start"
+internal const val HENDELSE_URL = "http://localhost:$HENDELSE_PORT$HENDELSE_PATH"
 
 internal class HendelseMock {
 
@@ -18,7 +19,7 @@ internal class HendelseMock {
 
     // region Stubs
     internal fun `stub hendelse endepunkt skatt`() {
-        skattApiMock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_URL)).willReturn(
+        skattApiMock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH)).willReturn(
                 aResponse()
                         .withBodyFile("Hendelser.json")
                         .withStatus(200)

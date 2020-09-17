@@ -5,19 +5,18 @@ import io.ktor.http.*
 import no.nav.pgi.skatt.leshendelse.skatt.Hendelse
 import no.nav.pgi.skatt.leshendelse.skatt.Hendelser
 import no.nav.pgi.skatt.leshendelse.skatt.SkattClient
+import no.nav.pgi.skatt.leshendelse.skatt.createGetRequest
 import org.apache.kafka.common.TopicPartition
 import org.json.JSONObject
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import java.net.http.HttpResponse.BodyHandlers.ofString
 
-
-private const val HOST = "http://localhost"
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class PGILesHendelseSkattTest {
-
     private val client = SkattClient()
     private val kafkaTestEnvironment = KafkaTestEnvironment()
     private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.testConfiguration())
@@ -49,8 +48,8 @@ internal class PGILesHendelseSkattTest {
     fun `get first sekvensnummer empty, call Skatteetaten REST service`() {
         var sekvensnummer = sekvensnummerConsumer.getLastSekvensnummer()
         if (sekvensnummer == null) {
-            val httpRequest = client.createGetRequest("$HOST:$SKATT_API_PORT$SKATT_FIRST_HENDELSE_URL")
-            val response = client.send(httpRequest)
+            val httpRequest = createGetRequest(FIRST_SEKVENSNUMMER_URL)
+            val response = client.send(httpRequest, ofString())
             sekvensnummer = JSONObject(response.body()).getInt("sekvensnummer").toString()
         }
 
@@ -59,8 +58,8 @@ internal class PGILesHendelseSkattTest {
 
     @Test
     fun `get first sekvensnummer skatt`() {
-        val httpRequest = client.createGetRequest("$HOST:$SKATT_API_PORT$SKATT_FIRST_HENDELSE_URL")
-        val response = client.send(httpRequest)
+        val httpRequest = createGetRequest(FIRST_SEKVENSNUMMER_URL)
+        val response = client.send(httpRequest, ofString())
 
         assertEquals(HttpStatusCode.OK.value, response.statusCode())
         assertEquals(1, JSONObject(response.body()).getInt("sekvensnummer"))
@@ -84,8 +83,8 @@ internal class PGILesHendelseSkattTest {
 
     @Test
     fun `get hendelser from skatt`() {
-        val httpRequest = client.createGetRequest("$HOST:$HENDELSE_PORT$HENDELSE_URL")
-        val response = client.send(httpRequest)
+        val httpRequest = createGetRequest(HENDELSE_URL)
+        val response = client.send(httpRequest, ofString())
 
         assertEquals(HttpStatusCode.OK.value, response.statusCode())
 
