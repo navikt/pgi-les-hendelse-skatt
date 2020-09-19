@@ -1,9 +1,8 @@
 package no.nav.pgi.skatt.leshendelse
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.http.*
+import no.nav.pgi.skatt.leshendelse.skatt.GrunnlagPgiHendelseClient
 import no.nav.pgi.skatt.leshendelse.skatt.Hendelse
-import no.nav.pgi.skatt.leshendelse.skatt.Hendelser
 import no.nav.pgi.skatt.leshendelse.skatt.SkattClient
 import no.nav.pgi.skatt.leshendelse.skatt.createGetRequest
 import org.apache.kafka.common.TopicPartition
@@ -17,6 +16,7 @@ import java.net.http.HttpResponse.BodyHandlers.ofString
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class PGILesHendelseSkattTest {
+    private val grunnlagPgiHendelseClient = GrunnlagPgiHendelseClient(HENDELSE_URL)
     private val client = SkattClient()
     private val kafkaTestEnvironment = KafkaTestEnvironment()
     private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.testConfiguration())
@@ -83,18 +83,13 @@ internal class PGILesHendelseSkattTest {
 
     @Test
     fun `get hendelser from skatt`() {
-        val httpRequest = createGetRequest(HENDELSE_URL)
-        val response = client.send(httpRequest, ofString())
-
-        assertEquals(HttpStatusCode.OK.value, response.statusCode())
-
-        val hendelser = ObjectMapper().readValue(response.body(), Hendelser::class.java)
-        assertTrue(hendelser.hendelser.size == 5)
+        val hendelser = grunnlagPgiHendelseClient.send(1000,1L)
+        assertTrue(hendelser.size() == 5)
     }
 
     @Test
     fun `write pgi hendelse to topic`() {
-        val hendelse = Hendelse(1, "12345", "1234")
+        val hendelse = Hendelse("123456", "12345", 1L)
         hendelseProducer.writeHendelse(hendelse)
         assertEquals(hendelse.toString(), kafkaTestEnvironment.getFirstRecordOnTopic().value())
     }

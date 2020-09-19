@@ -17,15 +17,11 @@ internal class FirstSekvensnummerMock {
         skattApiMock.start()
     }
 
-    // region Stubs
     internal fun `stub first sekvensnummer endepunkt skatt`() {
         skattApiMock.stubFor(get(urlPathEqualTo(SKATT_FIRST_SEKVENSNUMMER_PATH))
                 .willReturn(okJson("{\"sekvensnummer\": " + SKATT_FIRST_SEKVENSNUMMER + "}")))
     }
-    // endregion
 
-    internal fun stop() {
-        skattApiMock.stop()
-    }
+    internal fun stop() = skattApiMock.stop()
 }
 

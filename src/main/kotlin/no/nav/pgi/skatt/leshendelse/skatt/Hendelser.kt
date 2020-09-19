@@ -1,12 +1,16 @@
 package no.nav.pgi.skatt.leshendelse.skatt
 
-const val FAULTY_SEKVENSNUMMER = -1
+data class Hendelser(val nestesekvensnr: Long?, val hendelser: ArrayList<Hendelse>? = ArrayList()) {
+    internal fun size() = hendelser?.size
+    internal fun validate() {
+        if (nestesekvensnr == null) throw GrunnlagPgiHendelserValidationException("Hendelser.nestesekvensnr var null")
+    }
+}
 
-data class Hendelser(var hendelser: ArrayList<Hendelse> = ArrayList());
-data class Hendelse(var sekvensnummer: Int = FAULTY_SEKVENSNUMMER, var identifikator: String = "", var gjelderPeriode: String = "")
+data class Hendelse(val norskPersonidentifikator: String?, val inntektsaar: String?, val sekvensnr: Long?) {
+    fun getHendelseKey(): String = "$norskPersonidentifikator-$inntektsaar"
+}
 
-internal fun Hendelser.validate() = hendelser.forEach { it.validate() }
+internal class GrunnlagPgiHendelserValidationException(message: String) : Exception(message)
 
-internal fun Hendelse.getHendelseKey() = this.identifikator + "-" + this.gjelderPeriode
 
-internal fun Hendelse.validate() {}

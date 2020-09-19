@@ -1,7 +1,6 @@
 package no.nav.pgi.skatt.leshendelse
 
 import no.nav.pgi.skatt.leshendelse.skatt.Hendelse
-import no.nav.pgi.skatt.leshendelse.skatt.getHendelseKey
 import org.apache.kafka.clients.producer.ProducerRecord
 
 internal class HendelseProducer(kafkaConfig: KafkaConfig) {
