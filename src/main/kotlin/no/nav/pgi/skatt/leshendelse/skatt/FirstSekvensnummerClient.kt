@@ -1,5 +1,6 @@
 package no.nav.pgi.skatt.leshendelse.skatt
 
+import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -8,7 +9,7 @@ import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
 private const val FIRST_SEKVENSNUMMER_HOST_KEY = "grunnlag-pgi-first-sekvensnummer-host-key"
-private const val FIRST_SEKVENSNUMMER_PATH = "/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse/start"
+internal const val FIRST_SEKVENSNUMMER_PATH = "/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse/start"
 
 internal class FirstSekvensnummerClient(private val host: String = System.getenv().getVal(FIRST_SEKVENSNUMMER_HOST_KEY)) {
     private val objectMapper = ObjectMapper().registerModule(KotlinModule())
@@ -27,12 +28,17 @@ internal class FirstSekvensnummerClient(private val host: String = System.getenv
     }
 
     private fun readValue(body: String): Long {
+
         return try {
-            objectMapper.readValue(body)
+            objectMapper.readValue(body, Sekvensnummer::class.java).sekvensnummer
         } catch (e: Exception) {
-            throw GrunnlagPgiHendelseClientObjectMapperException(e.toString())
+            throw FirstSekvensnummerException(e.toString())
         }
     }
 }
+
+internal data class Sekvensnummer(val sekvensnummer: Long)
+
+internal class FirstSekvensnummerException(message: String) : Exception(message)
 
 //https://api-st.sits.no/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse/start?dato={YYYY-MM-DD}
