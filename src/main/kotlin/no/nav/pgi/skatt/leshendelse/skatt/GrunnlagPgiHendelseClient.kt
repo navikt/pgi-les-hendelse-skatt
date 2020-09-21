@@ -3,11 +3,13 @@ package no.nav.pgi.skatt.leshendelse.skatt
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import no.nav.pgi.skatt.leshendelse.getVal
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
+private const val HENDELSE_SKATT_URL_KEY = "grunnlag-pgi-hendelse-url"
 
-internal class GrunnlagPgiHendelseClient(private val url: String) {
+internal class GrunnlagPgiHendelseClient(private val url: String = System.getenv().getVal(HENDELSE_SKATT_URL_KEY)) {
     private val objectMapper = ObjectMapper().registerModule(KotlinModule())
     private val SkattClient = SkattClient()
 
