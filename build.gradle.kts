@@ -1,9 +1,10 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val junitJupiterVersion = "5.6.0"
 val ktorVersion = "1.3.2-1.4.0-rc"
-val ktorSupportVersion ="0.0.4"
+val ktorSupportVersion = "0.0.4"
+val joseJwtVersion = "9.0.1"
 val micrometerVersion = "1.3.5"
 val slf4jVersion = "1.7.30"
 val log4jVersion = "2.13.3"
@@ -24,7 +25,7 @@ repositories {
     mavenCentral()
     maven("https://packages.confluent.io/maven/")
     maven("https://jitpack.io")
-    maven("https://maven.pkg.github.com/navikt/pensjon-samhandling-ktor-support"){
+    maven("https://maven.pkg.github.com/navikt/pensjon-samhandling-ktor-support") {
         credentials {
             username = System.getenv("GITHUB_ACTOR")
             password = System.getenv("GITHUB_TOKEN")
@@ -38,6 +39,8 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-metrics-micrometer:$ktorVersion")
     implementation("no.nav.pensjonsamhandling:pensjon-samhandling-ktor-support:$ktorSupportVersion")
+
+    implementation("com.nimbusds:nimbus-jose-jwt:$joseJwtVersion")
 
     implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 

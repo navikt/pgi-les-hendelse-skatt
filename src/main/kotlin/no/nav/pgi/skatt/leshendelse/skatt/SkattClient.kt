@@ -5,7 +5,8 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
-class SkattClient(private val httpClient: HttpClient = HttpClient.newHttpClient()) {
+class SkattClient() {
+    private val httpClient: HttpClient = HttpClient.newHttpClient()
     internal fun <T> send(httpRequest: HttpRequest, responseBodyHandler: HttpResponse.BodyHandler<T>): HttpResponse<T> =
             httpClient.send(httpRequest, responseBodyHandler)
 }
