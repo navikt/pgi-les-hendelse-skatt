@@ -7,7 +7,6 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
 import com.nimbusds.jwt.SignedJWT
 import no.nav.pgi.skatt.leshendelse.MissingEnvironmentVariables
-import no.nav.pgi.skatt.leshendelse.maskinporten.grant.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

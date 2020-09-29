@@ -1,4 +1,4 @@
-package no.nav.pgi.skatt.leshendelse.maskinporten.grant
+package no.nav.pgi.skatt.leshendelse.maskinporten
 
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.JWTClaimsSet.Builder

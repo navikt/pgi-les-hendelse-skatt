@@ -1,4 +1,4 @@
-package no.nav.pgi.skatt.leshendelse.maskinporten.grant
+package no.nav.pgi.skatt.leshendelse.maskinporten
 
 import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.JWSHeader
@@ -11,7 +11,7 @@ import no.nav.pgi.skatt.leshendelse.verify
 
 internal const val PRIVATE_JWK_ENV_KEY = "jwk-private-key"
 
-internal class MaskinportenGrantTokenGenerator(env: Map<String, String> = System.getenv()) {
+internal class MaskinportenGrantTokenGenerator(env: Map<String, String>) {
     private val claims: MaskinportenClaims
     private val privateKey: RSAKey
     private val jwsSigner: JWSSigner
