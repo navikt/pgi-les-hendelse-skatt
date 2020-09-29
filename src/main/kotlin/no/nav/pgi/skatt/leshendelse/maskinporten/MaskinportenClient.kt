@@ -20,7 +20,7 @@ internal const val CONTENT_TYPE = "application/x-www-form-urlencoded"
 internal class MaskinportenClient(env: Map<String, String> = System.getenv()) {
     private val host: String = env.getVal(MASKINPORTEN_CREATE_TOKEN_HOST_ENV_KEY)
     private val httpClient: HttpClient = HttpClient.newHttpClient()
-    private val grantTokenGenerator: MaskinportenGrantTokenGenerator = MaskinportenGrantTokenGenerator(env)
+    private val grantToken: MaskinportenGrantToken = MaskinportenGrantToken(env)
     //private val maskinportenJWKSValidation: MaskinportenJWKSValidation = MaskinportenJWKSValidation()
 
     private val objectMapper = ObjectMapper().registerModule(KotlinModule())
@@ -52,7 +52,7 @@ internal class MaskinportenClient(env: Map<String, String> = System.getenv()) {
             .build()
 
     private fun createRequestBody() =
-            objectMapper.writeValueAsString(maskinportenRequestBody(assertion = grantTokenGenerator.createJwt()))
+            objectMapper.writeValueAsString(maskinportenRequestBody(assertion = grantToken.generateJwt()))
 
 
     private fun mapToMaskinportenResponseBody(responseBody: String): maskinportenResponseBody =
