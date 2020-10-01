@@ -28,11 +28,11 @@ internal class MaskinportenClient(env: Map<String, String> = System.getenv()) {
     private val grantTokenGenerator: MaskinportenGrantTokenGenerator = MaskinportenGrantTokenGenerator(env)
     private val objectMapper = ObjectMapper().registerModule(KotlinModule())
 
-    private var lastReceivedToken: MaskinportenToken = MaskinportenToken()
+    private var tokenCache: TokenCache = TokenCache()
 
     internal fun getToken(): String {
-        lastReceivedToken = if (lastReceivedToken.isExpired()) MaskinportenToken(getTokenFromMaskinporten()) else lastReceivedToken
-        return lastReceivedToken.getTokenString()
+        tokenCache = if (tokenCache.isExpired()) TokenCache(getTokenFromMaskinporten()) else tokenCache
+        return tokenCache.getTokenString()
     }
 
     private fun getTokenFromMaskinporten(): String {

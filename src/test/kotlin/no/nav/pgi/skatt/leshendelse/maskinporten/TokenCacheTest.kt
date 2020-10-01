@@ -14,19 +14,19 @@ import org.junit.jupiter.api.TestInstance
 import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class MaskinportenTokenTest {
+internal class TokenCacheTest {
     private val privateKey: RSAKey = RSAKeyGenerator(2048).keyID("123").generate()
 
     @Test
     internal fun `assert expired if expiration time on token is under 20 seconds from now`() {
-        val token = MaskinportenToken(createMaskinportenToken(19))
+        val token = TokenCache(createMaskinportenToken(19))
 
         assertTrue(token.isExpired())
     }
 
     @Test
     internal fun `should not be expired if expiration time is over 20 seconds from now`() {
-        val token = MaskinportenToken(createMaskinportenToken(30))
+        val token = TokenCache(createMaskinportenToken(30))
 
         assertFalse(token.isExpired())
     }
