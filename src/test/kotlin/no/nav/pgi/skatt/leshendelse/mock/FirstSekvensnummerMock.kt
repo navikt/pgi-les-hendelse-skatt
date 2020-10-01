@@ -1,4 +1,4 @@
-package no.nav.pgi.skatt.leshendelse
+package no.nav.pgi.skatt.leshendelse.mock
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*

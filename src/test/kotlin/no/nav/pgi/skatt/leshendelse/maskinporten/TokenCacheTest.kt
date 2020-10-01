@@ -20,14 +20,12 @@ internal class TokenCacheTest {
     @Test
     internal fun `assert expired if expiration time on token is under 20 seconds from now`() {
         val token = TokenCache(createMaskinportenToken(19))
-
         assertTrue(token.isExpired())
     }
 
     @Test
     internal fun `should not be expired if expiration time is over 20 seconds from now`() {
         val token = TokenCache(createMaskinportenToken(30))
-
         assertFalse(token.isExpired())
     }
 

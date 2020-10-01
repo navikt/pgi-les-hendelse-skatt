@@ -3,8 +3,12 @@ package no.nav.pgi.skatt.leshendelse
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
 import io.ktor.http.*
 import no.nav.pgi.skatt.leshendelse.maskinporten.*
-import no.nav.pgi.skatt.leshendelse.maskinporten.mock.MASKINPORTEN_MOCK_HOST
-import no.nav.pgi.skatt.leshendelse.maskinporten.mock.MaskinportenMock
+import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_URL
+import no.nav.pgi.skatt.leshendelse.mock.FirstSekvensnummerMock
+import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_URL
+import no.nav.pgi.skatt.leshendelse.mock.HendelseMock
+import no.nav.pgi.skatt.leshendelse.mock.MASKINPORTEN_MOCK_HOST
+import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
 import no.nav.pgi.skatt.leshendelse.skatt.GrunnlagPgiHendelseClient
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_SKATT_URL_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.Hendelse

@@ -3,10 +3,8 @@ package no.nav.pgi.skatt.leshendelse.skatt
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.equalTo
-import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
-import no.nav.pgi.skatt.leshendelse.maskinporten.*
-import no.nav.pgi.skatt.leshendelse.maskinporten.mock.MASKINPORTEN_MOCK_HOST
-import no.nav.pgi.skatt.leshendelse.maskinporten.mock.MaskinportenMock
+import no.nav.pgi.skatt.leshendelse.maskinporten.createMaskinportenEnvVariables
+import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 
@@ -21,7 +19,7 @@ private const val FRA_SEKVENSNUMMER_KEY = "fraSekvensnummer"
 internal class GrunnlagPgiHendelseClientTest {
     private val hendelseMock = WireMockServer(PORT)
     private val maskinportenMock = MaskinportenMock()
-    private val client = GrunnlagPgiHendelseClient(createEnvVariables())
+    private val client = GrunnlagPgiHendelseClient(createMaskinportenEnvVariables() + createEnvVariables())
 
     @BeforeAll
     internal fun init() {
@@ -114,12 +112,6 @@ internal class GrunnlagPgiHendelseClientTest {
     }
 
     private fun createEnvVariables() = mapOf(
-            AUDIENCE_ENV_KEY to "testAud",
-            ISSUER_ENV_KEY to "testIssuer",
-            SCOPE_ENV_KEY to "testScope",
-            VALID_IN_SECONDS_ENV_KEY to "120",
-            PRIVATE_JWK_ENV_KEY to RSAKeyGenerator(2048).keyID("123").generate().toJSONString(),
-            MASKINPORTEN_TOKEN_HOST_ENV_KEY to MASKINPORTEN_MOCK_HOST,
             HENDELSE_SKATT_URL_KEY to URL
     )
 
