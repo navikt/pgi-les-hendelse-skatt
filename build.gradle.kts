@@ -8,7 +8,7 @@ val joseJwtVersion = "9.0.1"
 val micrometerVersion = "1.3.5"
 val slf4jVersion = "1.7.30"
 val log4jVersion = "2.13.3"
-val wiremockVersion = "2.27.1"
+val wiremockVersion = "2.27.2"
 
 val kafkaVersion = "2.5.0"
 val kafkaEmbeddedEnvVersion = "2.5.0"
@@ -43,11 +43,7 @@ dependencies {
     implementation("no.nav.pensjonsamhandling:pensjon-samhandling-ktor-support:$ktorSupportVersion")
 
     implementation("com.nimbusds:nimbus-jose-jwt:$joseJwtVersion")
-
     implementation("no.nav.security:token-validation-core:$tokenValidationCoreVersion")
-    //implementation("no.nav.security:token-validation-core:$tokenValidationCoreVersion")
-    //runtime group: 'com.nimbusds', name: 'oauth2-oidc-sdk', version: '4.5'
-
     implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")

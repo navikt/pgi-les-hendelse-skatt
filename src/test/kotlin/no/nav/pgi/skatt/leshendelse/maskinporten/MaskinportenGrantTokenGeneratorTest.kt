@@ -18,25 +18,14 @@ import kotlin.math.absoluteValue
 const val SCOPE_CLAIM = "scope"
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class MaskinportenGrantTokenTest {
+internal class MaskinportenGrantTokenGeneratorTest {
     private val privateKey: RSAKey = RSAKeyGenerator(2048).keyID("123").generate()
     private val publicKey: RSAKey = privateKey.toPublicJWK()
-    private val token: MaskinportenGrantToken = MaskinportenGrantToken(createEnvVariables())
-
-    @Test
-    fun `Throwing error when environment variables are missing`() {
-        val exception = assertThrows<MissingEnvironmentVariables> { MaskinportenGrantToken(emptyMap()) }
-
-        assertTrue(exception.message!! containWord AUDIENCE_ENV_KEY)
-        assertTrue(exception.message containWord ISSUER_ENV_KEY)
-        assertTrue(exception.message containWord SCOPE_ENV_KEY)
-        assertTrue(exception.message containWord VALID_IN_SECONDS_ENV_KEY)
-        assertTrue(exception.message containWord PRIVATE_JWK_ENV_KEY)
-    }
+    private val tokenGenerator: MaskinportenGrantTokenGenerator = MaskinportenGrantTokenGenerator(createEnvVariables())
 
     @Test
     fun `Token is signed with private key in environment variables`() {
-        val signedJWT = SignedJWT.parse(token.generateJwt())
+        val signedJWT = SignedJWT.parse(tokenGenerator.generateJwt())
         val verifier: JWSVerifier = RSASSAVerifier(publicKey)
 
         assertTrue(signedJWT.verify(verifier))
@@ -44,7 +33,7 @@ internal class MaskinportenGrantTokenTest {
 
     @Test
     fun `Algorithm in token header is rsa256`() {
-        val signedJWT = SignedJWT.parse(token.generateJwt())
+        val signedJWT = SignedJWT.parse(tokenGenerator.generateJwt())
 
         assertEquals("RS256", (signedJWT.header.algorithm as JWSAlgorithm).name)
     }
@@ -52,7 +41,7 @@ internal class MaskinportenGrantTokenTest {
     @Test
     fun `Required claims added to token body`() {
         val env = createEnvVariables()
-        val signedJWT = SignedJWT.parse(token.generateJwt())
+        val signedJWT = SignedJWT.parse(tokenGenerator.generateJwt())
 
         assertEquals(env[AUDIENCE_ENV_KEY], signedJWT.jwtClaimsSet.audience[0])
         assertEquals(env[ISSUER_ENV_KEY], signedJWT.jwtClaimsSet.issuer)
@@ -61,7 +50,7 @@ internal class MaskinportenGrantTokenTest {
 
     @Test
     fun `Required timestamps are added to token body`() {
-        val signedJWT = SignedJWT.parse(token.generateJwt())
+        val signedJWT = SignedJWT.parse(tokenGenerator.generateJwt())
         val env = createEnvVariables()
 
         val issuedAt = signedJWT.jwtClaimsSet.issueTime as Date
@@ -81,5 +70,4 @@ internal class MaskinportenGrantTokenTest {
 
 }
 
-private infix fun String.containWord(word: String) = this.contains(word)
 private infix fun Date.equalWithinOneSecond(date: Date): Boolean = (this.time - date.time).absoluteValue < 1000L
