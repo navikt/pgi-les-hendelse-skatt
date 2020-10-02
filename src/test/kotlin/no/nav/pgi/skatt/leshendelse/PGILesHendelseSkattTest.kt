@@ -1,26 +1,21 @@
 package no.nav.pgi.skatt.leshendelse
 
-import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
-import io.ktor.http.*
-import no.nav.pgi.skatt.leshendelse.maskinporten.*
+import no.nav.pgi.skatt.leshendelse.maskinporten.createMaskinportenEnvVariables
 import no.nav.pgi.skatt.leshendelse.mock.*
-import no.nav.pgi.skatt.leshendelse.skatt.GrunnlagPgiHendelseClient
-import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
-import no.nav.pgi.skatt.leshendelse.skatt.Hendelse
-import no.nav.pgi.skatt.leshendelse.skatt.SkattClient
+import no.nav.pgi.skatt.leshendelse.skatt.*
 import org.apache.kafka.common.TopicPartition
-import org.json.JSONObject
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import java.net.http.HttpResponse.BodyHandlers.ofString
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class PGILesHendelseSkattTest {
     private val grunnlagPgiHendelseClient = GrunnlagPgiHendelseClient(createEnvVariables())
-    private val client = SkattClient(createEnvVariables())
+    private val firstSekvensnummerClient = FirstSekvensnummerClient(createEnvVariables())
+
+    private val skattClient = SkattClient(createEnvVariables())
     private val kafkaTestEnvironment = KafkaTestEnvironment()
     private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.testConfiguration())
     private val sekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
@@ -55,9 +50,7 @@ internal class PGILesHendelseSkattTest {
     fun `get first sekvensnummer empty, call Skatteetaten REST service`() {
         var sekvensnummer = sekvensnummerConsumer.getLastSekvensnummer()
         if (sekvensnummer == null) {
-            val httpRequest = client.createGetRequest(FIRST_SEKVENSNUMMER_URL)
-            val response = client.send(httpRequest, ofString())
-            sekvensnummer = JSONObject(response.body()).getInt("sekvensnummer").toString()
+            sekvensnummer = firstSekvensnummerClient.send().toString()
         }
 
         assertEquals("1", sekvensnummer)
@@ -65,11 +58,7 @@ internal class PGILesHendelseSkattTest {
 
     @Test
     fun `get first sekvensnummer skatt`() {
-        val httpRequest = client.createGetRequest(FIRST_SEKVENSNUMMER_URL)
-        val response = client.send(httpRequest, ofString())
-
-        assertEquals(HttpStatusCode.OK.value, response.statusCode())
-        assertEquals(1, JSONObject(response.body()).getInt("sekvensnummer"))
+        assertEquals(1L, firstSekvensnummerClient.send())
     }
 
 
@@ -105,14 +94,9 @@ internal class PGILesHendelseSkattTest {
         sekvensnummerList.indices.forEach { i -> sekvensnummerProducer.writeSekvensnummer(sekvensnummerList[i]) }
     }
 
-    private fun createEnvVariables() = mapOf(
-            AUDIENCE_ENV_KEY to "testAud",
-            ISSUER_ENV_KEY to "testIssuer",
-            SCOPE_ENV_KEY to "testScope",
-            VALID_IN_SECONDS_ENV_KEY to "120",
-            PRIVATE_JWK_ENV_KEY to RSAKeyGenerator(2048).keyID("123").generate().toJSONString(),
-            MASKINPORTEN_TOKEN_HOST_ENV_KEY to MASKINPORTEN_MOCK_HOST,
-            HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST
-
-    )
+    private fun createEnvVariables() = createMaskinportenEnvVariables() +
+            mapOf(
+                    HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
+                    FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST
+            )
 }

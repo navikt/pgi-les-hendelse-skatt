@@ -6,12 +6,13 @@ import no.nav.pgi.skatt.leshendelse.getVal
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
-private const val FIRST_SEKVENSNUMMER_HOST_KEY = "grunnlag-pgi-first-sekvensnummer-host-key"
+internal const val FIRST_SEKVENSNUMMER_HOST_ENV_KEY = "grunnlag-pgi-first-sekvensnummer-host-key"
 internal const val FIRST_SEKVENSNUMMER_PATH = "/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse/start"
 
-internal class FirstSekvensnummerClient(private val host: String = System.getenv().getVal(FIRST_SEKVENSNUMMER_HOST_KEY)) {
+internal class FirstSekvensnummerClient(env: Map<String, String> = System.getenv()) {
+    private val host = env.getVal(FIRST_SEKVENSNUMMER_HOST_ENV_KEY)
     private val objectMapper = ObjectMapper().registerModule(KotlinModule())
-    private val skattClient = SkattClient()
+    private val skattClient = SkattClient(env)
 
     fun send(): Long {
         val response = skattClient.send(skattClient.createGetRequest(host + FIRST_SEKVENSNUMMER_PATH), ofString())
