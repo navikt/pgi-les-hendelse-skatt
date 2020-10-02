@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.pgi.skatt.leshendelse.getVal
-import no.nav.pgi.skatt.leshendelse.verifyExsists
+import no.nav.pgi.skatt.leshendelse.verifyInEnvironment
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -20,7 +20,7 @@ internal const val CONTENT_TYPE = "application/x-www-form-urlencoded"
 
 internal class MaskinportenClient(env: Map<String, String> = System.getenv()) {
     init {
-        env.verifyExsists(MaskinportenGrantTokenGenerator.requiredEnvKeys() + MASKINPORTEN_TOKEN_HOST_ENV_KEY)
+        env.verifyInEnvironment(MaskinportenGrantTokenGenerator.requiredEnvKeys() + MASKINPORTEN_TOKEN_HOST_ENV_KEY)
     }
 
     private val host: String = env.getVal(MASKINPORTEN_TOKEN_HOST_ENV_KEY)

@@ -4,7 +4,7 @@ package no.nav.pgi.skatt.leshendelse
 internal fun Map<String, String>.getVal(key: String) = this[key]
         ?: throw MissingEnvironmentVariable("""$key, is not found in environment""")
 
-internal fun Map<String, String>.verifyExsists(keys: List<String>) {
+internal fun Map<String, String>.verifyInEnvironment(keys: List<String>) {
     val missingKeys = keys.filter { this[it] == null }
     if (missingKeys.isNotEmpty()) throw MissingEnvironmentVariables(missingKeys.joinToString(", ", "Missing env keys: "))
 }
