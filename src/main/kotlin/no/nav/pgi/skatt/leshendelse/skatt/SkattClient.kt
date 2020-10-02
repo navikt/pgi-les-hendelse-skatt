@@ -15,7 +15,7 @@ class SkattClient(env: Map<String, String> = System.getenv()) {
     internal fun createGetRequest(url: String, queryParameters: Map<String, Any> = emptyMap()) = HttpRequest.newBuilder()
             .uri(URI.create(url + queryParameters.createQueryString()))
             .GET()
-            .setHeader("Authorization", "Bearer ${maskinportenClient.getToken()}")
+            .setHeader("Authorization", "Bearer ${maskinportenClient.getMaskinportenToken()}")
             .build()
 }
 

@@ -49,7 +49,7 @@ internal class MaskinportenMock {
                 """)))
     }
 
-    internal fun mockOnlyOneCall() {
+    internal fun `mock valid response for only one call`() {
         mock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
                 .withHeader("Content-Type", WireMock.equalTo(CONTENT_TYPE))
                 .inScenario("First time")
@@ -66,15 +66,20 @@ internal class MaskinportenMock {
                 .willSetStateTo("Ended"))
     }
 
-    internal fun mockNonJSON() {
+    internal fun `mock invalid JSON response`() {
         mock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
                 .withHeader("Content-Type", WireMock.equalTo(CONTENT_TYPE))
-                .inScenario("First time")
-                .whenScenarioStateIs(Scenario.STARTED)
                 .withRequestBody(WireMock.matchingJsonPath("$.grant_type", WireMock.matching(GRANT_TYPE)))
                 .withRequestBody(WireMock.matchingJsonPath("$.assertion"))
-                .willReturn(WireMock.ok("""w"""))
-                .willSetStateTo("Ended"))
+                .willReturn(WireMock.ok("""w""")))
+    }
+
+    internal fun `mock 500 server error`() {
+        mock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
+                .withHeader("Content-Type", WireMock.equalTo(CONTENT_TYPE))
+                .withRequestBody(WireMock.matchingJsonPath("$.grant_type", WireMock.matching(GRANT_TYPE)))
+                .withRequestBody(WireMock.matchingJsonPath("$.assertion"))
+                .willReturn(WireMock.serverError().withBody("test body")))
     }
 
 

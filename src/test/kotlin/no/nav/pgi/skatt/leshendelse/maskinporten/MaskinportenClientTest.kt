@@ -11,13 +11,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class MaskinportenClientTest {
-    private lateinit var maskinportenClient: MaskinportenClient
     private var maskinportenMock: MaskinportenMock = MaskinportenMock()
-
-    @BeforeAll
-    internal fun init() {
-        maskinportenClient = MaskinportenClient(createMaskinportenEnvVariables())
-    }
 
     @BeforeEach
     internal fun beforeEach() {
@@ -30,23 +24,33 @@ internal class MaskinportenClientTest {
     }
 
     @Test
-    fun `reuse token if not expired`() {
-        maskinportenMock.mockOnlyOneCall()
+    fun `reuse token from maskinporten if not expired`() {
+        val maskinportenClient = MaskinportenClient(createMaskinportenEnvVariables())
+        maskinportenMock.`mock valid response for only one call`()
 
-        val firstToken = maskinportenClient.getToken()
-        val secondToken = maskinportenClient.getToken()
+        val firstToken = maskinportenClient.getMaskinportenToken()
+        val secondToken = maskinportenClient.getMaskinportenToken()
         assertEquals(firstToken, secondToken)
     }
 
     @Test
     fun `throws MaskinportenObjectMapperException if response from maskinporten cant be mapped`() {
-        maskinportenMock.mockNonJSON()
+        val maskinportenClient = MaskinportenClient(createMaskinportenEnvVariables())
+        maskinportenMock.`mock invalid JSON response`()
 
-        assertThrows<MaskinportenObjectMapperException> { maskinportenClient.getToken() }
+        assertThrows<MaskinportenObjectMapperException> { maskinportenClient.getMaskinportenToken() }
     }
 
     @Test
-    fun `Throwing error when environment variables are missing`() {
+    fun `Throws MaskinportenClientException when status other than 200 is returned from maskinporten`() {
+        val maskinportenClient = MaskinportenClient(createMaskinportenEnvVariables())
+        maskinportenMock.`mock 500 server error`()
+
+        assertThrows<MaskinportenClientException> { maskinportenClient.getMaskinportenToken() }
+    }
+
+    @Test
+    fun `Throws MissingEnvironmentVariables when environment variables are missing`() {
         val exception = assertThrows<MissingEnvironmentVariables> { MaskinportenClient(emptyMap()) }
 
         Assertions.assertTrue(exception.message!! containWord MASKINPORTEN_TOKEN_HOST_ENV_KEY)

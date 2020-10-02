@@ -30,7 +30,7 @@ internal class MaskinportenClient(env: Map<String, String> = System.getenv()) {
 
     private var tokenCache: TokenCache = TokenCache()
 
-    internal fun getToken(): String {
+    internal fun getMaskinportenToken(): String {
         tokenCache = if (tokenCache.isExpired()) TokenCache(getTokenFromMaskinporten()) else tokenCache
         return tokenCache.getTokenString()
     }
@@ -38,7 +38,7 @@ internal class MaskinportenClient(env: Map<String, String> = System.getenv()) {
     private fun getTokenFromMaskinporten(): String {
         val response = httpClient.send(createTokenRequest(), ofString())
         if (response.statusCode() == 200) return mapToMaskinportenResponseBody(response.body()).access_token
-        throw MaskinportenGrantException(response)
+        throw MaskinportenClientException(response)
     }
 
     private fun createTokenRequest() = HttpRequest.newBuilder()
@@ -60,6 +60,6 @@ internal class MaskinportenClient(env: Map<String, String> = System.getenv()) {
 internal data class MaskinportenRequestBody(val grant_type: String = GRANT_TYPE, val assertion: String)
 internal data class MaskinportenResponseBody(val access_token: String, val token_type: String?, val expires_in: Int?, val scope: String?)
 
-internal class MaskinportenGrantException(response: HttpResponse<String>) : Exception("Feil ved henting av token: Status: ${response.statusCode()} , Body: ${response.body()}")
+internal class MaskinportenClientException(response: HttpResponse<String>) : Exception("Feil ved henting av token: Status: ${response.statusCode()} , Body: ${response.body()}")
 internal class MaskinportenObjectMapperException(message: String) : Exception("Feil ved deserialisering av response fra maskinporten: $message")
 

@@ -31,17 +31,21 @@ internal class PGILesHendelseSkattTest {
         sekvensnummerMock.`mock first sekvensnummer endpoint`()
         hendelseMock.`stub hendelse endepunkt skatt`()
         maskinportenMock.`mock  maskinporten token enpoint`()
+
         application.start()
     }
 
     @AfterAll
     internal fun teardown() {
         application.stop(100, 100)
+
         kafkaTestEnvironment.tearDown()
+        sekvensnummerConsumer.close()
+
         sekvensnummerMock.stop()
         hendelseMock.stop()
         maskinportenMock.stop()
-        sekvensnummerConsumer.close()
+
     }
 
     @Test
