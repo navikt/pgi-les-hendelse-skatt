@@ -20,23 +20,23 @@ private const val TOKEN_PATH = "/token"
 internal const val MASKINPORTEN_MOCK_HOST = "http://localhost:$PORT"
 
 internal class MaskinportenMock {
-    private var endpointMock = WireMockServer(PORT)
+    private var mock = WireMockServer(PORT)
     private val privateKey: RSAKey = RSAKeyGenerator(2048).keyID("123").generate()
 
     init {
-        endpointMock.start()
+        mock.start()
     }
 
     internal fun reset() {
-        endpointMock.resetAll()
+        mock.resetAll()
     }
 
     internal fun stop() {
-        endpointMock.stop()
+        mock.stop()
     }
 
     internal fun `mock  maskinporten token enpoint`() {
-        endpointMock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
+        mock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
                 .withHeader("Content-Type", WireMock.equalTo(CONTENT_TYPE))
                 .withRequestBody(WireMock.matchingJsonPath("$.grant_type", WireMock.matching(GRANT_TYPE)))
                 .withRequestBody(WireMock.matchingJsonPath("$.assertion"))
@@ -50,7 +50,7 @@ internal class MaskinportenMock {
     }
 
     internal fun mockOnlyOneCall() {
-        endpointMock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
+        mock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
                 .withHeader("Content-Type", WireMock.equalTo(CONTENT_TYPE))
                 .inScenario("First time")
                 .whenScenarioStateIs(Scenario.STARTED)
@@ -67,7 +67,7 @@ internal class MaskinportenMock {
     }
 
     internal fun mockNonJSON() {
-        endpointMock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
+        mock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
                 .withHeader("Content-Type", WireMock.equalTo(CONTENT_TYPE))
                 .inScenario("First time")
                 .whenScenarioStateIs(Scenario.STARTED)

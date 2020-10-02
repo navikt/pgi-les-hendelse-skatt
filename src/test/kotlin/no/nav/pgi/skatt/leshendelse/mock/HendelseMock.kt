@@ -13,15 +13,22 @@ private const val HENDELSE_PORT = 8085
 internal const val HENDELSE_MOCK_HOST = "http://localhost:$HENDELSE_PORT"
 
 internal class HendelseMock {
-
-    private val skattApiHendelseMock = WireMockServer(HENDELSE_PORT)
+    private val mock = WireMockServer(HENDELSE_PORT)
 
     init {
-        skattApiHendelseMock.start()
+        mock.start()
+    }
+
+    internal fun reset() {
+        mock.resetAll()
+    }
+
+    internal fun stop() {
+        mock.stop()
     }
 
     internal fun `stub hendelse endepunkt skatt`() {
-        skattApiHendelseMock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
                 .willReturn(
                         aResponse()
                                 .withBodyFile("Hendelser1To100.json")
@@ -30,7 +37,7 @@ internal class HendelseMock {
     }
 
     internal fun `stub for skatt hendelser`(antall: Int, fraSekvensnummer: Long) {
-        skattApiHendelseMock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
                 .withQueryParams(
                         mapOf(
                                 ANTALL_KEY to WireMock.equalTo((antall.toString())),
@@ -38,14 +45,14 @@ internal class HendelseMock {
                         )
                 )
                 .willReturn(
-                        WireMock.aResponse()
+                        aResponse()
                                 .withBodyFile("Hendelser1To100.json")
                                 .withStatus(200)
                 ))
     }
 
     internal fun `stub response without nestesekvensnr`(antall: Int, fraSekvensnummer: Long) {
-        skattApiHendelseMock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
                 .withQueryParams(
                         mapOf(
                                 ANTALL_KEY to WireMock.equalTo((antall.toString())),
@@ -60,7 +67,7 @@ internal class HendelseMock {
     }
 
     internal fun `stub response that wont map`(antall: Int, fraSekvensnummer: Long) {
-        skattApiHendelseMock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
                 .withQueryParams(
                         mapOf(
                                 ANTALL_KEY to WireMock.equalTo((antall.toString())),
@@ -72,11 +79,5 @@ internal class HendelseMock {
                                 .withBody("[")
                                 .withStatus(200)
                 ))
-    }
-
-
-
-    internal fun stop() {
-        skattApiHendelseMock.stop()
     }
 }

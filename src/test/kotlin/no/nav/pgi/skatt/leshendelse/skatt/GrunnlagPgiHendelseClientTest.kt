@@ -8,6 +8,9 @@ import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
+private const val ANTALL_HENDELSER = 1
+private const val FRA_SEKVENSNUMMER = 1L
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class GrunnlagPgiHendelseClientTest {
     private val hendelseMock = HendelseMock()
@@ -19,6 +22,11 @@ internal class GrunnlagPgiHendelseClientTest {
         maskinportenMock.`mock  maskinporten token enpoint`()
     }
 
+    @BeforeEach
+    internal fun beforeEach(){
+        hendelseMock.reset()
+    }
+
     @AfterAll
     internal fun teardown() {
         hendelseMock.stop()
@@ -27,34 +35,27 @@ internal class GrunnlagPgiHendelseClientTest {
 
     @Test
     fun `returns hendelser`() {
-        val antall = 1
-        val fraSekvensnummer = 1L
-        hendelseMock.`stub for skatt hendelser`(antall, fraSekvensnummer)
+        hendelseMock.`stub for skatt hendelser`(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
 
-        val hendelser = client.send(antall, fraSekvensnummer)
-
+        val hendelser = client.send(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
         assertEquals(hendelser.size(), 5)
     }
 
     @Test
     fun `throw exception when nestesekvensnr is missing from response`() {
-        val antall = 2
-        val fraSekvensnummer = 1L
-        hendelseMock.`stub response without nestesekvensnr`(antall, fraSekvensnummer)
+        hendelseMock.`stub response without nestesekvensnr`(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
 
         assertThrows<GrunnlagPgiHendelserValidationException> {
-            client.send(antall, fraSekvensnummer)
+            client.send(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
         }
     }
 
     @Test
     fun `throw exception when response is not mappable`() {
-        val antall = 3
-        val fraSekvensnummer = 1L
-        hendelseMock.`stub response that wont map`(antall, fraSekvensnummer)
+        hendelseMock.`stub response that wont map`(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
 
         assertThrows<GrunnlagPgiHendelseClientObjectMapperException> {
-            client.send(antall, fraSekvensnummer)
+            client.send(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
         }
     }
 

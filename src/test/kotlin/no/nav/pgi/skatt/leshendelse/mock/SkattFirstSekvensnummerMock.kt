@@ -17,6 +17,12 @@ internal class SkattFirstSekvensnummerMock {
         mock.start()
     }
 
+    internal fun reset() {
+        mock.resetAll()
+    }
+
+    internal fun stop() = mock.stop()
+
     internal fun `mock first sekvensnummer endpoint`() {
         mock.stubFor(get(urlPathEqualTo(FIRST_SEKVENSNUMMER_PATH))
                 .willReturn(okJson("{\"sekvensnummer\": " + SKATT_FIRST_SEKVENSNUMMER + "}")))
@@ -36,13 +42,5 @@ internal class SkattFirstSekvensnummerMock {
         mock.stubFor(get(urlPathEqualTo(FIRST_SEKVENSNUMMER_PATH))
                 .willReturn(okJson("{}")))
     }
-
-    internal fun reset() {
-        mock.resetAll()
-    }
-
-    internal fun stop() = mock.stop()
-
-
 }
 

@@ -9,6 +9,7 @@ class HendelserTest {
     fun test() {
         val inntektsAar = "2018"
         val identifikator = "12345678901"
+
         val expectedHendelseKey = "$identifikator-$inntektsAar"
         assertEquals(expectedHendelseKey, Hendelse(identifikator, inntektsAar, 1L).getHendelseKey())
     }

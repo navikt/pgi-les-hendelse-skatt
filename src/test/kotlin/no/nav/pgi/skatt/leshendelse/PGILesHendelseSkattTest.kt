@@ -15,7 +15,6 @@ internal class PGILesHendelseSkattTest {
     private val grunnlagPgiHendelseClient = GrunnlagPgiHendelseClient(createEnvVariables())
     private val firstSekvensnummerClient = FirstSekvensnummerClient(createEnvVariables())
 
-    private val skattClient = SkattClient(createEnvVariables())
     private val kafkaTestEnvironment = KafkaTestEnvironment()
     private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.testConfiguration())
     private val sekvensnummerProducer = SekvensnummerProducer(kafkaConfig)

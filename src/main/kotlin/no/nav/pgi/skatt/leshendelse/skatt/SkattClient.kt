@@ -19,6 +19,5 @@ class SkattClient(env: Map<String, String> = System.getenv()) {
             .build()
 }
 
-
 internal fun Map<String, Any>.createQueryString() =
         if (isEmpty()) "" else keys.joinToString(prefix = "?", separator = "&") { "$it=${get(it).toString()}" }
