@@ -33,6 +33,12 @@ repositories {
             password = System.getenv("GITHUB_TOKEN")
         }
     }
+    maven("https://maven.pkg.github.com/navikt/pgi-schema") {
+        credentials {
+            username = System.getenv("GITHUB_ACTOR")
+            password = System.getenv("GITHUB_TOKEN")
+        }
+    }
 }
 
 dependencies {
@@ -41,6 +47,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-metrics-micrometer:$ktorVersion")
     implementation("no.nav.pensjonsamhandling:pensjon-samhandling-ktor-support:$ktorSupportVersion")
+    implementation("no.nav.pensjonsamhandling:pgi-schema:0.0.0")
 
     implementation("com.nimbusds:nimbus-jose-jwt:$joseJwtVersion")
     implementation("no.nav.security:token-validation-core:$tokenValidationCoreVersion")
