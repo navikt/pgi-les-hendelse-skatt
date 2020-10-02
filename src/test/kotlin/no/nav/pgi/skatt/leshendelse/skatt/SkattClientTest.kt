@@ -28,7 +28,7 @@ internal class SkattClientTest {
     @AfterAll
     internal fun teardown() {
         skattMock.stop()
-        maskinportenMock.close()
+        maskinportenMock.stop()
     }
 
     @Test

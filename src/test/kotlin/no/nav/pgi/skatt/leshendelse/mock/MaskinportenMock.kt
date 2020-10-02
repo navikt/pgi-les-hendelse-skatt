@@ -15,7 +15,7 @@ import no.nav.pgi.skatt.leshendelse.maskinporten.CONTENT_TYPE
 import no.nav.pgi.skatt.leshendelse.maskinporten.GRANT_TYPE
 import java.util.*
 
-private const val PORT = 8090
+private const val PORT = 8096
 private const val TOKEN_PATH = "/token"
 internal const val MASKINPORTEN_MOCK_HOST = "http://localhost:$PORT"
 
@@ -31,7 +31,7 @@ internal class MaskinportenMock {
         endpointMock.resetAll()
     }
 
-    internal fun close() {
+    internal fun stop() {
         endpointMock.stop()
     }
 

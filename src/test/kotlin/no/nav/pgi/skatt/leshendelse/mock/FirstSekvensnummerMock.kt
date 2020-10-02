@@ -1,7 +1,9 @@
 package no.nav.pgi.skatt.leshendelse.mock
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.*
+import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH
 
 internal const val FIRST_SEKVENSNUMMER_PORT = 8084
 internal const val SKATT_FIRST_SEKVENSNUMMER_PATH = "/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse/start"

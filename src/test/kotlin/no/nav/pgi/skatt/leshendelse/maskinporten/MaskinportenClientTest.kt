@@ -26,7 +26,7 @@ internal class MaskinportenClientTest {
 
     @AfterAll
     internal fun teardown() {
-        maskinportenMock.close()
+        maskinportenMock.stop()
     }
 
     @Test

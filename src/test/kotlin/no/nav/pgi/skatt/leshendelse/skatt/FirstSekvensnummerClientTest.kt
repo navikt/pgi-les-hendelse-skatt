@@ -19,12 +19,16 @@ internal class FirstSekvensnummerClientTest {
     @BeforeAll
     internal fun init() {
         hendelseMock.start()
+        maskinportenMock.mockMaskinporten()
     }
 
     @AfterAll
     internal fun teardown() {
         hendelseMock.stop()
+        maskinportenMock.stop()
     }
+
+
 
     private fun `stub response without nestesekvensnr`(antall: Int, fraSekvensnummer: Long) {
         hendelseMock.stubFor(WireMock.get(WireMock.urlPathEqualTo(FIRST_SEKVENSNUMMER_PATH))

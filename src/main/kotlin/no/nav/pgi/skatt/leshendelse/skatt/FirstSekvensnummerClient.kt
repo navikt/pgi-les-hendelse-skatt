@@ -23,7 +23,6 @@ internal class FirstSekvensnummerClient(private val host: String = System.getenv
     }
 
     private fun readValue(body: String): Long {
-
         return try {
             objectMapper.readValue(body, Sekvensnummer::class.java).sekvensnummer
         } catch (e: Exception) {
@@ -35,5 +34,3 @@ internal class FirstSekvensnummerClient(private val host: String = System.getenv
 internal data class Sekvensnummer(val sekvensnummer: Long)
 
 internal class FirstSekvensnummerException(message: String) : Exception(message)
-
-//https://api-st.sits.no/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse/start?dato={YYYY-MM-DD}

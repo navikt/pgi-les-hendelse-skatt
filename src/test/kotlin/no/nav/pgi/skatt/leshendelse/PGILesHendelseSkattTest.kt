@@ -3,14 +3,9 @@ package no.nav.pgi.skatt.leshendelse
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
 import io.ktor.http.*
 import no.nav.pgi.skatt.leshendelse.maskinporten.*
-import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_URL
-import no.nav.pgi.skatt.leshendelse.mock.FirstSekvensnummerMock
-import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_URL
-import no.nav.pgi.skatt.leshendelse.mock.HendelseMock
-import no.nav.pgi.skatt.leshendelse.mock.MASKINPORTEN_MOCK_HOST
-import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
+import no.nav.pgi.skatt.leshendelse.mock.*
 import no.nav.pgi.skatt.leshendelse.skatt.GrunnlagPgiHendelseClient
-import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_SKATT_URL_KEY
+import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.Hendelse
 import no.nav.pgi.skatt.leshendelse.skatt.SkattClient
 import org.apache.kafka.common.TopicPartition
@@ -51,8 +46,8 @@ internal class PGILesHendelseSkattTest {
         kafkaTestEnvironment.tearDown()
         sekvensnummerMock.stop()
         hendelseMock.stop()
+        maskinportenMock.stop()
         sekvensnummerConsumer.close()
-        maskinportenMock.close()
     }
 
     @Test
@@ -117,8 +112,7 @@ internal class PGILesHendelseSkattTest {
             VALID_IN_SECONDS_ENV_KEY to "120",
             PRIVATE_JWK_ENV_KEY to RSAKeyGenerator(2048).keyID("123").generate().toJSONString(),
             MASKINPORTEN_TOKEN_HOST_ENV_KEY to MASKINPORTEN_MOCK_HOST,
-            HENDELSE_SKATT_URL_KEY to HENDELSE_URL
+            HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST
 
     )
-
 }
