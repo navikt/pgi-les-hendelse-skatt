@@ -7,14 +7,15 @@ import no.nav.pgi.skatt.leshendelse.getVal
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
-private const val HENDELSE_SKATT_URL_KEY = "grunnlag-pgi-hendelse-url"
+internal const val HENDELSE_SKATT_URL_KEY = "grunnlag-pgi-hendelse-url"
 
-internal class GrunnlagPgiHendelseClient(private val url: String = System.getenv().getVal(HENDELSE_SKATT_URL_KEY)) {
-    private val objectMapper = ObjectMapper().registerModule(KotlinModule())
-    private val SkattClient = SkattClient()
+internal class GrunnlagPgiHendelseClient(env: Map<String, String> = System.getenv()) {
+    private val url: String = env.getVal(HENDELSE_SKATT_URL_KEY)
+    val objectMapper = ObjectMapper().registerModule(KotlinModule())
+    private val skattClient = SkattClient(env)
 
     fun send(antall: Int, fraSekvensnummer: Long): Hendelser {
-        val response = SkattClient.send(createGetRequest(url, queryParameters(antall, fraSekvensnummer)), ofString())
+        val response = skattClient.send(skattClient.createGetRequest(url, queryParameters(antall, fraSekvensnummer)), ofString())
         return mapResponse(response)
     }
 

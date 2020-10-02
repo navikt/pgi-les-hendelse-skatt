@@ -1,4 +1,4 @@
-package no.nav.pgi.skatt.leshendelse.maskinporten.mock
+package no.nav.pgi.skatt.leshendelse.mock
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
@@ -15,7 +15,7 @@ import no.nav.pgi.skatt.leshendelse.maskinporten.CONTENT_TYPE
 import no.nav.pgi.skatt.leshendelse.maskinporten.GRANT_TYPE
 import java.util.*
 
-private const val PORT = 8085
+private const val PORT = 8090
 private const val TOKEN_PATH = "/token"
 internal const val MASKINPORTEN_MOCK_HOST = "http://localhost:$PORT"
 
@@ -31,8 +31,22 @@ internal class MaskinportenMock {
         endpointMock.resetAll()
     }
 
-    internal fun stop() {
+    internal fun close() {
         endpointMock.stop()
+    }
+
+    internal fun mockMaskinporten() {
+        endpointMock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
+                .withHeader("Content-Type", WireMock.equalTo(CONTENT_TYPE))
+                .withRequestBody(WireMock.matchingJsonPath("$.grant_type", WireMock.matching(GRANT_TYPE)))
+                .withRequestBody(WireMock.matchingJsonPath("$.assertion"))
+                .willReturn(WireMock.ok("""{
+                      "access_token" : "${createMaskinportenToken()}",
+                      "token_type" : "Bearer",
+                      "expires_in" : 599,
+                      "scope" : "difitest:test1"
+                    }
+                """)))
     }
 
     internal fun mockOnlyOneCall() {

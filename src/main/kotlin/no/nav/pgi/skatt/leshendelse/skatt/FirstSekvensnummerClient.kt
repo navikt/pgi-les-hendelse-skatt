@@ -1,9 +1,7 @@
 package no.nav.pgi.skatt.leshendelse.skatt
 
-import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.pgi.skatt.leshendelse.getVal
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
@@ -13,15 +11,12 @@ internal const val FIRST_SEKVENSNUMMER_PATH = "/api/skatteoppgjoer/ekstern/grunn
 
 internal class FirstSekvensnummerClient(private val host: String = System.getenv().getVal(FIRST_SEKVENSNUMMER_HOST_KEY)) {
     private val objectMapper = ObjectMapper().registerModule(KotlinModule())
-    private val SkattClient = SkattClient()
+    private val skattClient = SkattClient()
 
     fun send(): Long {
-        val response = SkattClient.send(createGetRequest(host + FIRST_SEKVENSNUMMER_PATH), ofString())
+        val response = skattClient.send(skattClient.createGetRequest(host + FIRST_SEKVENSNUMMER_PATH), ofString())
         return mapResponse(response)
     }
-
-    //TODO hente sekvensnummer (json)
-    //TODO håndtere feilmelding
 
     private fun mapResponse(response: HttpResponse<String>): Long {
         return readValue(response.body())

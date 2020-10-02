@@ -5,7 +5,7 @@ import java.util.*
 
 private const val TWENTY_SECONDS = 20
 
-internal class MaskinportenToken(private val token: String? = null) {
+internal class TokenCache(private val token: String? = null) {
 
     internal fun getTokenString(): String = token!!
 

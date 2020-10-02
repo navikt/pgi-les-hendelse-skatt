@@ -3,6 +3,8 @@ package no.nav.pgi.skatt.leshendelse.skatt
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.equalTo
+import no.nav.pgi.skatt.leshendelse.maskinporten.createMaskinportenEnvVariables
+import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 
@@ -16,16 +18,19 @@ private const val FRA_SEKVENSNUMMER_KEY = "fraSekvensnummer"
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class GrunnlagPgiHendelseClientTest {
     private val hendelseMock = WireMockServer(PORT)
-    private val client = GrunnlagPgiHendelseClient(URL)
+    private val maskinportenMock = MaskinportenMock()
+    private val client = GrunnlagPgiHendelseClient(createMaskinportenEnvVariables() + createEnvVariables())
 
     @BeforeAll
     internal fun init() {
         hendelseMock.start()
+        maskinportenMock.mockMaskinporten()
     }
 
     @AfterAll
     internal fun teardown() {
         hendelseMock.stop()
+        maskinportenMock.close()
     }
 
     @Test
@@ -105,5 +110,9 @@ internal class GrunnlagPgiHendelseClientTest {
                                 .withStatus(200)
                 ))
     }
+
+    private fun createEnvVariables() = mapOf(
+            HENDELSE_SKATT_URL_KEY to URL
+    )
 
 }
