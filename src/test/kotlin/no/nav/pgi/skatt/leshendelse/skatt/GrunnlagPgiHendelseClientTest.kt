@@ -16,7 +16,7 @@ internal class GrunnlagPgiHendelseClientTest {
 
     @BeforeAll
     internal fun init() {
-        maskinportenMock.mockMaskinporten()
+        maskinportenMock.`mock  maskinporten token enpoint`()
     }
 
     @AfterAll

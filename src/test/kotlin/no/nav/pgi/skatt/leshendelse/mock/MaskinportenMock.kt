@@ -35,7 +35,7 @@ internal class MaskinportenMock {
         endpointMock.stop()
     }
 
-    internal fun mockMaskinporten() {
+    internal fun `mock  maskinporten token enpoint`() {
         endpointMock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
                 .withHeader("Content-Type", WireMock.equalTo(CONTENT_TYPE))
                 .withRequestBody(WireMock.matchingJsonPath("$.grant_type", WireMock.matching(GRANT_TYPE)))

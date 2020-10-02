@@ -1,5 +1,6 @@
 package no.nav.pgi.skatt.leshendelse.skatt
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.pgi.skatt.leshendelse.getVal
@@ -16,7 +17,8 @@ internal class FirstSekvensnummerClient(env: Map<String, String> = System.getenv
 
     fun send(): Long {
         val response = skattClient.send(skattClient.createGetRequest(host + FIRST_SEKVENSNUMMER_PATH), ofString())
-        return mapResponse(response)
+        if (response.statusCode() == 200) return mapResponse(response)
+        throw FirstSekvensnummerClientCallException(response)
     }
 
     private fun mapResponse(response: HttpResponse<String>): Long {
@@ -27,11 +29,14 @@ internal class FirstSekvensnummerClient(env: Map<String, String> = System.getenv
         return try {
             objectMapper.readValue(body, Sekvensnummer::class.java).sekvensnummer
         } catch (e: Exception) {
-            throw FirstSekvensnummerException(e.toString())
+            throw FirstSekvensnummerClientMappingException(e.toString())
         }
     }
 }
 
-internal data class Sekvensnummer(val sekvensnummer: Long)
 
-internal class FirstSekvensnummerException(message: String) : Exception(message)
+internal data class Sekvensnummer(@JsonProperty(value ="sekvensnummer",required = true) val sekvensnummer: Long)
+
+internal class FirstSekvensnummerClientMappingException(message: String) : Exception(message)
+
+internal class FirstSekvensnummerClientCallException(response: HttpResponse<String>) : Exception("Feil ved henting første sekvensnummer: Status: ${response.statusCode()} , Body: ${response.body()}")

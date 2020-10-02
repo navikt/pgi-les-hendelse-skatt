@@ -23,15 +23,15 @@ internal class PGILesHendelseSkattTest {
     private val hendelseProducer = HendelseProducer(kafkaConfig)
     private val application = createApplication(kafkaConfig = kafkaConfig)
 
-    private val sekvensnummerMock = FirstSekvensnummerMock()
+    private val sekvensnummerMock = SkattFirstSekvensnummerMock()
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
 
     @BeforeAll
     internal fun init() {
-        sekvensnummerMock.`stub first sekvensnummer endepunkt skatt`()
+        sekvensnummerMock.`mock first sekvensnummer endpoint`()
         hendelseMock.`stub hendelse endepunkt skatt`()
-        maskinportenMock.mockMaskinporten()
+        maskinportenMock.`mock  maskinporten token enpoint`()
         application.start()
     }
 

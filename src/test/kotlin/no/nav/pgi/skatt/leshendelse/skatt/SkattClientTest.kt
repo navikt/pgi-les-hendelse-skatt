@@ -22,7 +22,7 @@ internal class SkattClientTest {
     @BeforeAll
     internal fun init() {
         skattMock.start()
-        maskinportenMock.mockMaskinporten()
+        maskinportenMock.`mock  maskinporten token enpoint`()
     }
 
     @AfterAll
