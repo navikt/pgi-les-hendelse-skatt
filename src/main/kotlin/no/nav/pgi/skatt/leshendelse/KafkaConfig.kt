@@ -28,10 +28,10 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
             environment.getVal(PASSWORD_ENV_KEY)
     )
 
-    internal fun nextSekvensnummerProducer() = KafkaProducer<Nothing, String>(
+    internal fun nextSekvensnummerProducer() = KafkaProducer<String, String>(
             commonConfig() + sekvensnummerProducerConfig())
 
-    internal fun nextSekvensnummerConsumer() = KafkaConsumer<Nothing, String>(
+    internal fun nextSekvensnummerConsumer() = KafkaConsumer<String, String>(
             commonConfig() + sekvensnummerConsumerConfig())
 
     internal fun hendelseProducer() = KafkaProducer<HendelseKey, Hendelse>(

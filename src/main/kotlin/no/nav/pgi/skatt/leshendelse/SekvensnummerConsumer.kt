@@ -1,5 +1,6 @@
 package no.nav.pgi.skatt.leshendelse
 
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.TopicPartition
 import java.time.Duration.ofSeconds
 
@@ -16,11 +17,14 @@ internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topic
     internal fun getNextSekvensnummer(): String? {
         pointToLastSekvensnummer()
         val sekvensnummerRecords = pollRecords()
-        val lastSekvensnummer = if (sekvensnummerRecords.isEmpty()) null else sekvensnummerRecords.last().value()
-        return lastSekvensnummer
+        return lastSekvensnummerFrom(sekvensnummerRecords)
     }
 
+
     private fun pointToLastSekvensnummer() = consumer.seek(topicPartition, getOffsetOfLastRecord())
+
+    private fun lastSekvensnummerFrom(sekvensnummerRecords: List<ConsumerRecord<String, String>>) =
+            if (sekvensnummerRecords.isEmpty()) null else sekvensnummerRecords.last().value()
 
     private fun getOffsetOfLastRecord(): Long {
         val endOffset = endOffset()

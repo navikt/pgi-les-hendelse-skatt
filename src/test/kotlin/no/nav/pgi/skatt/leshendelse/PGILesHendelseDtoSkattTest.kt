@@ -103,9 +103,8 @@ internal class PGILesHendelseDtoSkattTest {
         sekvensnummerList.indices.forEach { i -> sekvensnummerProducer.writeSekvensnummer(sekvensnummerList[i]) }
     }
 
-    private fun createEnvVariables() = createMaskinportenEnvVariables() +
-            mapOf(
-                    HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
-                    FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST
-            )
+    private fun createEnvVariables() = createMaskinportenEnvVariables() + mapOf(
+            HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
+            FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST
+    )
 }
