@@ -15,7 +15,7 @@ internal class FirstSekvensnummerClient(env: Map<String, String> = System.getenv
     private val objectMapper = ObjectMapper().registerModule(KotlinModule())
     private val skattClient = SkattClient(env)
 
-    fun send(): Long {
+    fun getFirstSekvensnummerFromSkatt(): Long {
         val response = skattClient.send(skattClient.createGetRequest(host + FIRST_SEKVENSNUMMER_PATH), ofString())
         if (response.statusCode() == 200) return mapResponse(response)
         throw FirstSekvensnummerClientCallException(response)

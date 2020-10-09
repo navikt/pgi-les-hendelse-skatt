@@ -3,28 +3,28 @@
   "hendelser": [
     {
       "sekvensnr": 1,
-      "norskPersonidentifikator": "11111111111",
-      "inntektsaar": "2018"
+      "identifikator": "11111111111",
+      "gjelderPeriode": "2018"
     },
     {
       "sekvensnr": 12,
-      "norskPersonidentifikator": "22222222222",
-      "inntektsaar": "2018"
+      "identifikator": "22222222222",
+      "gjelderPeriode": "2018"
     },
     {
       "sekvensnr": 23,
-      "norskPersonidentifikator": "33333333333",
-      "inntektsaar": "2018"
+      "identifikator": "33333333333",
+      "gjelderPeriode": "2018"
     },
     {
       "sekvensnr": 34,
-      "norskPersonidentifikator": "44444444444",
-      "inntektsaar": "2018"
+      "identifikator": "44444444444",
+      "gjelderPeriode": "2018"
     },
     {
       "sekvensnr": 100,
-      "norskPersonidentifikator": "55555555555",
-      "inntektsaar": "2018"
+      "identifikator": "55555555555",
+      "gjelderPeriode": "2018"
     }
   ]
 }

@@ -12,10 +12,10 @@ private const val ANTALL_HENDELSER = 1
 private const val FRA_SEKVENSNUMMER = 1L
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class GrunnlagPgiHendelseClientTest {
+internal class GrunnlagPgiHendelseDtoClientTest {
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
-    private val client = GrunnlagPgiHendelseClient(createMaskinportenEnvVariables() + createEnvVariables())
+    private val client = HendelseClient(createMaskinportenEnvVariables() + createEnvVariables())
 
     @BeforeAll
     internal fun init() {
@@ -37,7 +37,7 @@ internal class GrunnlagPgiHendelseClientTest {
     fun `returns hendelser`() {
         hendelseMock.`stub for skatt hendelser`(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
 
-        val hendelser = client.send(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
+        val hendelser = client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
         assertEquals(hendelser.size(), 5)
     }
 
@@ -45,8 +45,8 @@ internal class GrunnlagPgiHendelseClientTest {
     fun `throw exception when nestesekvensnr is missing from response`() {
         hendelseMock.`stub response without nestesekvensnr`(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
 
-        assertThrows<GrunnlagPgiHendelserValidationException> {
-            client.send(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
+        assertThrows<HendelseClientObjectMapperException> {
+            client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
         }
     }
 
@@ -54,8 +54,8 @@ internal class GrunnlagPgiHendelseClientTest {
     fun `throw exception when response is not mappable`() {
         hendelseMock.`stub response that wont map`(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
 
-        assertThrows<GrunnlagPgiHendelseClientObjectMapperException> {
-            client.send(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
+        assertThrows<HendelseClientObjectMapperException> {
+            client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
         }
     }
 

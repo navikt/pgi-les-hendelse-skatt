@@ -4,18 +4,20 @@ import org.apache.kafka.common.TopicPartition
 import java.time.Duration.ofSeconds
 
 private const val POLLING_DURATION_SECONDS = 4L
+private val defaultTopicPartition = TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0)
 
-internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topicPartition: TopicPartition) {
+internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topicPartition: TopicPartition = defaultTopicPartition) {
     private val consumer = kafkaConfig.nextSekvensnummerConsumer()
 
     init {
         assignConsumerToPartition()
     }
 
-    internal fun getLastSekvensnummer(): String? {
+    internal fun getNextSekvensnummer(): String? {
         pointToLastSekvensnummer()
         val sekvensnummerRecords = pollRecords()
-        return if (sekvensnummerRecords.isEmpty()) null else sekvensnummerRecords.last().value()
+        val lastSekvensnummer = if (sekvensnummerRecords.isEmpty()) null else sekvensnummerRecords.last().value()
+        return lastSekvensnummer
     }
 
     private fun pointToLastSekvensnummer() = consumer.seek(topicPartition, getOffsetOfLastRecord())

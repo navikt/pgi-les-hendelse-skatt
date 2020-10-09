@@ -34,25 +34,25 @@ internal class FirstSekvensnummerClientTest {
     @Test
     fun `get first sekvensnummer skatt`() {
         firstSekvensnummerMock.`mock first sekvensnummer endpoint`()
-        Assertions.assertEquals(1L, firstSekvensnummerClient.send())
+        Assertions.assertEquals(1L, firstSekvensnummerClient.getFirstSekvensnummerFromSkatt())
     }
 
     @Test
     fun `Throws FirstSekvensnummerClientCallException when other status than 200`() {
         firstSekvensnummerMock.`mock 404 response`()
-        assertThrows<FirstSekvensnummerClientCallException> { firstSekvensnummerClient.send() }
+        assertThrows<FirstSekvensnummerClientCallException> { firstSekvensnummerClient.getFirstSekvensnummerFromSkatt() }
     }
 
     @Test
     fun `Throws FirstSekvensnummerClientMappingException mapping fails`() {
         firstSekvensnummerMock.`mock faulty json response`()
-        assertThrows<FirstSekvensnummerClientMappingException> { firstSekvensnummerClient.send() }
+        assertThrows<FirstSekvensnummerClientMappingException> { firstSekvensnummerClient.getFirstSekvensnummerFromSkatt() }
     }
 
     @Test
     fun `Throws FirstSekvensnummerClientMappingException first sekvensnummer is missing`() {
         firstSekvensnummerMock.`mock response without first sekvensnummer`()
-        assertThrows<FirstSekvensnummerClientMappingException> { firstSekvensnummerClient.send() }
+        assertThrows<FirstSekvensnummerClientMappingException> { firstSekvensnummerClient.getFirstSekvensnummerFromSkatt() }
     }
 
     private fun createEnvVariables() = createMaskinportenEnvVariables() + mapOf(FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST)

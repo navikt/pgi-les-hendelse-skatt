@@ -1,9 +1,13 @@
 package no.nav.pgi.skatt.leshendelse.mock
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH
+import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
+import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
 
 
 private const val ANTALL_KEY = "antall"
@@ -25,6 +29,44 @@ internal class HendelseMock {
 
     internal fun stop() {
         mock.stop()
+    }
+
+    internal fun `stub first call to hendelse endepunkt skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
+        val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+                .withQueryParams(
+                        mapOf(
+                                ANTALL_KEY to WireMock.equalTo("1000"),
+                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString()))
+                        )
+                )
+                .inScenario("Two calls to hendelse")
+                .whenScenarioStateIs(STARTED)
+                .willReturn(
+                        aResponse()
+                                .withBodyFile(ObjectMapper().writeValueAsString(hendelser))
+                                .withStatus(200)
+                ).willSetStateTo("First call completed"))
+        return hendelser
+    }
+
+    internal fun `stub second call to hendelse endepunkt skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
+        val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+                .withQueryParams(
+                        mapOf(
+                                ANTALL_KEY to WireMock.equalTo("1000"),
+                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString()))
+                        )
+                )
+                .inScenario("First call completed")
+                .whenScenarioStateIs(STARTED)
+                .willReturn(
+                        aResponse()
+                                .withBodyFile(ObjectMapper().writeValueAsString(hendelser))
+                                .withStatus(200)
+                ).willSetStateTo("second call completed"))
+        return hendelser
     }
 
     internal fun `stub hendelse endepunkt skatt`() {
@@ -80,4 +122,12 @@ internal class HendelseMock {
                                 .withStatus(200)
                 ))
     }
+
+    private fun createHendelser(startingSekvensnummer: Long, amount: Int): HendelserDto =
+            HendelserDto(startingSekvensnummer + amount, createHendelseList(startingSekvensnummer, amount))
+
+    private fun createHendelseList(startingSekvensnummer: Long, amount: Int): List<HendelseDto> =
+            (startingSekvensnummer until startingSekvensnummer + amount)
+                    .toList()
+                    .map { HendelseDto((11111111111 + it).toString(), "2020", it) }
 }

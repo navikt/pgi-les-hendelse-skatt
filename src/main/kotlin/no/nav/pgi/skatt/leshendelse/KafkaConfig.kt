@@ -1,5 +1,8 @@
 package no.nav.pgi.skatt.leshendelse
 
+import io.confluent.kafka.serializers.KafkaAvroSerializer
+import no.nav.samordning.pgi.schema.Hendelse
+import no.nav.samordning.pgi.schema.HendelseKey
 import org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG
 import org.apache.kafka.clients.CommonClientConfigs.SECURITY_PROTOCOL_CONFIG
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
@@ -14,8 +17,9 @@ import java.lang.Integer.MAX_VALUE
 
 internal const val GROUP_ID = "pgi-sekvensnummer-consumer-group"
 
-internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
 
+internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
+    private val schemaRegistryUrl = environment.getVal(SCHEMA_REGISTRY_ENV_KEY)
     private val bootstrapServers = environment.getVal(BOOTSTRAP_SERVERS_ENV_KEY)
     private val saslMechanism = environment.getVal(SASL_MECHANISM_ENV_KEY, "PLAIN")
     private val securityProtocol = environment.getVal(SECURITY_PROTOCOL_ENV_KEY, SASL_SSL.name)
@@ -30,7 +34,7 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
     internal fun nextSekvensnummerConsumer() = KafkaConsumer<Nothing, String>(
             commonConfig() + sekvensnummerConsumerConfig())
 
-    internal fun hendelseProducer() = KafkaProducer<String, String>(
+    internal fun hendelseProducer() = KafkaProducer<HendelseKey, Hendelse>(
             commonConfig() + hendelseProducerConfig())
 
     private fun sekvensnummerConsumerConfig() = mapOf(
@@ -48,9 +52,11 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
             RETRIES_CONFIG to MAX_VALUE
     )
 
+
     private fun hendelseProducerConfig() = mapOf(
-            KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
-            VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
+            "schema.registry.url" to schemaRegistryUrl,
+            KEY_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
+            VALUE_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
             ACKS_CONFIG to "all",
             RETRIES_CONFIG to MAX_VALUE
     )
@@ -73,5 +79,6 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
         const val SECURITY_PROTOCOL_ENV_KEY = "KAFKA_SECURITY_PROTOCOL"
         const val NEXT_SEKVENSNUMMER_TOPIC = "privat-pgi-nextSekvensnummer"
         const val PGI_HENDELSE_TOPIC = "privat-pgi-hendelse"
+        const val SCHEMA_REGISTRY_ENV_KEY = "KAFKA_SCHEMA_REGISTRY"
     }
 }

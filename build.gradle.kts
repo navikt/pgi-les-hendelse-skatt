@@ -11,6 +11,8 @@ val log4jVersion = "2.13.3"
 val wiremockVersion = "2.27.2"
 
 val kafkaVersion = "2.5.0"
+val pgiChemaVersion = "0.0.1"
+val kafkaAvroSerializerVersion = "5.5.1"
 val kafkaEmbeddedEnvVersion = "2.5.0"
 
 val tokenValidationCoreVersion = "1.3.0"
@@ -47,13 +49,14 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-metrics-micrometer:$ktorVersion")
     implementation("no.nav.pensjonsamhandling:pensjon-samhandling-ktor-support:$ktorSupportVersion")
-    implementation("no.nav.pensjonsamhandling:pgi-schema:0.0.0")
 
     implementation("com.nimbusds:nimbus-jose-jwt:$joseJwtVersion")
     implementation("no.nav.security:token-validation-core:$tokenValidationCoreVersion")
     implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
+    implementation("no.nav.pensjonsamhandling:pgi-schema:$pgiChemaVersion")
+    implementation("io.confluent:kafka-avro-serializer:$kafkaAvroSerializerVersion")
 
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")

@@ -11,6 +11,6 @@ class HendelserTest {
         val identifikator = "12345678901"
 
         val expectedHendelseKey = "$identifikator-$inntektsAar"
-        assertEquals(expectedHendelseKey, Hendelse(identifikator, inntektsAar, 1L).getHendelseKey())
+        assertEquals(expectedHendelseKey, HendelseDto(identifikator, inntektsAar, 1L).getHendelseKey())
     }
 }

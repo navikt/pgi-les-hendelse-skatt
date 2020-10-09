@@ -11,12 +11,12 @@ import org.junit.jupiter.api.Assertions.assertTrue
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class PGILesHendelseSkattTest {
-    private val grunnlagPgiHendelseClient = GrunnlagPgiHendelseClient(createEnvVariables())
+internal class PGILesHendelseDtoSkattTest {
+    private val grunnlagPgiHendelseClient = HendelseClient(createEnvVariables())
     private val firstSekvensnummerClient = FirstSekvensnummerClient(createEnvVariables())
 
     private val kafkaTestEnvironment = KafkaTestEnvironment()
-    private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.testConfiguration())
+    private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables())
     private val sekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
     private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0))
     private val hendelseProducer = HendelseProducer(kafkaConfig)
@@ -32,7 +32,7 @@ internal class PGILesHendelseSkattTest {
         hendelseMock.`stub hendelse endepunkt skatt`()
         maskinportenMock.`mock  maskinporten token enpoint`()
 
-        application.start()
+        //application.start()
     }
 
     @AfterAll
@@ -45,15 +45,14 @@ internal class PGILesHendelseSkattTest {
         sekvensnummerMock.stop()
         hendelseMock.stop()
         maskinportenMock.stop()
-
     }
 
     @Test
     @Order(1)
     fun `get first sekvensnummer empty, call Skatteetaten REST service`() {
-        var sekvensnummer = sekvensnummerConsumer.getLastSekvensnummer()
+        var sekvensnummer = sekvensnummerConsumer.getNextSekvensnummer()
         if (sekvensnummer == null) {
-            sekvensnummer = firstSekvensnummerClient.send().toString()
+            sekvensnummer = firstSekvensnummerClient.getFirstSekvensnummerFromSkatt().toString()
         }
 
         assertEquals("1", sekvensnummer)
@@ -61,7 +60,7 @@ internal class PGILesHendelseSkattTest {
 
     @Test
     fun `get first sekvensnummer skatt`() {
-        assertEquals(1L, firstSekvensnummerClient.send())
+        assertEquals(1L, firstSekvensnummerClient.getFirstSekvensnummerFromSkatt())
     }
 
 
@@ -70,27 +69,34 @@ internal class PGILesHendelseSkattTest {
         val lastSekvensnummer = "5"
         addListOfSekvensnummerToTopic(listOf("1", "2", "3", "4", lastSekvensnummer))
 
-        assertEquals(lastSekvensnummer, sekvensnummerConsumer.getLastSekvensnummer())
+        assertEquals(lastSekvensnummer, sekvensnummerConsumer.getNextSekvensnummer())
     }
 
     @Test
     fun `write sekvensnummer to topic`() {
         sekvensnummerProducer.writeSekvensnummer("1234")
-        assertEquals("1234", sekvensnummerConsumer.getLastSekvensnummer())
+        assertEquals("1234", sekvensnummerConsumer.getNextSekvensnummer())
     }
 
 
     @Test
     fun `get hendelser from skatt`() {
-        val hendelser = grunnlagPgiHendelseClient.send(1000, 1L)
+        val hendelser = grunnlagPgiHendelseClient.getHendelserSkatt(1000, 1L)
         assertTrue(hendelser.size() == 5)
     }
 
     @Test
     fun `write pgi hendelse to topic`() {
-        val hendelse = Hendelse("123456", "12345", 1L)
+        val hendelse = HendelseDto("123456", "12345", 1L)
         hendelseProducer.writeHendelse(hendelse)
-        assertEquals(hendelse.toString(), kafkaTestEnvironment.getFirstRecordOnTopic().value())
+        val record = kafkaTestEnvironment.getFirstRecordOnTopic()
+
+        assertEquals(hendelse.identifikator, record.key().getIdentifikator())
+        assertEquals(hendelse.gjelderPeriode, record.key().getGjelderPeriode())
+
+        assertEquals(hendelse.sekvensnr, record.value().getSekvensnummer())
+        assertEquals(hendelse.identifikator, record.value().getIdentifikator())
+        assertEquals(hendelse.gjelderPeriode, record.value().getGjelderPeriode())
     }
 
     private fun addListOfSekvensnummerToTopic(sekvensnummerList: List<String>) {
