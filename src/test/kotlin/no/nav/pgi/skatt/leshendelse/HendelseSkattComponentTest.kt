@@ -6,10 +6,7 @@ import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
 import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class HendelseSkattComponentTest {
@@ -38,6 +35,7 @@ internal class HendelseSkattComponentTest {
         maskinportenMock.stop()
     }
 
+    @Disabled
     @Test
     fun should() {
         hendelseMock.`stub first call to hendelse endepunkt skatt`(1 ,1000)
