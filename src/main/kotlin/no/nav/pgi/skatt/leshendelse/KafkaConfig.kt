@@ -77,8 +77,8 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv()) {
         const val PASSWORD_ENV_KEY = "PASSWORD"
         const val SASL_MECHANISM_ENV_KEY = "KAFKA_SASL_MECHANISM"
         const val SECURITY_PROTOCOL_ENV_KEY = "KAFKA_SECURITY_PROTOCOL"
-        const val NEXT_SEKVENSNUMMER_TOPIC = "privat-pgi-nextSekvensnummer"
-        const val PGI_HENDELSE_TOPIC = "privat-pgi-hendelse"
+        const val NEXT_SEKVENSNUMMER_TOPIC = "pensjonsamhandling.privat-pgi-nextSekvensnummer"
+        const val PGI_HENDELSE_TOPIC = "pensjonsamhandling.privat-pgi-hendelse"
         const val SCHEMA_REGISTRY_ENV_KEY = "KAFKA_SCHEMA_REGISTRY"
     }
 }
