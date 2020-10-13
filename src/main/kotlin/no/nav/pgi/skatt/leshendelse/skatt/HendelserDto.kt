@@ -10,8 +10,8 @@ data class HendelserDto(val nestesekvensnr: Long = FAULTY_SEKVENSNUMMER, val hen
     internal fun size() = hendelser.size
 }
 
-data class HendelseDto(val identifikator: String?, val gjelderPeriode: String?, val sekvensnr: Long?) {
-    fun getHendelseKey(): String = "$identifikator-$gjelderPeriode"
-}
+data class HendelseDto(val identifikator: String?, val gjelderPeriode: String?, val sekvensnr: Long?)
+
+internal fun HendelseDto.getHendelseKey(): String = "$identifikator-$gjelderPeriode"
 
 internal class HendelserDtoException(message: String) : Exception(message)

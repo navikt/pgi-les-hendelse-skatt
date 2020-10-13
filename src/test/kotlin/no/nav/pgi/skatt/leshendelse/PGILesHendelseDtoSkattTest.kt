@@ -74,7 +74,7 @@ internal class PGILesHendelseDtoSkattTest {
 
     @Test
     fun `write sekvensnummer to topic`() {
-        sekvensnummerProducer.writeSekvensnummer("1234")
+        sekvensnummerProducer.writeSekvensnummer(1234L)
         assertEquals("1234", sekvensnummerConsumer.getNextSekvensnummer())
     }
 
@@ -100,7 +100,7 @@ internal class PGILesHendelseDtoSkattTest {
     }
 
     private fun addListOfSekvensnummerToTopic(sekvensnummerList: List<String>) {
-        sekvensnummerList.indices.forEach { i -> sekvensnummerProducer.writeSekvensnummer(sekvensnummerList[i]) }
+        sekvensnummerList.indices.forEach { i -> sekvensnummerProducer.writeSekvensnummer(sekvensnummerList[i].toLong()) }
     }
 
     private fun createEnvVariables() = createMaskinportenEnvVariables() + mapOf(

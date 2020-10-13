@@ -35,11 +35,10 @@ internal class HendelseSkattComponentTest {
         maskinportenMock.stop()
     }
 
-    @Disabled
     @Test
-    fun should() {
+    fun shouldPutHendelseOnTopic() {
         hendelseMock.`stub first call to hendelse endepunkt skatt`(1 ,1000)
-        hendelseMock.`stub second call to hendelse endepunkt skatt`(1000 ,100)
+        hendelseMock.`stub second call to hendelse endepunkt skatt`(1001 ,100)
         application.start()
         kafkaTestEnvironment.getFirstRecordOnTopic()
     }

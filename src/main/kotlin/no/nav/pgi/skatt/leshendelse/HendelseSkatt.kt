@@ -1,48 +1,35 @@
 package no.nav.pgi.skatt.leshendelse
 
 import io.ktor.application.*
-import no.nav.pgi.skatt.leshendelse.skatt.*
 import no.nav.pgi.skatt.leshendelse.skatt.FirstSekvensnummerClient
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseClient
+import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
 
 private const val ANTALL_HENDELSER = 1000
 
 internal fun Application.hendelseSkatt(kafkaConfig: KafkaConfig, env: Map<String, String>) {
-    val hendelseProducer = HendelseProducer(kafkaConfig)
-    val nextSekvensnummerProducer = kafkaConfig.nextSekvensnummerProducer()
-    val hendelseClient = HendelseClient(env)
-
-    var sekvensnummer = hentSekvensnummer(kafkaConfig, env)
-
-
-    var hendelserDto: HendelserDto
-
-    do{
-        hendelserDto = hendelseClient.getHendelserSkatt(ANTALL_HENDELSER, sekvensnummer)
-        hendelserDto.hendelser.forEach {hendelseProducer.writeHendelse(it)}
-        sekvensnummer = hendelserDto.nestesekvensnr
-
-    }while(hendelserDto.size() >= ANTALL_HENDELSER)
-
-
-
-
-
-
-    //TODO Hent neste sekvensnummer
-    //Forsøk å hent lagret sekvensnummer
-    //TODO Hent første sekvensnummer
-    //TODO Les hendelser med sekvensnummer og antall
-    //TODO Skriv hendelser til kafka kø
-    //TODO Oppdater neste sekvensnummer
-
-
+        HendelseSkatt(kafkaConfig, env).readAndWriteHendelserToTopic()
 }
 
+internal class HendelseSkatt(private val kafkaConfig: KafkaConfig, private val env: Map<String, String>) {
+    private val hendelseProducer = HendelseProducer(kafkaConfig)
+    private val nextSekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
+    private val hendelseClient = HendelseClient(env)
 
-private fun hentSekvensnummer(kafkaConfig: KafkaConfig, env: Map<String, String>): Long =
-        SekvensnummerConsumer(kafkaConfig).getNextSekvensnummer()?.toLong()
-                ?: FirstSekvensnummerClient(env).getFirstSekvensnummerFromSkatt()
+    internal fun readAndWriteHendelserToTopic() {
+        var hendelserDto: HendelserDto
+        var currentSekvensnummer = getInitialSekvensnummer()
+        do {
+            hendelserDto = hendelseClient.getHendelserSkatt(ANTALL_HENDELSER, currentSekvensnummer)
+                    .apply {
+                        hendelseProducer.writeHendelser(this)
+                        currentSekvensnummer = nestesekvensnr
+                        nextSekvensnummerProducer.writeSekvensnummer(nestesekvensnr)
+                    }
+        } while (hendelserDto.size() >= ANTALL_HENDELSER)
+    }
 
-
-
+    private fun getInitialSekvensnummer(): Long =
+            SekvensnummerConsumer(kafkaConfig).getNextSekvensnummer()?.toLong()
+                    ?: FirstSekvensnummerClient(env).getFirstSekvensnummerFromSkatt()
+}

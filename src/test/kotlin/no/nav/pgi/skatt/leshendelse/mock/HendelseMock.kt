@@ -1,6 +1,7 @@
 package no.nav.pgi.skatt.leshendelse.mock
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
@@ -15,6 +16,7 @@ private const val FRA_SEKVENSNUMMER_KEY = "fraSekvensnummer"
 
 private const val HENDELSE_PORT = 8085
 internal const val HENDELSE_MOCK_HOST = "http://localhost:$HENDELSE_PORT"
+
 
 internal class HendelseMock {
     private val mock = WireMockServer(HENDELSE_PORT)
@@ -36,17 +38,20 @@ internal class HendelseMock {
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
                 .withQueryParams(
                         mapOf(
-                                ANTALL_KEY to WireMock.equalTo("1000"),
-                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString()))
+
+                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString())),
+                                ANTALL_KEY to WireMock.equalTo("1000")
                         )
                 )
                 .inScenario("Two calls to hendelse")
                 .whenScenarioStateIs(STARTED)
+
                 .willReturn(
                         aResponse()
-                                .withBodyFile(ObjectMapper().writeValueAsString(hendelser))
+                                .withBody(ObjectMapper().registerModule(KotlinModule()).writeValueAsString(hendelser))
                                 .withStatus(200)
-                ).willSetStateTo("First call completed"))
+                )
+                .willSetStateTo("First call completed"))
         return hendelser
     }
 
@@ -55,15 +60,15 @@ internal class HendelseMock {
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
                 .withQueryParams(
                         mapOf(
-                                ANTALL_KEY to WireMock.equalTo("1000"),
-                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString()))
+                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString())),
+                                ANTALL_KEY to WireMock.equalTo("1000")
                         )
                 )
-                .inScenario("First call completed")
-                .whenScenarioStateIs(STARTED)
+                .inScenario("Two calls to hendelse")
+                .whenScenarioStateIs("First call completed")
                 .willReturn(
                         aResponse()
-                                .withBodyFile(ObjectMapper().writeValueAsString(hendelser))
+                                .withBody(ObjectMapper().registerModule(KotlinModule()).writeValueAsString(hendelser))
                                 .withStatus(200)
                 ).willSetStateTo("second call completed"))
         return hendelser
