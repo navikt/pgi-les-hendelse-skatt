@@ -7,7 +7,7 @@ import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_PATH
 internal const val FIRST_SEKVENSNUMMER_PORT = 8084
 internal const val FIRST_SEKVENSNUMMER_MOCK_HOST = "http://localhost:$FIRST_SEKVENSNUMMER_PORT"
 
-internal const val SKATT_FIRST_SEKVENSNUMMER = 1
+internal const val SKATT_FIRST_SEKVENSNUMMER = 1L
 
 internal class SkattFirstSekvensnummerMock {
 
@@ -23,9 +23,9 @@ internal class SkattFirstSekvensnummerMock {
 
     internal fun stop() = mock.stop()
 
-    internal fun `mock first sekvensnummer endpoint`() {
+    internal fun `mock first sekvensnummer endpoint`(firstSekvensnummer: Long = SKATT_FIRST_SEKVENSNUMMER) {
         mock.stubFor(get(urlPathEqualTo(FIRST_SEKVENSNUMMER_PATH))
-                .willReturn(okJson("{\"sekvensnummer\": " + SKATT_FIRST_SEKVENSNUMMER + "}")))
+                .willReturn(okJson("{\"sekvensnummer\": " + firstSekvensnummer + "}")))
     }
 
     internal fun `mock 404 response`() {
