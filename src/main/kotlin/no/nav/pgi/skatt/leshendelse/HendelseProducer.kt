@@ -11,7 +11,6 @@ internal class HendelseProducer(kafkaConfig: KafkaConfig) {
 
     internal fun writeHendelse(hendelseDto: HendelseDto) {
         val record = ProducerRecord(KafkaConfig.PGI_HENDELSE_TOPIC, hendelseDto.mapToHendelseKey(), hendelseDto.mapToHendelse())
-        println("Hendelse ser slik ut:\n\n $hendelseDto")
         producer.send(record).get()
     }
 

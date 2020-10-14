@@ -1,7 +1,6 @@
 package no.nav.pgi.skatt.leshendelse
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
-import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import no.nav.common.KafkaEnvironment
 import no.nav.common.KafkaEnvironment.TopicInfo
@@ -62,4 +61,15 @@ class KafkaTestEnvironment {
     }
 
     fun getFirstRecordOnTopic() = consumeHendelseTopic()[0]
+
+    fun getLastRecordOnTopic(): ConsumerRecord<HendelseKey, Hendelse> {
+        var hendelseRecordList: List<ConsumerRecord<HendelseKey, Hendelse>> = consumeHendelseTopic()
+        var hendelsTempRecordList: List<ConsumerRecord<HendelseKey, Hendelse>>
+        do {
+            hendelsTempRecordList = consumeHendelseTopic()
+            if (hendelsTempRecordList.isNotEmpty()) hendelseRecordList = hendelsTempRecordList
+        } while (hendelsTempRecordList.isNotEmpty())
+
+        return hendelseRecordList[hendelseRecordList.size - 1]
+    }
 }

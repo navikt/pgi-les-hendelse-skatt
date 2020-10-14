@@ -33,12 +33,29 @@ internal class HendelseMock {
         mock.stop()
     }
 
-    internal fun `stub first call to hendelse endepunkt skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
+    internal fun `stub hendelse endepunkt skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
         val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
                 .withQueryParams(
                         mapOf(
 
+                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString())),
+                                ANTALL_KEY to WireMock.equalTo("1000")
+                        )
+                )
+                .willReturn(
+                        aResponse()
+                                .withBody(ObjectMapper().registerModule(KotlinModule()).writeValueAsString(hendelser))
+                                .withStatus(200)
+                ))
+        return hendelser
+    }
+
+    internal fun `stub first call to hendelse endepunkt skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
+        val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+                .withQueryParams(
+                        mapOf(
                                 FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString())),
                                 ANTALL_KEY to WireMock.equalTo("1000")
                         )
