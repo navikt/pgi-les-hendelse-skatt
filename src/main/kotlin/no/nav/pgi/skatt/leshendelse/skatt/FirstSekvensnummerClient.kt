@@ -17,26 +17,20 @@ internal class FirstSekvensnummerClient(env: Map<String, String> = System.getenv
 
     fun getFirstSekvensnummerFromSkatt(): Long {
         val response = skattClient.send(skattClient.createGetRequest(host + FIRST_SEKVENSNUMMER_PATH), ofString())
-        if (response.statusCode() == 200) return mapResponse(response)
-        throw FirstSekvensnummerClientCallException(response)
-    }
-
-    private fun mapResponse(response: HttpResponse<String>): Long {
-        return readValue(response.body())
-    }
-
-    private fun readValue(body: String): Long {
-        return try {
-            objectMapper.readValue(body, Sekvensnummer::class.java).sekvensnummer
-        } catch (e: Exception) {
-            throw FirstSekvensnummerClientMappingException(e.toString())
+        return when (response.statusCode()) {
+            200 -> mapResponse(response.body())
+            else -> throw FirstSekvensnummerClientCallException(response).also { logger.error(it.message) }
         }
     }
+
+    private fun mapResponse(body: String) =
+            try {
+                objectMapper.readValue(body, Sekvensnummer::class.java).sekvensnummer
+            } catch (e: Exception) {
+                throw FirstSekvensnummerClientMappingException(e.toString())
+            }
 }
 
-
-internal data class Sekvensnummer(@JsonProperty(value ="sekvensnummer",required = true) val sekvensnummer: Long)
-
+internal data class Sekvensnummer(@JsonProperty(value = "sekvensnummer", required = true) val sekvensnummer: Long)
 internal class FirstSekvensnummerClientMappingException(message: String) : Exception(message)
-
 internal class FirstSekvensnummerClientCallException(response: HttpResponse<String>) : Exception("Feil ved henting første sekvensnummer: Status: ${response.statusCode()} , Body: ${response.body()}")
