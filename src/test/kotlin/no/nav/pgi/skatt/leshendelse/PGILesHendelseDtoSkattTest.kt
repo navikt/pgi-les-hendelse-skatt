@@ -1,5 +1,9 @@
 package no.nav.pgi.skatt.leshendelse
 
+import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducer
+import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
+import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
+import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerProducer
 import no.nav.pgi.skatt.leshendelse.maskinporten.createMaskinportenEnvVariables
 import no.nav.pgi.skatt.leshendelse.mock.*
 import no.nav.pgi.skatt.leshendelse.skatt.*

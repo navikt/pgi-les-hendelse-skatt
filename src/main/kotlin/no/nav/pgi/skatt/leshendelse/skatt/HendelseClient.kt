@@ -3,7 +3,7 @@ package no.nav.pgi.skatt.leshendelse.skatt
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import no.nav.pgi.skatt.leshendelse.getVal
+import no.nav.pensjon.samhandling.env.getVal
 import org.slf4j.LoggerFactory
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString

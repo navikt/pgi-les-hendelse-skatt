@@ -1,14 +1,23 @@
 package no.nav.pgi.skatt.leshendelse
 
 import io.ktor.application.*
+import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducer
+import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
+import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
+import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerProducer
 import no.nav.pgi.skatt.leshendelse.skatt.FirstSekvensnummerClient
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseClient
 import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
 
 private const val ANTALL_HENDELSER = 1000
 
-internal fun Application.hendelseSkatt(kafkaConfig: KafkaConfig, env: Map<String, String>) {
-        HendelseSkatt(kafkaConfig, env).readAndWriteHendelserToTopic()
+internal fun Application.hendelseSkattLoop(kafkaConfig: KafkaConfig, env: Map<String, String>, loopForever: Boolean) {
+    val hendelseSkatt = HendelseSkatt(kafkaConfig, env)
+    val scheduler: SkattScheduler = SkattScheduler(env)
+    do {
+        hendelseSkatt.readAndWriteHendelserToTopic()
+        //scheduler.process()
+    } while (loopForever)
 }
 
 internal class HendelseSkatt(private val kafkaConfig: KafkaConfig, private val env: Map<String, String>) {
@@ -32,4 +41,5 @@ internal class HendelseSkatt(private val kafkaConfig: KafkaConfig, private val e
     private fun getInitialSekvensnummer(): Long =
             SekvensnummerConsumer(kafkaConfig).getNextSekvensnummer()?.toLong()
                     ?: FirstSekvensnummerClient(env).getFirstSekvensnummerFromSkatt()
+
 }

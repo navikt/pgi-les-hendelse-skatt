@@ -6,7 +6,7 @@ import com.nimbusds.jose.crypto.RSASSASigner
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
-import no.nav.pgi.skatt.leshendelse.getVal
+import no.nav.pensjon.samhandling.env.getVal
 import java.util.*
 
 internal const val SCOPE_CLAIM = "scope"

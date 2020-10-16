@@ -1,4 +1,4 @@
-package no.nav.pgi.skatt.leshendelse
+package no.nav.pgi.skatt.leshendelse.kafka
 
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.TopicPartition

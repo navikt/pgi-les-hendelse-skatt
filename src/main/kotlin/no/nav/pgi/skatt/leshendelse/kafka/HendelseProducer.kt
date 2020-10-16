@@ -1,4 +1,4 @@
-package no.nav.pgi.skatt.leshendelse
+package no.nav.pgi.skatt.leshendelse.kafka
 
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
 import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
@@ -17,6 +17,8 @@ internal class HendelseProducer(kafkaConfig: KafkaConfig) {
     internal fun writeHendelser(hendelserDto: HendelserDto) {
         hendelserDto.hendelser.forEach { writeHendelse(it) }
     }
+
+    internal fun close() = producer.close()
 }
 
 internal fun HendelseDto.mapToHendelseKey() = HendelseKey(identifikator, gjelderPeriode)

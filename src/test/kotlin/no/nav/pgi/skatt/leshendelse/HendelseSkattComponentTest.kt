@@ -1,6 +1,9 @@
 package no.nav.pgi.skatt.leshendelse
 
 import io.ktor.server.netty.*
+import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
+import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
+import no.nav.pgi.skatt.leshendelse.kafka.mapToHendelse
 import no.nav.pgi.skatt.leshendelse.maskinporten.createMaskinportenEnvVariables
 import no.nav.pgi.skatt.leshendelse.mock.*
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
@@ -28,18 +31,9 @@ internal class HendelseSkattComponentTest {
         maskinportenMock.`mock  maskinporten token enpoint`()
     }
 
-    @AfterAll
-    internal fun teardown() {
-        application.stop(100, 100)
-        kafkaTestEnvironment.tearDown()
-        sekvensnummerMock.stop()
-        hendelseMock.stop()
-        maskinportenMock.stop()
-    }
-
     @BeforeEach
     internal fun beforeEachTest() {
-        application = createApplication(kafkaConfig = kafkaConfig, env = createEnvVariables())
+        application = createApplication(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
         hendelseMock.reset()
         sekvensnummerMock.reset()
     }
@@ -47,6 +41,15 @@ internal class HendelseSkattComponentTest {
     @AfterEach
     internal fun afterEachTest() {
         application.stop(100, 100)
+    }
+
+    @AfterAll
+    internal fun teardown() {
+        application.stop(100, 100)
+        kafkaTestEnvironment.tearDown()
+        sekvensnummerMock.stop()
+        hendelseMock.stop()
+        maskinportenMock.stop()
     }
 
     @Test

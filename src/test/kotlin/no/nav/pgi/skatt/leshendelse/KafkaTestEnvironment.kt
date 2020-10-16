@@ -4,6 +4,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG
 import no.nav.common.KafkaEnvironment
 import no.nav.common.KafkaEnvironment.TopicInfo
+import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import no.nav.samordning.pgi.schema.Hendelse
 import no.nav.samordning.pgi.schema.HendelseKey
 import org.apache.kafka.clients.CommonClientConfigs

@@ -2,7 +2,7 @@ package no.nav.pgi.skatt.leshendelse.maskinporten
 
 import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
-import no.nav.pgi.skatt.leshendelse.MissingEnvironmentVariables
+import no.nav.pensjon.samhandling.env.MissingEnvironmentVariables
 import no.nav.pgi.skatt.leshendelse.mock.MASKINPORTEN_MOCK_HOST
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
 import org.junit.jupiter.api.*
@@ -54,11 +54,11 @@ internal class MaskinportenClientTest {
         val exception = assertThrows<MissingEnvironmentVariables> { MaskinportenClient(emptyMap()) }
 
         Assertions.assertTrue(exception.message!! containWord MASKINPORTEN_TOKEN_HOST_ENV_KEY)
-        Assertions.assertTrue(exception.message containWord AUDIENCE_ENV_KEY)
-        Assertions.assertTrue(exception.message containWord ISSUER_ENV_KEY)
-        Assertions.assertTrue(exception.message containWord SCOPE_ENV_KEY)
-        Assertions.assertTrue(exception.message containWord VALID_IN_SECONDS_ENV_KEY)
-        Assertions.assertTrue(exception.message containWord PRIVATE_JWK_ENV_KEY)
+        Assertions.assertTrue(exception.message!! containWord AUDIENCE_ENV_KEY)
+        Assertions.assertTrue(exception.message!! containWord ISSUER_ENV_KEY)
+        Assertions.assertTrue(exception.message!! containWord SCOPE_ENV_KEY)
+        Assertions.assertTrue(exception.message!! containWord VALID_IN_SECONDS_ENV_KEY)
+        Assertions.assertTrue(exception.message!! containWord PRIVATE_JWK_ENV_KEY)
     }
 
     private infix fun String.containWord(word: String) = this.contains(word)

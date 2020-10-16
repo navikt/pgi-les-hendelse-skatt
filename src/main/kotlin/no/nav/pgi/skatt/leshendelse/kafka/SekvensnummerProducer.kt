@@ -1,5 +1,6 @@
-package no.nav.pgi.skatt.leshendelse
+package no.nav.pgi.skatt.leshendelse.kafka
 
+import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 
 internal class SekvensnummerProducer(kafkaConfig: KafkaConfig) {
@@ -10,6 +11,8 @@ internal class SekvensnummerProducer(kafkaConfig: KafkaConfig) {
         val record = ProducerRecord(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, "sekvensnummer", sekvensnummer.toString())
         sekvensnummerProducer.send(record).get()
     }
+
+    internal fun close()= sekvensnummerProducer.close()
 }
 
 //TODO skal vi endre sekvensnummer til Long

@@ -1,6 +1,7 @@
-package no.nav.pgi.skatt.leshendelse
+package no.nav.pgi.skatt.leshendelse.kafka
 
 import io.confluent.kafka.serializers.KafkaAvroSerializer
+import no.nav.pensjon.samhandling.env.getVal
 import no.nav.samordning.pgi.schema.Hendelse
 import no.nav.samordning.pgi.schema.HendelseKey
 import org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG
