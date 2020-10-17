@@ -23,7 +23,7 @@ internal class HendelseSkattComponentTest {
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
 
-    private lateinit var application: NettyApplicationEngine
+    private val application = Application()
 
 
     @BeforeAll
@@ -33,19 +33,18 @@ internal class HendelseSkattComponentTest {
 
     @BeforeEach
     internal fun beforeEachTest() {
-        application = createApplication(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
         hendelseMock.reset()
         sekvensnummerMock.reset()
     }
 
     @AfterEach
     internal fun afterEachTest() {
-        application.stop(100, 100)
+        application.stopServer()
     }
 
     @AfterAll
     internal fun teardown() {
-        application.stop(100, 100)
+        application.stopServer()
         kafkaTestEnvironment.tearDown()
         sekvensnummerMock.stop()
         hendelseMock.stop()
@@ -62,7 +61,7 @@ internal class HendelseSkattComponentTest {
         sekvensnummerMock.`mock first sekvensnummer endpoint`(startingSekvensnummer)
 
         val hendelserDto = hendelseMock.`stub hendelse endepunkt skatt`(startingSekvensnummer, antallHendelser)
-        application.start()
+        application.startHendelseSkattLoop(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
         assertEquals(hendelserDto.nestesekvensnr, sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
     }
 
@@ -74,7 +73,7 @@ internal class HendelseSkattComponentTest {
 
         hendelseMock.`stub first call to hendelse endepunkt skatt`(currentSekvensnummer, antallHendelserFirstCall)
         val hendelserDto = hendelseMock.`stub second call to hendelse endepunkt skatt`(currentSekvensnummer + antallHendelserFirstCall, antallHendelserSecondCall)
-        application.start()
+        application.startHendelseSkattLoop(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
 
         assertEquals(hendelserDto.nestesekvensnr, sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
         assertEquals(hendelserDto.hendelser[hendelserDto.hendelser.size - 1].mapToHendelse(), kafkaTestEnvironment.getLastRecordOnTopic().value())

@@ -11,7 +11,7 @@ import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
 
 private const val ANTALL_HENDELSER = 1000
 
-internal fun Application.hendelseSkattLoop(kafkaConfig: KafkaConfig, env: Map<String, String>, loopForever: Boolean) {
+internal fun hendelseSkattLoop(kafkaConfig: KafkaConfig, env: Map<String, String>, loopForever: Boolean) {
     val hendelseSkatt = HendelseSkatt(kafkaConfig, env)
     val scheduler: SkattScheduler = SkattScheduler(env)
     do {

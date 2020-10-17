@@ -9,28 +9,33 @@ import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 
 
 fun main() {
-    createApplication().apply {
-        start(wait = false)
-    }
+    val application = Application()
+    application.startHendelseSkattLoop(KafkaConfig(), System.getenv())
 }
 
-internal fun createApplication(serverPort: Int = 8080, kafkaConfig: KafkaConfig = KafkaConfig(), env: Map<String, String> = System.getenv(), loopForever: Boolean = true): NettyApplicationEngine {
-    return embeddedServer(Netty, createApplicationEnvironment(serverPort, kafkaConfig, env, loopForever)).apply {
-        addShutdownHook {
-            //TODO Se om det finnes en finere måte å gjøre dette på
-        }
+internal class Application {
+
+    private val naisServer = embeddedServer(Netty, createApplicationEnvironment())
+
+    init {
+        naisServer.addShutdownHook { /*TODO Se om  det finnes en finere måte å gjøre dette på.*/ }
+        naisServer.start()
     }
 
-}
+    internal fun startHendelseSkattLoop(kafkaConfig: KafkaConfig, env: Map<String, String>, loopForever: Boolean = true) =
+            hendelseSkattLoop(kafkaConfig, env, loopForever)
 
-
-private fun createApplicationEnvironment(serverPort: Int, kafkaConfig: KafkaConfig, env: Map<String, String>, loopForever: Boolean) =
-        applicationEngineEnvironment {
-            connector { port = serverPort }
-            module {
-                isAlive()
-                isReady()
-                metrics()
-                hendelseSkattLoop(kafkaConfig, env, loopForever)
+    private fun createApplicationEnvironment(serverPort: Int = 8080) =
+            applicationEngineEnvironment {
+                connector { port = serverPort }
+                module {
+                    isAlive()
+                    isReady()
+                    metrics()
+                }
             }
-        }
+
+    internal fun stopServer() {
+        naisServer.stop(100, 100)
+    }
+}

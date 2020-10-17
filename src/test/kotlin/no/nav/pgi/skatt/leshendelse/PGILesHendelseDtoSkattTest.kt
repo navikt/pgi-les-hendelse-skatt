@@ -24,7 +24,7 @@ internal class PGILesHendelseDtoSkattTest {
     private val sekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
     private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0))
     private val hendelseProducer = HendelseProducer(kafkaConfig)
-    private val application = createApplication(kafkaConfig = kafkaConfig)
+    private val application = Application()
 
     private val sekvensnummerMock = SkattFirstSekvensnummerMock()
     private val hendelseMock = HendelseMock()
@@ -41,7 +41,7 @@ internal class PGILesHendelseDtoSkattTest {
 
     @AfterAll
     internal fun teardown() {
-        application.stop(100, 100)
+        application.stopServer()
 
         kafkaTestEnvironment.tearDown()
         sekvensnummerConsumer.close()
