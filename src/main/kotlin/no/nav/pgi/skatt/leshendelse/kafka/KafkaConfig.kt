@@ -60,7 +60,7 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv(), p
     }
 
     internal companion object EnvironmentKeys {
-        const val BOOTSTRAP_SERVERS = "KAFKA_BOOTSTRAP_SERVERS"
+        const val BOOTSTRAP_SERVERS = "KAFKA_BROKERS"
         const val SCHEMA_REGISTRY = "KAFKA_SCHEMA_REGISTRY"
     }
 }
