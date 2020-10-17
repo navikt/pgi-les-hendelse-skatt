@@ -13,9 +13,7 @@ spec:
     - secret: pgi-les-hendelse-skatt-secrets
   liveness:
     path: isAlive
-    initialDelay: 30
-    periodSeconds: 1
-    failureThreshold: 60
+    initialDelay: 5
   readiness:
     path: isReady
     initialDelay: 5
