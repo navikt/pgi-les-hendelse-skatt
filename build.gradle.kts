@@ -20,7 +20,7 @@ val tokenValidationCoreVersion = "1.3.0"
 group = "no.nav.pgi"
 
 plugins {
-    kotlin("jvm") version "1.4.0"
+    kotlin("jvm") version "1.4.10"
     kotlin("plugin.serialization") version "1.4.0"
 }
 
