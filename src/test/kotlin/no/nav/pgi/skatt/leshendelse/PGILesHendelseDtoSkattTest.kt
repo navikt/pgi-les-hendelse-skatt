@@ -1,9 +1,6 @@
 package no.nav.pgi.skatt.leshendelse
 
-import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducer
-import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
-import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
-import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerProducer
+import no.nav.pgi.skatt.leshendelse.kafka.*
 import no.nav.pgi.skatt.leshendelse.maskinporten.createMaskinportenEnvVariables
 import no.nav.pgi.skatt.leshendelse.mock.*
 import no.nav.pgi.skatt.leshendelse.skatt.*
@@ -20,9 +17,9 @@ internal class PGILesHendelseDtoSkattTest {
     private val firstSekvensnummerClient = FirstSekvensnummerClient(createEnvVariables())
 
     private val kafkaTestEnvironment = KafkaTestEnvironment()
-    private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables())
+    private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy())
     private val sekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
-    private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0))
+    private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0))
     private val hendelseProducer = HendelseProducer(kafkaConfig)
     private val application = Application()
 

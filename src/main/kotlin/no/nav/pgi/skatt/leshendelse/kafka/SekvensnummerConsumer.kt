@@ -5,7 +5,7 @@ import org.apache.kafka.common.TopicPartition
 import java.time.Duration.ofSeconds
 
 private const val POLLING_DURATION_SECONDS = 4L
-private val defaultTopicPartition = TopicPartition(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, 0)
+private val defaultTopicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
 
 internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topicPartition: TopicPartition = defaultTopicPartition) {
     private val consumer = kafkaConfig.nextSekvensnummerConsumer()

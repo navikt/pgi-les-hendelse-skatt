@@ -5,42 +5,37 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_
 import no.nav.common.KafkaEnvironment
 import no.nav.common.KafkaEnvironment.TopicInfo
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
+import no.nav.pgi.skatt.leshendelse.kafka.NEXT_SEKVENSNUMMER_TOPIC
+import no.nav.pgi.skatt.leshendelse.kafka.PGI_HENDELSE_TOPIC
 import no.nav.samordning.pgi.schema.Hendelse
 import no.nav.samordning.pgi.schema.HendelseKey
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.apache.kafka.common.security.auth.SecurityProtocol
 import java.time.Duration
-
-const val KAFKA_TEST_USERNAME = "srvTest"
-const val KAFKA_TEST_PASSWORD = "opensourcedPassword"
 
 class KafkaTestEnvironment {
 
     private val kafkaTestEnvironment: KafkaEnvironment = KafkaEnvironment(
             withSchemaRegistry = true,
             topicInfos = listOf(
-                    TopicInfo(KafkaConfig.NEXT_SEKVENSNUMMER_TOPIC, partitions = 1),
-                    TopicInfo(KafkaConfig.PGI_HENDELSE_TOPIC)
+                    TopicInfo(NEXT_SEKVENSNUMMER_TOPIC, partitions = 1),
+                    TopicInfo(PGI_HENDELSE_TOPIC)
             )
     )
     private var hendelseTestConsumer: KafkaConsumer<HendelseKey, Hendelse> = hendelseTestConsumer()
 
     init {
         kafkaTestEnvironment.start()
-        hendelseTestConsumer.subscribe(listOf(KafkaConfig.PGI_HENDELSE_TOPIC))
+        hendelseTestConsumer.subscribe(listOf(PGI_HENDELSE_TOPIC))
     }
 
     internal fun tearDown() = kafkaTestEnvironment.tearDown()
 
     internal fun kafkaTestEnvironmentVariables() = mapOf<String, String>(
-            KafkaConfig.BOOTSTRAP_SERVERS_ENV_KEY to kafkaTestEnvironment.brokersURL,
-            KafkaConfig.SCHEMA_REGISTRY_ENV_KEY to kafkaTestEnvironment.schemaRegistry!!.url,
-            KafkaConfig.USERNAME_ENV_KEY to KAFKA_TEST_USERNAME,
-            KafkaConfig.PASSWORD_ENV_KEY to KAFKA_TEST_PASSWORD,
-            KafkaConfig.SECURITY_PROTOCOL_ENV_KEY to SecurityProtocol.PLAINTEXT.name
+            KafkaConfig.BOOTSTRAP_SERVERS to kafkaTestEnvironment.brokersURL,
+            KafkaConfig.SCHEMA_REGISTRY to kafkaTestEnvironment.schemaRegistry!!.url,
     )
 
     private fun hendelseTestConsumer() = KafkaConsumer<HendelseKey, Hendelse>(
@@ -58,7 +53,7 @@ class KafkaTestEnvironment {
 
     //Duration 4 seconds to allow for hendelse to be added to topic
     fun consumeHendelseTopic(): List<ConsumerRecord<HendelseKey, Hendelse>> {
-        return hendelseTestConsumer.poll(Duration.ofSeconds(4)).records(KafkaConfig.PGI_HENDELSE_TOPIC).toList()
+        return hendelseTestConsumer.poll(Duration.ofSeconds(4)).records(PGI_HENDELSE_TOPIC).toList()
     }
 
     fun getFirstRecordOnTopic() = consumeHendelseTopic()[0]
