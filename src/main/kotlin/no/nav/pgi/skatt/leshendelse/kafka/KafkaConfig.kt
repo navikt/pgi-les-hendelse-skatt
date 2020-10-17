@@ -44,7 +44,7 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv(), p
             ACKS_CONFIG to "all",
             RETRIES_CONFIG to MAX_VALUE
     )
-    
+
     private fun hendelseProducerConfig() = mapOf(
             "schema.registry.url" to schemaRegistryUrl,
             KEY_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
