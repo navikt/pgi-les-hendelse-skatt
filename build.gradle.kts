@@ -58,6 +58,8 @@ dependencies {
     implementation("no.nav.pensjonsamhandling:pgi-schema:$pgiChemaVersion")
     implementation("io.confluent:kafka-avro-serializer:$kafkaAvroSerializerVersion")
 
+    implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("net.logstash.logback:logstash-logback-encoder:5.2")
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
