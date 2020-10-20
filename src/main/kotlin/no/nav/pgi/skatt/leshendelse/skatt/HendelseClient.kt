@@ -10,7 +10,7 @@ import java.net.http.HttpResponse.BodyHandlers.ofString
 
 internal const val HENDELSE_HOST_ENV_KEY = "grunnlag-pgi-hendelse-host"
 internal const val HENDELSE_PATH = "/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse"
-internal val logger = LoggerFactory.getLogger(HendelseClient::class.java)
+private val LOGGER = LoggerFactory.getLogger(HendelseClient::class.java)
 
 internal class HendelseClient(env: Map<String, String>) {
     private val host: String = env.getVal(HENDELSE_HOST_ENV_KEY)
@@ -18,10 +18,11 @@ internal class HendelseClient(env: Map<String, String>) {
     private val skattClient = SkattClient(env)
 
     fun getHendelserSkatt(antall: Int, fraSekvensnummer: Long): HendelserDto {
+        LOGGER.info("""Starting to read $antall hendelser from sekvensnummer "$fraSekvensnummer"  """)
         val response = skattClient.send(skattClient.createGetRequest(host + HENDELSE_PATH, createQueryParameters(antall, fraSekvensnummer)), ofString())
         return when (response.statusCode()) {
-            200 -> mapResponse(response.body())
-            else -> throw HendelseClientCallException(response).also { logger.error(it.message) }
+            200 -> mapResponse(response.body()).also { LOGGER.info("Read ${it.hendelser.size} hendelser from skatt successfully.") }
+            else -> throw HendelseClientCallException(response).also { LOGGER.error(it.message) }
         }
     }
 
@@ -29,7 +30,7 @@ internal class HendelseClient(env: Map<String, String>) {
             try {
                 objectMapper.readValue(body)
             } catch (e: Exception) {
-                throw HendelseClientObjectMapperException(e.toString()).also { logger.error(it.message) }
+                throw HendelseClientObjectMapperException(e.toString()).also { LOGGER.error(it.message) }
             }
 
     private fun createQueryParameters(antall: Int, fraSekvensnummer: Long) = mapOf("antall" to antall, "fraSekvensnummer" to fraSekvensnummer)

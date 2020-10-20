@@ -18,7 +18,6 @@ internal class Application {
     private val naisServer = embeddedServer(Netty, createApplicationEnvironment())
 
     init {
-        naisServer.addShutdownHook { /*TODO Se om  det finnes en finere måte å gjøre dette på.*/ }
         naisServer.start()
     }
 

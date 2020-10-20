@@ -5,8 +5,12 @@ import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
 import no.nav.samordning.pgi.schema.Hendelse
 import no.nav.samordning.pgi.schema.HendelseKey
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.slf4j.LoggerFactory
+
+private val LOGGER = LoggerFactory.getLogger(HendelseProducer::class.java)
 
 internal class HendelseProducer(kafkaConfig: KafkaConfig) {
+
     private val producer = kafkaConfig.hendelseProducer()
 
     internal fun writeHendelse(hendelseDto: HendelseDto) {
@@ -16,9 +20,8 @@ internal class HendelseProducer(kafkaConfig: KafkaConfig) {
 
     internal fun writeHendelser(hendelserDto: HendelserDto) {
         hendelserDto.hendelser.forEach { writeHendelse(it) }
+        LOGGER.info("Added ${hendelserDto.hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. ")
     }
-
-    internal fun close() = producer.close()
 }
 
 internal fun HendelseDto.mapToHendelseKey() = HendelseKey(identifikator, gjelderPeriode)

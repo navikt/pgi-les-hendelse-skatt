@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.pensjon.samhandling.env.getVal
+import org.slf4j.LoggerFactory
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
 internal const val FIRST_SEKVENSNUMMER_HOST_ENV_KEY = "grunnlag-pgi-first-sekvensnummer-host-key"
 internal const val FIRST_SEKVENSNUMMER_PATH = "/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse/start"
+private val LOGGER = LoggerFactory.getLogger(FirstSekvensnummerClient::class.java)
 
 internal class FirstSekvensnummerClient(env: Map<String, String> = System.getenv()) {
     private val host = env.getVal(FIRST_SEKVENSNUMMER_HOST_ENV_KEY)
@@ -18,8 +20,8 @@ internal class FirstSekvensnummerClient(env: Map<String, String> = System.getenv
     fun getFirstSekvensnummerFromSkatt(): Long {
         val response = skattClient.send(skattClient.createGetRequest(host + FIRST_SEKVENSNUMMER_PATH), ofString())
         return when (response.statusCode()) {
-            200 -> mapResponse(response.body())
-            else -> throw FirstSekvensnummerClientCallException(response).also { logger.error(it.message) }
+            200 -> mapResponse(response.body()).also{ LOGGER.info("Received $it as first sekvensnummer from skatt")}
+            else -> throw FirstSekvensnummerClientCallException(response).also { LOGGER.error(it.message) }
         }
     }
 

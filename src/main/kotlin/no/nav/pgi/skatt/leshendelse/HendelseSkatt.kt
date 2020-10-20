@@ -1,6 +1,5 @@
 package no.nav.pgi.skatt.leshendelse
 
-import io.ktor.application.*
 import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducer
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
@@ -13,10 +12,10 @@ private const val ANTALL_HENDELSER = 1000
 
 internal fun hendelseSkattLoop(kafkaConfig: KafkaConfig, env: Map<String, String>, loopForever: Boolean) {
     val hendelseSkatt = HendelseSkatt(kafkaConfig, env)
-    val scheduler: SkattScheduler = SkattScheduler(env)
+    val scheduler = SkattScheduler(env)
     do {
         hendelseSkatt.readAndWriteHendelserToTopic()
-        //scheduler.process()
+        scheduler.wait()
     } while (loopForever)
 }
 
