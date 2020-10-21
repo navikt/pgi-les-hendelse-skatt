@@ -25,3 +25,12 @@ spec:
   env:
     - name: APP_TEAM
       value: pensjonsamhandling
+  accessPolicy:
+    inbound:
+      rules:
+        - application: pgi-mock
+          cluster: dev-gcp
+    outbound:
+      rules:
+        - application: pgi-mock
+          cluster: dev-gcp
