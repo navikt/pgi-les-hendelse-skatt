@@ -28,4 +28,4 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: https://pgi-mock.dev.nav.no
+        - host: pgi-mock.dev.nav.no
