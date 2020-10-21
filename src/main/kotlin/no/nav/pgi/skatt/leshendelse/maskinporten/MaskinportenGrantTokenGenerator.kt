@@ -12,11 +12,11 @@ import java.util.*
 internal const val SCOPE_CLAIM = "scope"
 internal const val ONE_SECOND_IN_MILLISECONDS = 1000
 
-internal const val PRIVATE_JWK_ENV_KEY = "jwk-private-key"
-internal const val AUDIENCE_ENV_KEY = "aud_maskinporten"
-internal const val ISSUER_ENV_KEY = "iss_maskinporten"
-internal const val SCOPE_ENV_KEY = "scope_maskinporten"
-internal const val VALID_IN_SECONDS_ENV_KEY = "jwt_expiration_time_seconds_maskinporten"
+internal const val PRIVATE_JWK_ENV_KEY = "JWK_PRIVATE_KEY"
+internal const val AUDIENCE_ENV_KEY = "AUD_MASKINPORTEN"
+internal const val ISSUER_ENV_KEY = "ISS_MASKINPORTEN"
+internal const val SCOPE_ENV_KEY = "SCOPE_MASKINPORTEN"
+internal const val VALID_IN_SECONDS_ENV_KEY = "JWT_EXPIRATION_TIME_SECONDS_MASKINPORTEN"
 
 
 internal class MaskinportenGrantTokenGenerator(env: Map<String, String>) {

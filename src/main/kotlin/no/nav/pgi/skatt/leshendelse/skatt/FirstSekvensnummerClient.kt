@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
-internal const val FIRST_SEKVENSNUMMER_HOST_ENV_KEY = "grunnlag-pgi-first-sekvensnummer-host"
+internal const val FIRST_SEKVENSNUMMER_HOST_ENV_KEY = "GRUNNLAG_PGI_FIRST_SEKVENSNUMMER_HOST"
 internal const val FIRST_SEKVENSNUMMER_PATH = "/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse/start"
 private val LOGGER = LoggerFactory.getLogger(FirstSekvensnummerClient::class.java)
 

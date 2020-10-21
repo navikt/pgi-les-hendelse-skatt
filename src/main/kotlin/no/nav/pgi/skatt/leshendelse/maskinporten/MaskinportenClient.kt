@@ -13,7 +13,7 @@ import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
 internal const val MASKINPORTEN_TOKEN_PATH = "/token"
-internal const val MASKINPORTEN_TOKEN_HOST_ENV_KEY = "maskinporten-host"
+internal const val MASKINPORTEN_TOKEN_HOST_ENV_KEY = "MASKINPORTEN_HOST"
 
 internal const val GRANT_TYPE = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 internal const val CONTENT_TYPE = "application/x-www-form-urlencoded"

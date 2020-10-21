@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
-internal const val HENDELSE_HOST_ENV_KEY = "grunnlag-pgi-hendelse-host"
+internal const val HENDELSE_HOST_ENV_KEY = "GRUNNLAG_PGI_HENDELSE_HOST"
 internal const val HENDELSE_PATH = "/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse"
 private val LOGGER = LoggerFactory.getLogger(HendelseClient::class.java)
 
