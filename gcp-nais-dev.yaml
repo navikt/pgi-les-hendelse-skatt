@@ -27,5 +27,5 @@ spec:
       value: pensjonsamhandling
   accessPolicy:
     outbound:
-      rules:
-        - application: pgi-mock
+      external:
+        - host: https://pgi-mock.dev.nav.no
