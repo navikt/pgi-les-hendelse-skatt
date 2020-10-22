@@ -19,8 +19,12 @@ internal class HendelseProducer(kafkaConfig: KafkaConfig) {
     }
 
     internal fun writeHendelser(hendelserDto: HendelserDto) {
-        hendelserDto.hendelser.forEach { writeHendelse(it) }
-        LOGGER.info("Added ${hendelserDto.hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. ")
+        try {
+            hendelserDto.hendelser.forEach { writeHendelse(it) }
+            LOGGER.info("Added ${hendelserDto.hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. ")
+        }catch (e:Throwable){
+            throw Exception("Skulle fanget exception før den ble logget")
+        }
     }
 }
 
