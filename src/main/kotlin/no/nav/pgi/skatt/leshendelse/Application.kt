@@ -10,7 +10,7 @@ private val LOGGER = LoggerFactory.getLogger(Application::class.java)
 fun main() {
     val application = Application()
     try {
-        application.startHendelseSkattLoop(KafkaConfig(), System.getenv())
+        //application.startHendelseSkattLoop(KafkaConfig(), System.getenv())
     } catch (e: Throwable) {
         LOGGER.info(e.javaClass.name)
         //application.stopServer() TODO vent til kafka-gjengen har fiksa greiene sine
