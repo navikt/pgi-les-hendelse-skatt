@@ -11,13 +11,13 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
-import no.nav.pgi.skatt.leshendelse.maskinporten.CONTENT_TYPE
-import no.nav.pgi.skatt.leshendelse.maskinporten.GRANT_TYPE
 import java.util.*
 
 private const val PORT = 8096
 private const val TOKEN_PATH = "/token"
 internal const val MASKINPORTEN_MOCK_HOST = "http://localhost:$PORT"
+internal const val GRANT_TYPE = "urn:ietf:params:oauth:grant-type:jwt-bearer"
+internal const val CONTENT_TYPE = "application/x-www-form-urlencoded"
 
 internal class MaskinportenMock {
     private var mock = WireMockServer(PORT)
@@ -37,9 +37,6 @@ internal class MaskinportenMock {
 
     internal fun `mock  maskinporten token enpoint`() {
         mock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
-                .withHeader("Content-Type", WireMock.equalTo(CONTENT_TYPE))
-                .withRequestBody(WireMock.matchingJsonPath("$.grant_type", WireMock.matching(GRANT_TYPE)))
-                .withRequestBody(WireMock.matchingJsonPath("$.assertion"))
                 .willReturn(WireMock.ok("""{
                       "access_token" : "${createMaskinportenToken()}",
                       "token_type" : "Bearer",
@@ -51,11 +48,8 @@ internal class MaskinportenMock {
 
     internal fun `mock valid response for only one call`() {
         mock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
-                .withHeader("Content-Type", WireMock.equalTo(CONTENT_TYPE))
                 .inScenario("First time")
                 .whenScenarioStateIs(Scenario.STARTED)
-                .withRequestBody(WireMock.matchingJsonPath("$.grant_type", WireMock.matching(GRANT_TYPE)))
-                .withRequestBody(WireMock.matchingJsonPath("$.assertion"))
                 .willReturn(WireMock.ok("""{
                       "access_token" : "${createMaskinportenToken()}",
                       "token_type" : "Bearer",
@@ -68,17 +62,11 @@ internal class MaskinportenMock {
 
     internal fun `mock invalid JSON response`() {
         mock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
-                .withHeader("Content-Type", WireMock.equalTo(CONTENT_TYPE))
-                .withRequestBody(WireMock.matchingJsonPath("$.grant_type", WireMock.matching(GRANT_TYPE)))
-                .withRequestBody(WireMock.matchingJsonPath("$.assertion"))
                 .willReturn(WireMock.ok("""w""")))
     }
 
     internal fun `mock 500 server error`() {
         mock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
-                .withHeader("Content-Type", WireMock.equalTo(CONTENT_TYPE))
-                .withRequestBody(WireMock.matchingJsonPath("$.grant_type", WireMock.matching(GRANT_TYPE)))
-                .withRequestBody(WireMock.matchingJsonPath("$.assertion"))
                 .willReturn(WireMock.serverError().withBody("test body")))
     }
 

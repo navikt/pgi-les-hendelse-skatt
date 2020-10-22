@@ -5,6 +5,7 @@ val junitJupiterVersion = "5.6.0"
 val ktorVersion = "1.3.2-1.4.0-rc"
 val ktorSupportVersion = "0.0.6"
 val joseJwtVersion = "9.0.1"
+val maskinportenClientVersion = "0.3.4"
 val micrometerVersion = "1.3.5"
 val slf4jVersion = "1.7.30"
 val log4jVersion = "2.13.3"
@@ -41,6 +42,12 @@ repositories {
             password = System.getenv("GITHUB_TOKEN")
         }
     }
+    maven("https://maven.pkg.github.com/navikt/maskinporten-client") {
+        credentials {
+            username = System.getenv("GITHUB_ACTOR")
+            password = System.getenv("GITHUB_TOKEN")
+        }
+    }
 }
 
 dependencies {
@@ -51,6 +58,7 @@ dependencies {
     implementation("no.nav.pensjonsamhandling:pensjon-samhandling-ktor-support:$ktorSupportVersion")
 
     implementation("com.nimbusds:nimbus-jose-jwt:$joseJwtVersion")
+    implementation("no.nav.pensjonsamhandling:maskinporten-client:$maskinportenClientVersion")
     implementation("no.nav.security:token-validation-core:$tokenValidationCoreVersion")
     implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
