@@ -8,7 +8,7 @@ import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 
 
-private const val ANTALL_HENDELSER = 1
+private const val ANTALL_HENDELSER = 1000
 private const val FRA_SEKVENSNUMMER = 1L
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -35,25 +35,22 @@ internal class GrunnlagPgiHendelseDtoClientTest {
 
     @Test
     fun `returns hendelser`() {
-        hendelseMock.`stub for skatt hendelser`(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
+        hendelseMock.`stub hendelse response with masked data from skatt`(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
 
         val hendelser = client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
-        assertEquals(hendelser.size(), 5)
+        assertEquals(100, hendelser.size())
     }
 
     @Test
-    fun `throw exception when nestesekvensnr is missing from response`() {
-        hendelseMock.`stub response without nestesekvensnr`(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
+    fun `neste skevensummer should be USE_PREVIOUS_SEKVENSNUMMER when of hendelser is empty`() {
+        hendelseMock.`stub response with no hendelser`(FRA_SEKVENSNUMMER)
 
-        assertThrows<HendelseClientObjectMapperException> {
-            client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
-        }
+        assertEquals(USE_PREVIOUS_SEKVENSNUMMER,client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER).getNesteSekvensnummer())
     }
 
     @Test
     fun `throw exception when response is not mappable`() {
         hendelseMock.`stub response that wont map`(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
-
         assertThrows<HendelseClientObjectMapperException> {
             client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
         }

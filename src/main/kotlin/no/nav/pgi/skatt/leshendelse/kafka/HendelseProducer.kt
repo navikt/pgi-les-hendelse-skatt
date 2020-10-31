@@ -25,4 +25,4 @@ internal class HendelseProducer(kafkaConfig: KafkaConfig) {
 }
 
 internal fun HendelseDto.mapToHendelseKey() = HendelseKey(identifikator, gjelderPeriode)
-internal fun HendelseDto.mapToHendelse() = Hendelse(sekvensnr, identifikator, gjelderPeriode)
+internal fun HendelseDto.mapToHendelse() = Hendelse(sekvensnummer, identifikator, gjelderPeriode)

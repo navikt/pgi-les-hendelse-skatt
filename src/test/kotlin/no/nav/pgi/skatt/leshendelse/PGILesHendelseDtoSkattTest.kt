@@ -7,7 +7,6 @@ import no.nav.pgi.skatt.leshendelse.skatt.*
 import org.apache.kafka.common.TopicPartition
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
@@ -30,10 +29,8 @@ internal class PGILesHendelseDtoSkattTest {
     @BeforeAll
     internal fun init() {
         sekvensnummerMock.`mock first sekvensnummer endpoint`()
-        hendelseMock.`stub hendelse endepunkt skatt`()
+        hendelseMock.`stub hendelse response with masked data from skatt`(1000, 1)
         maskinportenMock.`mock  maskinporten token enpoint`()
-
-        //application.start()
     }
 
     @AfterAll
@@ -83,7 +80,7 @@ internal class PGILesHendelseDtoSkattTest {
     @Test
     fun `get hendelser from skatt`() {
         val hendelser = grunnlagPgiHendelseClient.getHendelserSkatt(1000, 1L)
-        assertTrue(hendelser.size() == 5)
+        assertEquals(100, hendelser.size())
     }
 
     @Test
@@ -95,7 +92,7 @@ internal class PGILesHendelseDtoSkattTest {
         assertEquals(hendelse.identifikator, record.key().getIdentifikator())
         assertEquals(hendelse.gjelderPeriode, record.key().getGjelderPeriode())
 
-        assertEquals(hendelse.sekvensnr, record.value().getSekvensnummer())
+        assertEquals(hendelse.sekvensnummer, record.value().getSekvensnummer())
         assertEquals(hendelse.identifikator, record.value().getIdentifikator())
         assertEquals(hendelse.gjelderPeriode, record.value().getGjelderPeriode())
     }

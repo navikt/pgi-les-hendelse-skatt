@@ -33,6 +33,24 @@ internal class HendelseMock {
         mock.stop()
     }
 
+    internal fun `stub response with no hendelser`(fraSekvensnummer: Long): HendelserDto {
+        val hendelser: HendelserDto = createHendelser(fraSekvensnummer, 0)
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+                .withQueryParams(
+                        mapOf(
+
+                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString())),
+                                ANTALL_KEY to WireMock.equalTo("1000")
+                        )
+                )
+                .willReturn(
+                        aResponse()
+                                .withBody(ObjectMapper().registerModule(KotlinModule()).writeValueAsString(hendelser))
+                                .withStatus(200)
+                ))
+        return hendelser
+    }
+
     internal fun `stub hendelse endepunkt skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
         val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
@@ -91,45 +109,6 @@ internal class HendelseMock {
         return hendelser
     }
 
-    internal fun `stub hendelse endepunkt skatt`() {
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .willReturn(
-                        aResponse()
-                                .withBodyFile("Hendelser1To100.json")
-                                .withStatus(200)
-                ))
-    }
-
-    internal fun `stub for skatt hendelser`(antall: Int, fraSekvensnummer: Long) {
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(
-                        mapOf(
-                                ANTALL_KEY to WireMock.equalTo((antall.toString())),
-                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString()))
-                        )
-                )
-                .willReturn(
-                        aResponse()
-                                .withBodyFile("Hendelser1To100.json")
-                                .withStatus(200)
-                ))
-    }
-
-    internal fun `stub response without nestesekvensnr`(antall: Int, fraSekvensnummer: Long) {
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(
-                        mapOf(
-                                ANTALL_KEY to WireMock.equalTo((antall.toString())),
-                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString()))
-                        )
-                )
-                .willReturn(
-                        aResponse()
-                                .withBody("{}")
-                                .withStatus(200)
-                ))
-    }
-
     internal fun `stub response that wont map`(antall: Int, fraSekvensnummer: Long) {
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
                 .withQueryParams(
@@ -139,14 +118,29 @@ internal class HendelseMock {
                         )
                 )
                 .willReturn(
-                        WireMock.aResponse()
+                        aResponse()
                                 .withBody("[")
                                 .withStatus(200)
                 ))
     }
 
+    internal fun `stub hendelse response with masked data from skatt`(antall: Int, fraSekvensnummer: Long) {
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+                .withQueryParams(
+                        mapOf(
+                                ANTALL_KEY to WireMock.equalTo((antall.toString())),
+                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString()))
+                        )
+                )
+                .willReturn(
+                        aResponse()
+                                .withBodyFile("Hendelser1To100.json")
+                                .withStatus(200)
+                ))
+    }
+
     private fun createHendelser(startingSekvensnummer: Long, amount: Int): HendelserDto =
-            HendelserDto(startingSekvensnummer + amount, createHendelseList(startingSekvensnummer, amount))
+            HendelserDto(createHendelseList(startingSekvensnummer, amount))
 
     private fun createHendelseList(startingSekvensnummer: Long, amount: Int): List<HendelseDto> =
             (startingSekvensnummer until startingSekvensnummer + amount)

@@ -9,6 +9,7 @@ import no.nav.pgi.skatt.leshendelse.maskinporten.createMaskinportenEnvVariables
 import no.nav.pgi.skatt.leshendelse.mock.*
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
+import no.nav.pgi.skatt.leshendelse.skatt.getNesteSekvensnummer
 import org.apache.kafka.common.TopicPartition
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -63,7 +64,7 @@ internal class HendelseSkattComponentTest {
 
         val hendelserDto = hendelseMock.`stub hendelse endepunkt skatt`(startingSekvensnummer, antallHendelser)
         application.startHendelseSkattLoop(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
-        assertEquals(hendelserDto.nestesekvensnr, sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
+        assertEquals(hendelserDto.getNesteSekvensnummer(), sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
     }
 
     @Test
@@ -76,7 +77,7 @@ internal class HendelseSkattComponentTest {
         val hendelserDto = hendelseMock.`stub second call to hendelse endepunkt skatt`(currentSekvensnummer + antallHendelserFirstCall, antallHendelserSecondCall)
         application.startHendelseSkattLoop(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
 
-        assertEquals(hendelserDto.nestesekvensnr, sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
+        assertEquals(hendelserDto.getNesteSekvensnummer(), sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
         assertEquals(hendelserDto.hendelser[hendelserDto.hendelser.size - 1].mapToHendelse(), kafkaTestEnvironment.getLastRecordOnTopic().value())
     }
 

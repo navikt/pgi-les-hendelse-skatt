@@ -4,9 +4,7 @@ import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducer
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerProducer
-import no.nav.pgi.skatt.leshendelse.skatt.FirstSekvensnummerClient
-import no.nav.pgi.skatt.leshendelse.skatt.HendelseClient
-import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
+import no.nav.pgi.skatt.leshendelse.skatt.*
 
 private const val ANTALL_HENDELSER = 1000
 
@@ -31,8 +29,10 @@ internal class HendelseSkatt(private val kafkaConfig: KafkaConfig, private val e
             hendelserDto = hendelseClient.getHendelserSkatt(ANTALL_HENDELSER, currentSekvensnummer)
                     .apply {
                         hendelseProducer.writeHendelser(this)
-                        currentSekvensnummer = nestesekvensnr
-                        nextSekvensnummerProducer.writeSekvensnummer(nestesekvensnr)
+                        if (getNesteSekvensnummer() != USE_PREVIOUS_SEKVENSNUMMER) {
+                            currentSekvensnummer = getNesteSekvensnummer()
+                            nextSekvensnummerProducer.writeSekvensnummer(getNesteSekvensnummer())
+                        }
                     }
         } while (hendelserDto.size() >= ANTALL_HENDELSER)
     }
