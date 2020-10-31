@@ -1,6 +1,7 @@
 package no.nav.pgi.skatt.leshendelse.skatt
 
-import no.nav.pgi.skatt.leshendelse.maskinporten.Maskinporten
+
+import no.nav.pensjon.samhandling.maskinporten.Maskinporten
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest

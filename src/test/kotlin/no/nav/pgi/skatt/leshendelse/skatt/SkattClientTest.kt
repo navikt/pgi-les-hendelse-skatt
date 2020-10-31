@@ -2,10 +2,13 @@ package no.nav.pgi.skatt.leshendelse.skatt
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
-import no.nav.pgi.skatt.leshendelse.maskinporten.*
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
-import org.junit.jupiter.api.*
+import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock.Companion.MASKINPORTEN_ENV_VARIABLES
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import java.net.http.HttpResponse
 
 
@@ -15,7 +18,7 @@ private const val URL = "http://localhost:$PORT$PATH"
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class SkattClientTest {
-    private val skattClient: SkattClient = SkattClient(createMaskinportenEnvVariables())
+    private val skattClient: SkattClient = SkattClient(MASKINPORTEN_ENV_VARIABLES)
     private val skattMock = WireMockServer(PORT)
     private val maskinportenMock = MaskinportenMock()
 
@@ -46,6 +49,6 @@ internal class SkattClientTest {
                 .willReturn(WireMock.ok()))
         val response = skattClient.send(skattClient.createGetRequest(URL, mapOf(key1 to value1, key2 to value2)), HttpResponse.BodyHandlers.discarding())
 
-        assertEquals(response.statusCode(),200)
+        assertEquals(response.statusCode(), 200)
     }
 }

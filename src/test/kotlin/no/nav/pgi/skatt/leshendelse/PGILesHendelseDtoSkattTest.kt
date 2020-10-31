@@ -1,8 +1,8 @@
 package no.nav.pgi.skatt.leshendelse
 
 import no.nav.pgi.skatt.leshendelse.kafka.*
-import no.nav.pgi.skatt.leshendelse.maskinporten.createMaskinportenEnvVariables
 import no.nav.pgi.skatt.leshendelse.mock.*
+import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock.Companion.MASKINPORTEN_ENV_VARIABLES
 import no.nav.pgi.skatt.leshendelse.skatt.*
 import org.apache.kafka.common.TopicPartition
 import org.junit.jupiter.api.*
@@ -101,7 +101,7 @@ internal class PGILesHendelseDtoSkattTest {
         sekvensnummerList.indices.forEach { i -> sekvensnummerProducer.writeSekvensnummer(sekvensnummerList[i].toLong()) }
     }
 
-    private fun createEnvVariables() = createMaskinportenEnvVariables() + mapOf(
+    private fun createEnvVariables() = MASKINPORTEN_ENV_VARIABLES + mapOf(
             HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
             FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST
     )

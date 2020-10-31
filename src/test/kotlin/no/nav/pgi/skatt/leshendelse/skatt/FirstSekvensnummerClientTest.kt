@@ -1,8 +1,8 @@
 package no.nav.pgi.skatt.leshendelse.skatt
 
-import no.nav.pgi.skatt.leshendelse.maskinporten.createMaskinportenEnvVariables
 import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_HOST
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
+import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock.Companion.MASKINPORTEN_ENV_VARIABLES
 import no.nav.pgi.skatt.leshendelse.mock.SkattFirstSekvensnummerMock
 import org.junit.jupiter.api.*
 
@@ -55,5 +55,5 @@ internal class FirstSekvensnummerClientTest {
         assertThrows<FirstSekvensnummerClientMappingException> { firstSekvensnummerClient.getFirstSekvensnummerFromSkatt() }
     }
 
-    private fun createEnvVariables() = createMaskinportenEnvVariables() + mapOf(FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST)
+    private fun createEnvVariables() = MASKINPORTEN_ENV_VARIABLES + mapOf(FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST)
 }

@@ -1,9 +1,10 @@
 package no.nav.pgi.skatt.leshendelse.skatt
 
-import no.nav.pgi.skatt.leshendelse.maskinporten.createMaskinportenEnvVariables
+
 import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_HOST
 import no.nav.pgi.skatt.leshendelse.mock.HendelseMock
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
+import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock.Companion.MASKINPORTEN_ENV_VARIABLES
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 
@@ -15,7 +16,7 @@ private const val FRA_SEKVENSNUMMER = 1L
 internal class GrunnlagPgiHendelseDtoClientTest {
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
-    private val client = HendelseClient(createMaskinportenEnvVariables() + createEnvVariables())
+    private val client = HendelseClient(MASKINPORTEN_ENV_VARIABLES + createEnvVariables())
 
     @BeforeAll
     internal fun init() {
@@ -23,7 +24,7 @@ internal class GrunnlagPgiHendelseDtoClientTest {
     }
 
     @BeforeEach
-    internal fun beforeEach(){
+    internal fun beforeEach() {
         hendelseMock.reset()
     }
 
@@ -45,7 +46,7 @@ internal class GrunnlagPgiHendelseDtoClientTest {
     fun `neste skevensummer should be USE_PREVIOUS_SEKVENSNUMMER when of hendelser is empty`() {
         hendelseMock.`stub hendelse endpoint that returns no hendelser`(FRA_SEKVENSNUMMER)
 
-        assertEquals(USE_PREVIOUS_SEKVENSNUMMER,client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER).getNesteSekvensnummer())
+        assertEquals(USE_PREVIOUS_SEKVENSNUMMER, client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER).getNesteSekvensnummer())
     }
 
     @Test
