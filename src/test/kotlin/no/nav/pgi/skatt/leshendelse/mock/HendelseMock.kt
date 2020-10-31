@@ -34,10 +34,22 @@ internal class HendelseMock {
         mock.stop()
     }
 
-    internal fun `stub response with no hendelser`(fraSekvensnummer: Long): HendelserDto {
+    internal fun `stub hendelse endpoint skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
+        val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+                .withQueryParams(queryParams(fraSekvensnummer))
+                .willReturn(
+                        aResponse()
+                                .withBody(ObjectMapper().registerModule(KotlinModule()).writeValueAsString(hendelser))
+                                .withStatus(200)
+                ))
+        return hendelser
+    }
+
+    internal fun `stub hendelse endpoint that returns no hendelser`(fraSekvensnummer: Long): HendelserDto {
         val hendelser: HendelserDto = createHendelser(fraSekvensnummer, 0)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(createQueryParamsForValidation(fraSekvensnummer))
+                .withQueryParams(queryParams(fraSekvensnummer))
                 .willReturn(
                         aResponse()
                                 .withBody(ObjectMapper().registerModule(KotlinModule()).writeValueAsString(hendelser))
@@ -46,22 +58,30 @@ internal class HendelseMock {
         return hendelser
     }
 
-    internal fun `stub hendelse endepunkt skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
-        val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
+    internal fun `stub hendelse endpoint response that wont map`(fraSekvensnummer: Long) {
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(createQueryParamsForValidation(fraSekvensnummer))
+                .withQueryParams(queryParams(fraSekvensnummer))
                 .willReturn(
                         aResponse()
-                                .withBody(ObjectMapper().registerModule(KotlinModule()).writeValueAsString(hendelser))
+                                .withBody("[")
                                 .withStatus(200)
                 ))
-        return hendelser
     }
 
-    internal fun `stub first call to hendelse endepunkt skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
+    internal fun `stub hendelse endpoint response with masked data from skatt`(fraSekvensnummer: Long) {
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+                .withQueryParams(queryParams(fraSekvensnummer))
+                .willReturn(
+                        aResponse()
+                                .withBodyFile("Hendelser1To100.json")
+                                .withStatus(200)
+                ))
+    }
+
+    internal fun `stub hendelse endpoint first call`(fraSekvensnummer: Long, antall: Int): HendelserDto {
         val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(createQueryParamsForValidation(fraSekvensnummer))
+                .withQueryParams(queryParams(fraSekvensnummer))
                 .inScenario("Two calls to hendelse")
                 .whenScenarioStateIs(STARTED)
 
@@ -74,10 +94,10 @@ internal class HendelseMock {
         return hendelser
     }
 
-    internal fun `stub second call to hendelse endepunkt skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
+    internal fun `stub hendelse endpoint second call`(fraSekvensnummer: Long, antall: Int): HendelserDto {
         val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(createQueryParamsForValidation(fraSekvensnummer))
+                .withQueryParams(queryParams(fraSekvensnummer))
                 .inScenario("Two calls to hendelse")
                 .whenScenarioStateIs("First call completed")
                 .willReturn(
@@ -88,32 +108,7 @@ internal class HendelseMock {
         return hendelser
     }
 
-    internal fun `stub response that wont map`(antall: Int, fraSekvensnummer: Long) {
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(createQueryParamsForValidation(fraSekvensnummer))
-                .willReturn(
-                        aResponse()
-                                .withBody("[")
-                                .withStatus(200)
-                ))
-    }
-
-    internal fun `stub hendelse response with masked data from skatt`(antall: Int, fraSekvensnummer: Long) {
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(
-                        mapOf(
-                                ANTALL_KEY to WireMock.equalTo((antall.toString())),
-                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString()))
-                        )
-                )
-                .willReturn(
-                        aResponse()
-                                .withBodyFile("Hendelser1To100.json")
-                                .withStatus(200)
-                ))
-    }
-
-    private fun createQueryParamsForValidation(fraSekvensnummer: Long) =
+    private fun queryParams(fraSekvensnummer: Long) =
             mapOf(
                     FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString())),
                     ANTALL_KEY to WireMock.equalTo("$ANTALL_HENDELSER")

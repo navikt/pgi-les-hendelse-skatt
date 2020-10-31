@@ -29,7 +29,7 @@ internal class PGILesHendelseDtoSkattTest {
     @BeforeAll
     internal fun init() {
         sekvensnummerMock.`mock first sekvensnummer endpoint`()
-        hendelseMock.`stub hendelse response with masked data from skatt`(1000, 1)
+        hendelseMock.`stub hendelse endpoint response with masked data from skatt`(1)
         maskinportenMock.`mock  maskinporten token enpoint`()
     }
 

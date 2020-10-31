@@ -1,6 +1,5 @@
 package no.nav.pgi.skatt.leshendelse
 
-import io.ktor.server.netty.*
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import no.nav.pgi.skatt.leshendelse.kafka.NEXT_SEKVENSNUMMER_TOPIC
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
@@ -62,7 +61,7 @@ internal class HendelseSkattComponentTest {
         assertEquals(null, sekvensnummerConsumer.getNextSekvensnummer())
         sekvensnummerMock.`mock first sekvensnummer endpoint`(startingSekvensnummer)
 
-        val hendelserDto = hendelseMock.`stub hendelse endepunkt skatt`(startingSekvensnummer, antallHendelser)
+        val hendelserDto = hendelseMock.`stub hendelse endpoint skatt`(startingSekvensnummer, antallHendelser)
         application.startHendelseSkattLoop(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
         assertEquals(hendelserDto.getNesteSekvensnummer(), sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
     }
@@ -73,8 +72,8 @@ internal class HendelseSkattComponentTest {
         val antallHendelserFirstCall = 1000
         val antallHendelserSecondCall = 100
 
-        hendelseMock.`stub first call to hendelse endepunkt skatt`(currentSekvensnummer, antallHendelserFirstCall)
-        val hendelserDto = hendelseMock.`stub second call to hendelse endepunkt skatt`(currentSekvensnummer + antallHendelserFirstCall, antallHendelserSecondCall)
+        hendelseMock.`stub hendelse endpoint first call`(currentSekvensnummer, antallHendelserFirstCall)
+        val hendelserDto = hendelseMock.`stub hendelse endpoint second call`(currentSekvensnummer + antallHendelserFirstCall, antallHendelserSecondCall)
         application.startHendelseSkattLoop(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
 
         assertEquals(hendelserDto.getNesteSekvensnummer(), sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())

@@ -35,7 +35,7 @@ internal class GrunnlagPgiHendelseDtoClientTest {
 
     @Test
     fun `returns hendelser`() {
-        hendelseMock.`stub hendelse response with masked data from skatt`(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
+        hendelseMock.`stub hendelse endpoint response with masked data from skatt`(FRA_SEKVENSNUMMER)
 
         val hendelser = client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
         assertEquals(100, hendelser.size())
@@ -43,14 +43,14 @@ internal class GrunnlagPgiHendelseDtoClientTest {
 
     @Test
     fun `neste skevensummer should be USE_PREVIOUS_SEKVENSNUMMER when of hendelser is empty`() {
-        hendelseMock.`stub response with no hendelser`(FRA_SEKVENSNUMMER)
+        hendelseMock.`stub hendelse endpoint that returns no hendelser`(FRA_SEKVENSNUMMER)
 
         assertEquals(USE_PREVIOUS_SEKVENSNUMMER,client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER).getNesteSekvensnummer())
     }
 
     @Test
     fun `throw exception when response is not mappable`() {
-        hendelseMock.`stub response that wont map`(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
+        hendelseMock.`stub hendelse endpoint response that wont map`(FRA_SEKVENSNUMMER)
         assertThrows<HendelseClientObjectMapperException> {
             client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
         }
