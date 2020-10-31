@@ -6,7 +6,7 @@ import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerProducer
 import no.nav.pgi.skatt.leshendelse.skatt.*
 
-private const val ANTALL_HENDELSER = 1000
+internal const val ANTALL_HENDELSER = 1000
 
 internal fun hendelseSkattLoop(kafkaConfig: KafkaConfig, env: Map<String, String>, loopForever: Boolean) {
     val hendelseSkatt = HendelseSkatt(kafkaConfig, env)

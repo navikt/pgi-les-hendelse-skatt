@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED
+import no.nav.pgi.skatt.leshendelse.ANTALL_HENDELSER
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
 import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
@@ -36,13 +37,7 @@ internal class HendelseMock {
     internal fun `stub response with no hendelser`(fraSekvensnummer: Long): HendelserDto {
         val hendelser: HendelserDto = createHendelser(fraSekvensnummer, 0)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(
-                        mapOf(
-
-                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString())),
-                                ANTALL_KEY to WireMock.equalTo("1000")
-                        )
-                )
+                .withQueryParams(createQueryParamsForValidation(fraSekvensnummer))
                 .willReturn(
                         aResponse()
                                 .withBody(ObjectMapper().registerModule(KotlinModule()).writeValueAsString(hendelser))
@@ -54,13 +49,7 @@ internal class HendelseMock {
     internal fun `stub hendelse endepunkt skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
         val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(
-                        mapOf(
-
-                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString())),
-                                ANTALL_KEY to WireMock.equalTo("1000")
-                        )
-                )
+                .withQueryParams(createQueryParamsForValidation(fraSekvensnummer))
                 .willReturn(
                         aResponse()
                                 .withBody(ObjectMapper().registerModule(KotlinModule()).writeValueAsString(hendelser))
@@ -72,12 +61,7 @@ internal class HendelseMock {
     internal fun `stub first call to hendelse endepunkt skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
         val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(
-                        mapOf(
-                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString())),
-                                ANTALL_KEY to WireMock.equalTo("1000")
-                        )
-                )
+                .withQueryParams(createQueryParamsForValidation(fraSekvensnummer))
                 .inScenario("Two calls to hendelse")
                 .whenScenarioStateIs(STARTED)
 
@@ -93,12 +77,7 @@ internal class HendelseMock {
     internal fun `stub second call to hendelse endepunkt skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
         val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(
-                        mapOf(
-                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString())),
-                                ANTALL_KEY to WireMock.equalTo("1000")
-                        )
-                )
+                .withQueryParams(createQueryParamsForValidation(fraSekvensnummer))
                 .inScenario("Two calls to hendelse")
                 .whenScenarioStateIs("First call completed")
                 .willReturn(
@@ -111,12 +90,7 @@ internal class HendelseMock {
 
     internal fun `stub response that wont map`(antall: Int, fraSekvensnummer: Long) {
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(
-                        mapOf(
-                                ANTALL_KEY to WireMock.equalTo((antall.toString())),
-                                FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString()))
-                        )
-                )
+                .withQueryParams(createQueryParamsForValidation(fraSekvensnummer))
                 .willReturn(
                         aResponse()
                                 .withBody("[")
@@ -138,6 +112,12 @@ internal class HendelseMock {
                                 .withStatus(200)
                 ))
     }
+
+    private fun createQueryParamsForValidation(fraSekvensnummer: Long) =
+            mapOf(
+                    FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString())),
+                    ANTALL_KEY to WireMock.equalTo("$ANTALL_HENDELSER")
+            )
 
     private fun createHendelser(startingSekvensnummer: Long, amount: Int): HendelserDto =
             HendelserDto(createHendelseList(startingSekvensnummer, amount))
