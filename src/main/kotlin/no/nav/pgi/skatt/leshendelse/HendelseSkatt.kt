@@ -29,9 +29,9 @@ internal class HendelseSkatt(private val kafkaConfig: KafkaConfig, private val e
             hendelserDto = hendelseClient.getHendelserSkatt(ANTALL_HENDELSER, currentSekvensnummer)
                     .apply {
                         hendelseProducer.writeHendelser(this)
-                        if (getNesteSekvensnummer() != USE_PREVIOUS_SEKVENSNUMMER) {
-                            currentSekvensnummer = getNesteSekvensnummer()
-                            nextSekvensnummerProducer.writeSekvensnummer(getNesteSekvensnummer())
+                        if (getNextSekvensnummer() != USE_PREVIOUS_SEKVENSNUMMER) {
+                            currentSekvensnummer = getNextSekvensnummer()
+                            nextSekvensnummerProducer.writeSekvensnummer(getNextSekvensnummer())
                         }
                     }
         } while (hendelserDto.size() >= ANTALL_HENDELSER)

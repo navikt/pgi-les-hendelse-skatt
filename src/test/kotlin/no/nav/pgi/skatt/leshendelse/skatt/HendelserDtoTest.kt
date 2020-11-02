@@ -7,7 +7,7 @@ internal class HendelserDtoTest {
 
     @Test
     fun `HendelserDto returns USE_PREVIOUS_SEKVENSNUMMER when there is no hendelseDto`() {
-        assertEquals(USE_PREVIOUS_SEKVENSNUMMER, HendelserDto().getNesteSekvensnummer())
+        assertEquals(USE_PREVIOUS_SEKVENSNUMMER, HendelserDto().getNextSekvensnummer())
     }
 
     @Test

@@ -1,6 +1,5 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
-import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 
 internal class SekvensnummerProducer(kafkaConfig: KafkaConfig) {

@@ -23,7 +23,7 @@ internal class SkattFirstSekvensnummerMock {
 
     internal fun stop() = mock.stop()
 
-    internal fun `mock first sekvensnummer endpoint`(firstSekvensnummer: Long = SKATT_FIRST_SEKVENSNUMMER) {
+    internal fun `stub first sekvensnummer endpoint`(firstSekvensnummer: Long = SKATT_FIRST_SEKVENSNUMMER) {
         mock.stubFor(get(urlPathEqualTo(FIRST_SEKVENSNUMMER_PATH))
                 .willReturn(okJson("{\"sekvensnummer\": " + firstSekvensnummer + "}")))
     }

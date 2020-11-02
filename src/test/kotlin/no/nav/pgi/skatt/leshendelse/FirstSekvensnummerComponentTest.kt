@@ -1,28 +1,26 @@
 package no.nav.pgi.skatt.leshendelse
 
-import no.nav.pgi.skatt.leshendelse.kafka.*
+import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
+import no.nav.pgi.skatt.leshendelse.kafka.NEXT_SEKVENSNUMMER_TOPIC
+import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
 import no.nav.pgi.skatt.leshendelse.mock.*
-import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock.Companion.MASKINPORTEN_ENV_VARIABLES
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
 import org.apache.kafka.common.TopicPartition
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-internal class HendelseSkattComponentTest {
+class FirstSekvensnummerComponentTest {
     private val kafkaTestEnvironment = KafkaTestEnvironment()
     private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy())
     private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0))
-    private val sekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
 
+    private val sekvensnummerMock = SkattFirstSekvensnummerMock()
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
 
     private val application = Application()
-
 
     @BeforeAll
     internal fun init() {
@@ -35,25 +33,23 @@ internal class HendelseSkattComponentTest {
         kafkaTestEnvironment.tearDown()
         hendelseMock.stop()
         maskinportenMock.stop()
+        sekvensnummerMock.stop()
     }
 
     @Test
-    fun `Should continue to read hendelser when amount of hendelser is over threshold`() {
-        val currentSekvensnummer = 10L
-        sekvensnummerProducer.writeSekvensnummer(currentSekvensnummer)
+    @Order(1)
+    fun `Should get sekvensnummer from FirstSekvensnummerClient when sekvensnummer topic is empty`() {
+        val antallHendelser = 400
+        val startingSekvensnummer = 1L
 
-        val antallHendelserFirstCall = 1000
-        val antallHendelserSecondCall = 60
+        sekvensnummerMock.`stub first sekvensnummer endpoint`(startingSekvensnummer)
 
-        hendelseMock.`stub hendelse endpoint first call`(currentSekvensnummer, antallHendelserFirstCall)
-        val hendelserDto = hendelseMock.`stub hendelse endpoint second call`(currentSekvensnummer + antallHendelserFirstCall, antallHendelserSecondCall)
+        val hendelserDto = hendelseMock.`stub hendelse endpoint skatt`(startingSekvensnummer, antallHendelser)
         application.startHendelseSkattLoop(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
-
-        assertEquals(hendelserDto.getNextSekvensnummer(), sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
-        assertEquals(hendelserDto.hendelser[hendelserDto.hendelser.size - 1].mapToHendelse(), kafkaTestEnvironment.getLastRecordOnTopic().value())
+        Assertions.assertEquals(hendelserDto.getNextSekvensnummer(), sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
     }
 
-    private fun createEnvVariables() = MASKINPORTEN_ENV_VARIABLES +
+    private fun createEnvVariables() = MaskinportenMock.MASKINPORTEN_ENV_VARIABLES +
             mapOf(
                     HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
                     FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,

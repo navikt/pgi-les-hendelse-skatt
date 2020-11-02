@@ -21,9 +21,10 @@ class KafkaTestEnvironment {
             withSchemaRegistry = true,
             topicInfos = listOf(
                     TopicInfo(NEXT_SEKVENSNUMMER_TOPIC, partitions = 1),
-                    TopicInfo(PGI_HENDELSE_TOPIC)
+                    TopicInfo(PGI_HENDELSE_TOPIC, partitions = 1)
             )
     )
+
     private var hendelseTestConsumer: KafkaConsumer<HendelseKey, Hendelse> = hendelseTestConsumer()
 
     init {
@@ -52,9 +53,7 @@ class KafkaTestEnvironment {
     )
 
     //Duration 4 seconds to allow for hendelse to be added to topic
-    fun consumeHendelseTopic(): List<ConsumerRecord<HendelseKey, Hendelse>> {
-        return hendelseTestConsumer.poll(Duration.ofSeconds(4)).records(PGI_HENDELSE_TOPIC).toList()
-    }
+    fun consumeHendelseTopic(): List<ConsumerRecord<HendelseKey, Hendelse>> = hendelseTestConsumer.poll(Duration.ofSeconds(4)).records(PGI_HENDELSE_TOPIC).toList()
 
     fun getFirstRecordOnTopic() = consumeHendelseTopic()[0]
 

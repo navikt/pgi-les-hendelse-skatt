@@ -33,7 +33,7 @@ internal class FirstSekvensnummerClientTest {
 
     @Test
     fun `get first sekvensnummer skatt`() {
-        firstSekvensnummerMock.`mock first sekvensnummer endpoint`()
+        firstSekvensnummerMock.`stub first sekvensnummer endpoint`()
         Assertions.assertEquals(1L, firstSekvensnummerClient.getFirstSekvensnummerFromSkatt())
     }
 
