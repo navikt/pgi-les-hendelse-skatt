@@ -9,7 +9,7 @@ import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
 internal const val FIRST_SEKVENSNUMMER_HOST_ENV_KEY = "GRUNNLAG_PGI_FIRST_SEKVENSNUMMER_HOST"
-internal const val FIRST_SEKVENSNUMMER_PATH = "/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse/start"
+internal const val FIRST_SEKVENSNUMMER_PATH = "/api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelse/start"
 private val LOGGER = LoggerFactory.getLogger(FirstSekvensnummerClient::class.java)
 
 internal class FirstSekvensnummerClient(env: Map<String, String> = System.getenv()) {
