@@ -1,5 +1,6 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.pensjon.samhandling.env.getVal
 import no.nav.samordning.pgi.schema.Hendelse
@@ -18,8 +19,10 @@ const val NEXT_SEKVENSNUMMER_TOPIC = "pensjonsamhandling.privat-pgi-nextsekvensn
 const val PGI_HENDELSE_TOPIC = "pensjonsamhandling.privat-pgi-hendelse"
 
 internal class KafkaConfig(environment: Map<String, String> = System.getenv(), private val securityStrategy: SecurityStrategy = SslStrategy()) {
-    private val schemaRegistryUrl = environment.getVal(SCHEMA_REGISTRY)
     private val bootstrapServers = environment.getVal(BOOTSTRAP_SERVERS)
+    private val schemaRegistryUrl = environment.getVal(SCHEMA_REGISTRY)
+    private val schemaRegUsername = environment.getVal(SCHEMA_REGISTRY_USERNAME)
+    private val schemaRegPassword = environment.getVal(SCHEMA_REGISTRY_PASSWORD)
 
     internal fun nextSekvensnummerProducer() = KafkaProducer<String, String>(
             commonConfig() + sekvensnummerProducerConfig())
@@ -28,7 +31,8 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv(), p
             commonConfig() + sekvensnummerConsumerConfig())
 
     internal fun hendelseProducer() = KafkaProducer<HendelseKey, Hendelse>(
-            commonConfig() + hendelseProducerConfig())
+            commonConfig() + schemaRegistryConfig() + hendelseProducerConfig()
+    )
 
     private fun sekvensnummerConsumerConfig() = mapOf(
             KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
@@ -46,7 +50,6 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv(), p
     )
 
     private fun hendelseProducerConfig() = mapOf(
-            "schema.registry.url" to schemaRegistryUrl,
             KEY_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
             VALUE_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
             ACKS_CONFIG to "all",
@@ -55,6 +58,12 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv(), p
 
     private fun commonConfig() = mapOf(BOOTSTRAP_SERVERS_CONFIG to bootstrapServers) + securityStrategy.securityConfig()
 
+    private fun schemaRegistryConfig() = mapOf(
+            AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
+            AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG to "$schemaRegUsername:$schemaRegPassword",
+            AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to schemaRegistryUrl
+    )
+
     internal interface SecurityStrategy {
         fun securityConfig(): Map<String, String>
     }
@@ -62,5 +71,7 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv(), p
     internal companion object EnvironmentKeys {
         const val BOOTSTRAP_SERVERS = "KAFKA_BROKERS"
         const val SCHEMA_REGISTRY = "KAFKA_SCHEMA_REGISTRY"
+        const val SCHEMA_REGISTRY_USERNAME = "KAFKA_SCHEMA_REGISTRY_USER"
+        const val SCHEMA_REGISTRY_PASSWORD = "KAFKA_SCHEMA_REGISTRY_PASSWORD"
     }
 }

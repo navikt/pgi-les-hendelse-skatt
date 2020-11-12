@@ -37,6 +37,8 @@ class KafkaTestEnvironment {
     internal fun kafkaTestEnvironmentVariables() = mapOf<String, String>(
             KafkaConfig.BOOTSTRAP_SERVERS to kafkaTestEnvironment.brokersURL,
             KafkaConfig.SCHEMA_REGISTRY to kafkaTestEnvironment.schemaRegistry!!.url,
+            KafkaConfig.SCHEMA_REGISTRY_USERNAME to "mrOpensource",
+            KafkaConfig.SCHEMA_REGISTRY_PASSWORD to "opensourcedPassword"
     )
 
     private fun hendelseTestConsumer() = KafkaConsumer<HendelseKey, Hendelse>(
