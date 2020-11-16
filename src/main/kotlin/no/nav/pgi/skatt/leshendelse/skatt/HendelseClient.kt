@@ -9,7 +9,7 @@ import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
 
 internal const val HENDELSE_HOST_ENV_KEY = "GRUNNLAG_PGI_HENDELSE_HOST"
-internal const val HENDELSE_PATH = "/api/skatteoppgjoer/ekstern/grunnlag-pgi/hendelse"
+internal const val HENDELSE_PATH = "/api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelse"
 private val LOGGER = LoggerFactory.getLogger(HendelseClient::class.java)
 
 internal class HendelseClient(env: Map<String, String>) {
