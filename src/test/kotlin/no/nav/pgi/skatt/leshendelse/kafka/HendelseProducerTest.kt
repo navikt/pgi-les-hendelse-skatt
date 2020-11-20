@@ -58,6 +58,4 @@ internal class HendelseProducerTest {
         assertEquals(hendelse3.identifikator, record[2].value().getIdentifikator())
         assertEquals(hendelse3.gjelderPeriode, record[2].value().getGjelderPeriode())
     }
-
-
 }

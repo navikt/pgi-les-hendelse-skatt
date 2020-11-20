@@ -22,7 +22,7 @@ class FirstSekvensnummerComponentTest {
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
 
-    private val application = Application()
+    private val application = Application(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
 
     @BeforeAll
     internal fun init() {
@@ -47,7 +47,7 @@ class FirstSekvensnummerComponentTest {
         sekvensnummerMock.`stub first sekvensnummer endpoint`(startingSekvensnummer)
 
         val hendelserDto = hendelseMock.`stub hendelse endpoint skatt`(startingSekvensnummer, antallHendelser)
-        application.startHendelseSkattLoop(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
+        application.startHendelseSkattLoop()
         Assertions.assertEquals(hendelserDto.getNextSekvensnummer(), sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
     }
 

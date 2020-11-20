@@ -23,7 +23,7 @@ internal class HendelseSkattComponentTest {
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
 
-    private val application = Application()
+    private val application = Application(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
 
 
     @BeforeAll
@@ -49,7 +49,7 @@ internal class HendelseSkattComponentTest {
 
         hendelseMock.`stub hendelse endpoint first call`(currentSekvensnummer, antallHendelserFirstCall)
         val hendelserDto = hendelseMock.`stub hendelse endpoint second call`(currentSekvensnummer + antallHendelserFirstCall, antallHendelserSecondCall)
-        application.startHendelseSkattLoop(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
+        application.startHendelseSkattLoop()
 
         assertEquals(hendelserDto.getNextSekvensnummer(), sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
         assertEquals(hendelserDto.hendelser[hendelserDto.hendelser.size - 1].mapToHendelse(), kafkaTestEnvironment.getLastRecordOnTopic().value())

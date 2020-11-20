@@ -8,13 +8,24 @@ import no.nav.pgi.skatt.leshendelse.skatt.*
 
 internal const val ANTALL_HENDELSER = 1000
 
-internal fun hendelseSkattLoop(kafkaConfig: KafkaConfig, env: Map<String, String>, loopForever: Boolean) {
-    val hendelseSkatt = HendelseSkatt(kafkaConfig, env)
-    val scheduler = SkattScheduler(env)
-    do {
-        hendelseSkatt.readAndWriteHendelserToTopic()
-        scheduler.wait()
-    } while (loopForever)
+internal class HendelseSkattLoop(kafkaConfig: KafkaConfig, env: Map<String, String>, val loopForever: Boolean) {
+    private val hendelseSkatt = HendelseSkatt(kafkaConfig, env)
+    private val scheduler = SkattScheduler(env)
+    private var stopLoop = false
+
+    internal fun start() {
+        do {
+            hendelseSkatt.readAndWriteHendelserToTopic()
+            scheduler.wait()
+        } while (continueToLoop())
+        hendelseSkatt.close()
+    }
+
+    private fun continueToLoop() = loopForever && !stopLoop
+
+    internal fun stop() {
+        stopLoop = true
+    }
 }
 
 internal class HendelseSkatt(private val kafkaConfig: KafkaConfig, private val env: Map<String, String>) {
@@ -40,5 +51,10 @@ internal class HendelseSkatt(private val kafkaConfig: KafkaConfig, private val e
     private fun getInitialSekvensnummer(): Long =
             SekvensnummerConsumer(kafkaConfig).getNextSekvensnummer()?.toLong()
                     ?: FirstSekvensnummerClient(env).getFirstSekvensnummerFromSkatt()
+
+    fun close() {
+        hendelseProducer.close()
+        nextSekvensnummerProducer.close()
+    }
 
 }
