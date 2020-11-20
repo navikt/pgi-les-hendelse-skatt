@@ -10,4 +10,6 @@ internal class SekvensnummerProducer(kafkaConfig: KafkaConfig) {
         val record = ProducerRecord(NEXT_SEKVENSNUMMER_TOPIC, "sekvensnummer", sekvensnummer.toString())
         sekvensnummerProducer.send(record).get()
     }
+
+    internal fun close() = sekvensnummerProducer.close()
 }

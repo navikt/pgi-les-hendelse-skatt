@@ -18,6 +18,7 @@ internal class HendelseProducerTest {
     @AfterAll
     internal fun teardown() {
         kafkaTestEnvironment.tearDown()
+        hendelseProducer.close()
     }
 
     @Test

@@ -22,6 +22,8 @@ internal class HendelseProducer(kafkaConfig: KafkaConfig) {
         hendelserDto.hendelser.forEach { writeHendelse(it) }
         LOGGER.info("Added ${hendelserDto.hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. ")
     }
+
+    internal fun close() = producer.close()
 }
 
 internal fun HendelseDto.mapToHendelseKey() = HendelseKey(identifikator, gjelderPeriode)

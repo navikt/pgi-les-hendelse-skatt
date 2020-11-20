@@ -15,5 +15,4 @@ internal class HendelserDtoTest {
         val hendelseList: List<HendelseDto> = listOf(HendelseDto("12345678901", "2020", 3))
         assertEquals(hendelseList.size, HendelserDto(hendelseList).size())
     }
-
 }

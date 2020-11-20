@@ -17,6 +17,8 @@ internal class SekvensnummerProducerConsumerTest {
     @AfterAll
     internal fun teardown() {
         kafkaTestEnvironment.tearDown()
+        sekvensnummerProducer.close()
+        sekvensnummerConsumer.close()
     }
 
     @Order(1)
