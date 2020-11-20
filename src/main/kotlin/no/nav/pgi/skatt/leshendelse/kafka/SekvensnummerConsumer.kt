@@ -4,8 +4,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.TopicPartition
 import java.time.Duration.ofSeconds
 
-private const val POLLING_DURATION_SECONDS = 4L
-private val defaultTopicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
 
 internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topicPartition: TopicPartition = defaultTopicPartition) {
     private val consumer = kafkaConfig.nextSekvensnummerConsumer()
@@ -38,6 +36,12 @@ internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topic
     private fun assignConsumerToPartition() = consumer.assign(listOf(topicPartition))
 
     internal fun close() = consumer.close()
+
+    companion object {
+        internal const val INVALID_OFFSET = -1L
+        private const val POLLING_DURATION_SECONDS = 4L
+        private val defaultTopicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
+    }
 }
 
 

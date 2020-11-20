@@ -1,5 +1,7 @@
 package no.nav.pgi.skatt.leshendelse
 
+import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
+import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import no.nav.pgi.skatt.leshendelse.kafka.*
 import no.nav.pgi.skatt.leshendelse.mock.*
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock.Companion.MASKINPORTEN_ENV_VARIABLES

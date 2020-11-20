@@ -1,5 +1,7 @@
 package no.nav.pgi.skatt.leshendelse
 
+import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
+import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import no.nav.pgi.skatt.leshendelse.kafka.NEXT_SEKVENSNUMMER_TOPIC
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer

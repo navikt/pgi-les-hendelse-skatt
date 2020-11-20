@@ -1,4 +1,4 @@
-package no.nav.pgi.skatt.leshendelse
+package no.nav.pgi.skatt.leshendelse.common
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG

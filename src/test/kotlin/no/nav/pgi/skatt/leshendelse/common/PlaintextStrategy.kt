@@ -1,4 +1,4 @@
-package no.nav.pgi.skatt.leshendelse
+package no.nav.pgi.skatt.leshendelse.common
 
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import org.apache.kafka.clients.CommonClientConfigs

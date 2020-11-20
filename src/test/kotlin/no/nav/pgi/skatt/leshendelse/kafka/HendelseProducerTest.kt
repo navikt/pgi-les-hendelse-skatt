@@ -1,7 +1,7 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
-import no.nav.pgi.skatt.leshendelse.KafkaTestEnvironment
-import no.nav.pgi.skatt.leshendelse.PlaintextStrategy
+import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
+import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
 import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
 import org.junit.jupiter.api.AfterAll

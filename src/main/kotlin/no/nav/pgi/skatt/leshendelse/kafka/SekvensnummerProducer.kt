@@ -11,5 +11,3 @@ internal class SekvensnummerProducer(kafkaConfig: KafkaConfig) {
         sekvensnummerProducer.send(record).get()
     }
 }
-
-//TODO skal vi endre sekvensnummer til Long
