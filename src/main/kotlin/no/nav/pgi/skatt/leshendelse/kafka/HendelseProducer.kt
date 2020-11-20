@@ -13,7 +13,7 @@ internal class HendelseProducer(kafkaConfig: KafkaConfig) {
 
     private val producer = kafkaConfig.hendelseProducer()
 
-    internal fun writeHendelse(hendelseDto: HendelseDto) {
+    private fun writeHendelse(hendelseDto: HendelseDto) {
         val record = ProducerRecord(PGI_HENDELSE_TOPIC, hendelseDto.mapToHendelseKey(), hendelseDto.mapToHendelse())
         producer.send(record).get()
     }

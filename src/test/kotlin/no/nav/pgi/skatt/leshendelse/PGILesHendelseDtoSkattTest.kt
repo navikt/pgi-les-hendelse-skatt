@@ -19,7 +19,6 @@ internal class PGILesHendelseDtoSkattTest {
     private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy())
     private val sekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
     private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0))
-    private val hendelseProducer = HendelseProducer(kafkaConfig)
     private val application = Application()
 
     private val sekvensnummerMock = SkattFirstSekvensnummerMock()
@@ -83,19 +82,7 @@ internal class PGILesHendelseDtoSkattTest {
         assertEquals(100, hendelser.size())
     }
 
-    @Test
-    fun `write pgi hendelse to topic`() {
-        val hendelse = HendelseDto("123456", "12345", 1L)
-        hendelseProducer.writeHendelse(hendelse)
-        val record = kafkaTestEnvironment.getFirstRecordOnTopic()
 
-        assertEquals(hendelse.identifikator, record.key().getIdentifikator())
-        assertEquals(hendelse.gjelderPeriode, record.key().getGjelderPeriode())
-
-        assertEquals(hendelse.sekvensnummer, record.value().getSekvensnummer())
-        assertEquals(hendelse.identifikator, record.value().getIdentifikator())
-        assertEquals(hendelse.gjelderPeriode, record.value().getGjelderPeriode())
-    }
 
     private fun addListOfSekvensnummerToTopic(sekvensnummerList: List<String>) {
         sekvensnummerList.indices.forEach { i -> sekvensnummerProducer.writeSekvensnummer(sekvensnummerList[i].toLong()) }

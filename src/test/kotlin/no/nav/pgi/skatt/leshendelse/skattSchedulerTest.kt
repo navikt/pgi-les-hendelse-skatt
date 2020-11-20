@@ -69,10 +69,7 @@ internal class SkattSchedulerTest {
         val scheduler = SkattScheduler(mapOf(HOUR_OF_DAY_TO_START_POLLING_SKATT_ENV_KEY to minusOneHour.toString()))
         assertTrue(scheduler.shouldWait(Calendar.getInstance()))
     }
-
-
 }
-
 
 private fun now() = Calendar.getInstance()
 private infix fun Calendar.secondsAfter(other: Calendar): Long = (other.timeInMillis - this.timeInMillis) / 1000

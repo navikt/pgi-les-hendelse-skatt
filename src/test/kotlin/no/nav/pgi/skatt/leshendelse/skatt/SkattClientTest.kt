@@ -2,13 +2,12 @@ package no.nav.pgi.skatt.leshendelse.skatt
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
+import com.nimbusds.jwt.SignedJWT
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock.Companion.MASKINPORTEN_ENV_VARIABLES
-import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.Assertions.assertTrue
 import java.net.http.HttpResponse
 
 
@@ -35,6 +34,14 @@ internal class SkattClientTest {
     }
 
     @Test
+    fun `httpRequest should have bearer token in Authorization header`() {
+        val httpRequest = skattClient.createGetRequest(URL, mapOf("key" to "value"))
+        val authorizationHeader = httpRequest.headers().firstValue("Authorization").get()
+        assertTrue(authorizationHeader containsRegex """Bearer\s.*""")
+        assertDoesNotThrow { parseJwt(authorizationHeader) }
+    }
+
+    @Test
     fun `createGetRequest should add query parameters`() {
         val key1 = "key1"
         val value1 = "value1"
@@ -51,4 +58,7 @@ internal class SkattClientTest {
 
         assertEquals(response.statusCode(), 200)
     }
+
+    private fun parseJwt(bearerToken: String) = SignedJWT.parse(bearerToken.split("""Bearer """)[1])
+    private infix fun String.containsRegex(regex: String): Boolean = regex.toRegex().matches(this)
 }
