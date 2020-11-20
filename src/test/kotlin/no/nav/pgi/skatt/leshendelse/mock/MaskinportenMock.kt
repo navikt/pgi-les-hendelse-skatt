@@ -29,7 +29,7 @@ internal class MaskinportenMock {
         mock.stop()
     }
 
-    internal fun `mock  maskinporten token enpoint`() {
+    internal fun `mock maskinporten token enpoint`() {
         mock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
                 .willReturn(WireMock.ok("""{
                       "access_token" : "${createMaskinportenToken()}",

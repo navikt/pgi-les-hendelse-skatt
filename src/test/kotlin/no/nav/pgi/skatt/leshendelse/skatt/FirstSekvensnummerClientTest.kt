@@ -12,12 +12,11 @@ import org.junit.jupiter.api.*
 internal class FirstSekvensnummerClientTest {
     private val firstSekvensnummerMock = SkattFirstSekvensnummerMock()
     private val maskinportenMock = MaskinportenMock()
-
     private val firstSekvensnummerClient = FirstSekvensnummerClient(createEnvVariables())
 
     @BeforeAll
     internal fun init() {
-        maskinportenMock.`mock  maskinporten token enpoint`()
+        maskinportenMock.`mock maskinporten token enpoint`()
     }
 
     @BeforeEach
@@ -34,25 +33,25 @@ internal class FirstSekvensnummerClientTest {
     @Test
     fun `get first sekvensnummer skatt`() {
         firstSekvensnummerMock.`stub first sekvensnummer endpoint`()
-        Assertions.assertEquals(1L, firstSekvensnummerClient.getFirstSekvensnummerFromSkatt())
+        Assertions.assertEquals(1L, firstSekvensnummerClient.getFirstSekvensnummer())
     }
 
     @Test
     fun `Throws FirstSekvensnummerClientCallException when other status than 200`() {
         firstSekvensnummerMock.`mock 404 response`()
-        assertThrows<FirstSekvensnummerClientCallException> { firstSekvensnummerClient.getFirstSekvensnummerFromSkatt() }
+        assertThrows<FirstSekvensnummerClientCallException> { firstSekvensnummerClient.getFirstSekvensnummer() }
     }
 
     @Test
     fun `Throws FirstSekvensnummerClientMappingException mapping fails`() {
         firstSekvensnummerMock.`mock faulty json response`()
-        assertThrows<FirstSekvensnummerClientMappingException> { firstSekvensnummerClient.getFirstSekvensnummerFromSkatt() }
+        assertThrows<FirstSekvensnummerClientMappingException> { firstSekvensnummerClient.getFirstSekvensnummer() }
     }
 
     @Test
     fun `Throws FirstSekvensnummerClientMappingException first sekvensnummer is missing`() {
         firstSekvensnummerMock.`mock response without first sekvensnummer`()
-        assertThrows<FirstSekvensnummerClientMappingException> { firstSekvensnummerClient.getFirstSekvensnummerFromSkatt() }
+        assertThrows<FirstSekvensnummerClientMappingException> { firstSekvensnummerClient.getFirstSekvensnummer() }
     }
 
     private fun createEnvVariables() = MASKINPORTEN_ENV_VARIABLES + mapOf(FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST)

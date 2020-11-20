@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-internal class HendelseSkattComponentTest {
+internal class ReadAndWriteHendelserToTopicComponentTest {
     private val kafkaTestEnvironment = KafkaTestEnvironment()
     private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy())
     private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0))
@@ -28,7 +28,7 @@ internal class HendelseSkattComponentTest {
 
     @BeforeAll
     internal fun init() {
-        maskinportenMock.`mock  maskinporten token enpoint`()
+        maskinportenMock.`mock maskinporten token enpoint`()
     }
 
     @AfterAll

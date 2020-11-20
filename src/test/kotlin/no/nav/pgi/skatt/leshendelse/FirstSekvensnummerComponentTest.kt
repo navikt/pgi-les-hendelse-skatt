@@ -26,7 +26,7 @@ class FirstSekvensnummerComponentTest {
 
     @BeforeAll
     internal fun init() {
-        maskinportenMock.`mock  maskinporten token enpoint`()
+        maskinportenMock.`mock maskinporten token enpoint`()
     }
 
     @AfterAll
