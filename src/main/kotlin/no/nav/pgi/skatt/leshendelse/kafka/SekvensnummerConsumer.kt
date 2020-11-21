@@ -13,21 +13,17 @@ internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topic
     }
 
     internal fun getNextSekvensnummer(): String? {
-        pointToLastSekvensnummer()
-        val sekvensnummerRecords = pollRecords()
-        return lastSekvensnummerFrom(sekvensnummerRecords)
+        setConsumerPollOffset(lastSekvensnummerOffset())
+        return pollRecords().lastValue()
     }
 
-    private fun pointToLastSekvensnummer() = consumer.seek(topicPartition, getOffsetOfLastRecord())
-
-    private fun getOffsetOfLastRecord(): Long = max(getEndOffset() -1 , 0)
+    private fun lastSekvensnummerOffset(): Long = max(getEndOffset() - 1, 0)
 
     private fun getEndOffset(): Long = consumer.endOffsets(mutableSetOf(topicPartition))[topicPartition]!!
 
-    private fun pollRecords() = consumer.poll(ofSeconds(POLLING_DURATION_SECONDS)).records(topicPartition).toList()
+    private fun setConsumerPollOffset(offset: Long) = consumer.seek(topicPartition, offset)
 
-    private fun lastSekvensnummerFrom(sekvensnummerRecords: List<ConsumerRecord<String, String>>) =
-            if (sekvensnummerRecords.isEmpty()) null else sekvensnummerRecords.last().value()
+    private fun pollRecords() = consumer.poll(ofSeconds(POLLING_DURATION_SECONDS)).records(topicPartition).toList()
 
     internal fun close() = consumer.close()
 
@@ -37,3 +33,4 @@ internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topic
     }
 }
 
+private fun List<ConsumerRecord<String, String>>.lastValue() = if (isEmpty()) null else last().value()
