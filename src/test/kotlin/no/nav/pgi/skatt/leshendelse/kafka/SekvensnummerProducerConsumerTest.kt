@@ -33,6 +33,7 @@ internal class SekvensnummerProducerConsumerTest {
         addListOfSekvensnummerToTopic(listOf("1", "2", "3", "4", lastSekvensnummer))
 
         assertEquals(lastSekvensnummer, sekvensnummerConsumer.getNextSekvensnummer())
+        assertEquals(lastSekvensnummer, sekvensnummerConsumer.getNextSekvensnummer())
     }
 
     @Test

@@ -3,13 +3,13 @@ package no.nav.pgi.skatt.leshendelse.kafka
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.TopicPartition
 import java.time.Duration.ofSeconds
-
+import kotlin.math.max
 
 internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topicPartition: TopicPartition = defaultTopicPartition) {
     private val consumer = kafkaConfig.nextSekvensnummerConsumer()
 
     init {
-        assignConsumerToPartition()
+        consumer.assign(listOf(topicPartition))
     }
 
     internal fun getNextSekvensnummer(): String? {
@@ -18,16 +18,11 @@ internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topic
         return lastSekvensnummerFrom(sekvensnummerRecords)
     }
 
-    private fun assignConsumerToPartition() = consumer.assign(listOf(topicPartition))
-
     private fun pointToLastSekvensnummer() = consumer.seek(topicPartition, getOffsetOfLastRecord())
 
-    private fun getOffsetOfLastRecord(): Long {
-        val endOffset = endOffset()
-        return if (endOffset > 0) endOffset - 1L else endOffset
-    }
+    private fun getOffsetOfLastRecord(): Long = max(getEndOffset() -1 , 0)
 
-    private fun endOffset(): Long = consumer.endOffsets(mutableSetOf(topicPartition)).getLastRecordValue()
+    private fun getEndOffset(): Long = consumer.endOffsets(mutableSetOf(topicPartition))[topicPartition]!!
 
     private fun pollRecords() = consumer.poll(ofSeconds(POLLING_DURATION_SECONDS)).records(topicPartition).toList()
 
@@ -41,4 +36,4 @@ internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topic
         private val defaultTopicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
     }
 }
-fun Map<TopicPartition, Long>.getLastRecordValue(): Long = entries.iterator().next().value
+
