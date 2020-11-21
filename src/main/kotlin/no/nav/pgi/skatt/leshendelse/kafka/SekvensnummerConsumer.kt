@@ -18,11 +18,9 @@ internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topic
         return lastSekvensnummerFrom(sekvensnummerRecords)
     }
 
+    private fun assignConsumerToPartition() = consumer.assign(listOf(topicPartition))
 
     private fun pointToLastSekvensnummer() = consumer.seek(topicPartition, getOffsetOfLastRecord())
-
-    private fun lastSekvensnummerFrom(sekvensnummerRecords: List<ConsumerRecord<String, String>>) =
-            if (sekvensnummerRecords.isEmpty()) null else sekvensnummerRecords.last().value()
 
     private fun getOffsetOfLastRecord(): Long {
         val endOffset = endOffset()
@@ -33,7 +31,8 @@ internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topic
 
     private fun pollRecords() = consumer.poll(ofSeconds(POLLING_DURATION_SECONDS)).records(topicPartition).toList()
 
-    private fun assignConsumerToPartition() = consumer.assign(listOf(topicPartition))
+    private fun lastSekvensnummerFrom(sekvensnummerRecords: List<ConsumerRecord<String, String>>) =
+            if (sekvensnummerRecords.isEmpty()) null else sekvensnummerRecords.last().value()
 
     internal fun close() = consumer.close()
 
@@ -42,7 +41,4 @@ internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topic
         private val defaultTopicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
     }
 }
-
-
 fun Map<TopicPartition, Long>.getLastRecordValue(): Long = entries.iterator().next().value
-
