@@ -45,3 +45,5 @@ internal class SekvensnummerProducerConsumerTest {
         sekvensnummerList.indices.forEach { i -> sekvensnummerProducer.writeSekvensnummer(sekvensnummerList[i].toLong()) }
     }
 }
+
+//TODO Vurder å fjerne denne testen

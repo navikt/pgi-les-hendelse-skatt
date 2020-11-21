@@ -1,6 +1,7 @@
 package no.nav.pgi.skatt.leshendelse.skatt
 
 
+import no.nav.pgi.skatt.leshendelse.Sekvensnummer
 import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_HOST
 import no.nav.pgi.skatt.leshendelse.mock.HendelseMock
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
@@ -46,7 +47,7 @@ internal class GrunnlagPgiHendelseDtoClientTest {
     fun `neste skevensummer should be USE_PREVIOUS_SEKVENSNUMMER when of hendelser is empty`() {
         hendelseMock.`stub hendelse endpoint that returns no hendelser`(FRA_SEKVENSNUMMER)
 
-        assertEquals(USE_PREVIOUS_SEKVENSNUMMER, client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER).getNextSekvensnummer())
+        assertEquals(Sekvensnummer.USE_PREVIOUS, client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER).getNextSekvensnummer())
     }
 
     @Test

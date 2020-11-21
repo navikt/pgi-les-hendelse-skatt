@@ -38,7 +38,6 @@ internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topic
     internal fun close() = consumer.close()
 
     companion object {
-        internal const val INVALID_OFFSET = -1L
         private const val POLLING_DURATION_SECONDS = 4L
         private val defaultTopicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
     }

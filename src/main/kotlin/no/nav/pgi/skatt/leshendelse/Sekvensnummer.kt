@@ -5,9 +5,6 @@ import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerProducer
 import no.nav.pgi.skatt.leshendelse.skatt.FirstSekvensnummerClient
 
-private const val FIRST_VALID_SEKVENSNUMMER = 1
-private const val NOT_INITIALIZED = -2L
-
 internal class Sekvensnummer(kafkaConfig: KafkaConfig, env: Map<String, String>) {
     private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig)
     private val nextSekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
@@ -23,7 +20,7 @@ internal class Sekvensnummer(kafkaConfig: KafkaConfig, env: Map<String, String>)
             return currentSekvensnummer
         }
         set(newSekvensnummer) {
-            if (newSekvensnummer >= FIRST_VALID_SEKVENSNUMMER) {
+            if (newSekvensnummer > USE_PREVIOUS) {
                 currentSekvensnummer = newSekvensnummer
                 nextSekvensnummerProducer.writeSekvensnummer(newSekvensnummer)
             }
@@ -36,4 +33,11 @@ internal class Sekvensnummer(kafkaConfig: KafkaConfig, env: Map<String, String>)
 
     private fun getInitialSekvensnummer(): Long =
             sekvensnummerConsumer.getNextSekvensnummer()?.toLong() ?: firstSekvensnummerClient.getFirstSekvensnummer()
+
+    companion object{
+        internal const val NOT_INITIALIZED = -9999L
+        internal const val USE_PREVIOUS = -1L
+    }
 }
+
+//TODO Vurder om write sekvensnummer bør være async. Fart!!
