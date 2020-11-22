@@ -10,7 +10,7 @@ import no.nav.pgi.skatt.leshendelse.skatt.size
 
 internal const val ANTALL_HENDELSER = 1000
 
-internal class HendelseSkattLoop(kafkaConfig: KafkaConfig, env: Map<String, String>, val loopForever: Boolean) {
+internal class HendelseSkattLoop(kafkaConfig: KafkaConfig, env: Map<String, String>, val loopForever: Boolean) : Stop() {
     private val readAndWriteHendelserToTopic = ReadAndWriteHendelserToTopic(kafkaConfig, env)
     private val scheduler = SkattScheduler(env)
 
@@ -18,31 +18,36 @@ internal class HendelseSkattLoop(kafkaConfig: KafkaConfig, env: Map<String, Stri
         do {
             readAndWriteHendelserToTopic.start()
             scheduler.wait()
-        } while (shouldContinueToLoop())
+        } while (shouldContinueToLoop() && isNotStopped())
+        close()
     }
 
     private fun shouldContinueToLoop() = loopForever
+
+    override fun onStop(){
+        readAndWriteHendelserToTopic.stop()
+        scheduler.stop()
+    }
 
     internal fun close() {
         readAndWriteHendelserToTopic.close()
     }
 }
 
-internal class ReadAndWriteHendelserToTopic(private val kafkaConfig: KafkaConfig, private val env: Map<String, String>) {
+internal class ReadAndWriteHendelserToTopic(kafkaConfig: KafkaConfig, env: Map<String, String>) : Stop() {
     private val hendelseProducer = HendelseProducer(kafkaConfig)
     private val nextSekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
     private val sekvensnummer = Sekvensnummer(kafkaConfig, env)
     private val hendelseClient = HendelseClient(env)
-    private var stopped = false
 
     internal fun start() {
         var hendelserDto: HendelserDto
         do {
-            if(stopped) return
+            if(isStopped()) return
             hendelserDto = hendelseClient.getHendelserSkatt(ANTALL_HENDELSER, sekvensnummer.value)
             hendelseProducer.writeHendelser(hendelserDto)
             sekvensnummer.value = hendelserDto.getNextSekvensnummer()
-        } while (hendelserDto.size() >= ANTALL_HENDELSER && !stopped)
+        } while (hendelserDto.size() >= ANTALL_HENDELSER && isNotStopped())
     }
 
     fun close() {

@@ -27,6 +27,11 @@ internal class Application(kafkaConfig: KafkaConfig, env: Map<String, String>, l
     internal fun startHendelseSkattLoop() = hendelseSkattLoop.start()
 
     internal fun stopServer() {
-        naisServer.stop(100, 100)
+        try{
+            hendelseSkattLoop.stop()
+            naisServer.stop(100, 100)
+        }catch (e:Exception){
+            hendelseSkattLoop.close()
+        }
     }
 }
