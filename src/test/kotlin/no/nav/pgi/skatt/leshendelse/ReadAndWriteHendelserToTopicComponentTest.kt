@@ -25,7 +25,6 @@ internal class ReadAndWriteHendelserToTopicComponentTest {
 
     private val application = Application(kafkaConfig = kafkaConfig, env = createEnvVariables(), loopForever = false)
 
-
     @BeforeAll
     internal fun init() {
         maskinportenMock.`mock maskinporten token enpoint`()

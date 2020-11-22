@@ -2,7 +2,6 @@ package no.nav.pgi.skatt.leshendelse
 
 import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducer
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
-import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerProducer
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseClient
 import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
 import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
@@ -53,5 +52,4 @@ internal class ReadAndWriteHendelserToTopic(kafkaConfig: KafkaConfig, env: Map<S
         hendelseProducer.close()
         sekvensnummer.close()
     }
-
 }
