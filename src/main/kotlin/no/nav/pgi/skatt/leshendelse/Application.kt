@@ -9,10 +9,10 @@ private val LOGGER = LoggerFactory.getLogger(Application::class.java)
 fun main() {
     val application = Application(KafkaConfig(), System.getenv())
     try {
-        // application.startHendelseSkattLoop()
+        application.startHendelseSkattLoop()
     } catch (e: Throwable) {
         LOGGER.info(e.javaClass.name)
-        // application.stopServer() TODO vent til kafka-gjengen har fiksa greiene sine
+        application.stopServer()
     }
 }
 
@@ -51,7 +51,6 @@ internal class Application(kafkaConfig: KafkaConfig, env: Map<String, String>, l
 
 //TODO Vurder skriving sekvensnummer-topic bør være async. Fart!!
 //TODO Tester for close og stop
-//TODO Legg inn igjen hendelse HendelseSkattLoop for test
 //TODO Kjør applikasjon mot mock
 //TODO Legg inn logging
 //TODO LEGG in matriser
