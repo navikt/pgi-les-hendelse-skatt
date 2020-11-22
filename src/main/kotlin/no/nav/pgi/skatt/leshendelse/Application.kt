@@ -33,6 +33,7 @@ internal class Application(kafkaConfig: KafkaConfig, env: Map<String, String>, l
             naisServer.stop(300, 300)
         } catch (e: Exception) {
             hendelseSkattLoop.close()
+            throw e
         }
     }
 
@@ -52,3 +53,6 @@ internal class Application(kafkaConfig: KafkaConfig, env: Map<String, String>, l
 //TODO Tester for close og stop
 //TODO Legg inn igjen hendelse HendelseSkattLoop for test
 //TODO Kjør applikasjon mot mock
+//TODO Legg inn logging
+//TODO LEGG in matriser
+//TODO DObbelsjekk tortuga-hiv om det er noe vi mangler
