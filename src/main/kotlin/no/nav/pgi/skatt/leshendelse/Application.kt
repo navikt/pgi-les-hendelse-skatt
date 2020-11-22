@@ -22,23 +22,33 @@ internal class Application(kafkaConfig: KafkaConfig, env: Map<String, String>, l
 
     init {
         naisServer.start()
+        addShutdownHook()
     }
 
     internal fun startHendelseSkattLoop() = hendelseSkattLoop.start()
 
     internal fun stopServer() {
-        try{
+        try {
             hendelseSkattLoop.stop()
-            naisServer.stop(100, 100)
-        }catch (e:Exception){
+            naisServer.stop(300, 300)
+        } catch (e: Exception) {
             hendelseSkattLoop.close()
         }
     }
-}
 
+    private fun addShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(Thread {
+            try {
+                LOGGER.info("stopping naisServer and hendelseSkattLoop")
+                stopServer()
+            } catch (e: Exception) {
+                LOGGER.error("Error while stopping naisServer and hendelseSkattLoop", e)
+            }
+        })
+    }
+}
 
 //TODO Vurder skriving sekvensnummer-topic bør være async. Fart!!
 //TODO Tester for close og stop
-//TODO shutdown hook.
 //TODO Legg inn igjen hendelse HendelseSkattLoop for test
 //TODO Kjør applikasjon mot mock
