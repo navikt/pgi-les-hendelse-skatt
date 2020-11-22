@@ -3,7 +3,10 @@ package no.nav.pgi.skatt.leshendelse
 import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
 import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import no.nav.pgi.skatt.leshendelse.kafka.*
-import no.nav.pgi.skatt.leshendelse.mock.*
+import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_HOST
+import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_HOST
+import no.nav.pgi.skatt.leshendelse.mock.HendelseMock
+import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock.Companion.MASKINPORTEN_ENV_VARIABLES
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
@@ -14,7 +17,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-internal class ReadAndWriteHendelserToTopicComponentTest {
+internal class ComponentTest {
     private val kafkaTestEnvironment = KafkaTestEnvironment()
     private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy())
     private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0))
