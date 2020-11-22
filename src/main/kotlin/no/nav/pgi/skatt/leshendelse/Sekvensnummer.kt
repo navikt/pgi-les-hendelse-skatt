@@ -39,5 +39,3 @@ internal class Sekvensnummer(kafkaConfig: KafkaConfig, env: Map<String, String>)
         internal const val USE_PREVIOUS = -1L
     }
 }
-
-//TODO Vurder om write sekvensnummer bør være async. Fart!!

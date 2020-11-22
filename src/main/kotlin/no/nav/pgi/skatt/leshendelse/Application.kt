@@ -35,3 +35,10 @@ internal class Application(kafkaConfig: KafkaConfig, env: Map<String, String>, l
         }
     }
 }
+
+
+//TODO Vurder skriving sekvensnummer-topic bør være async. Fart!!
+//TODO Tester for close og stop
+//TODO shutdown hook.
+//TODO Legg inn igjen hendelse HendelseSkattLoop for test
+//TODO Kjør applikasjon mot mock
