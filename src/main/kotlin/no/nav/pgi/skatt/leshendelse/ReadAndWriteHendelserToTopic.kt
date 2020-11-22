@@ -36,7 +36,6 @@ internal class HendelseSkattLoop(kafkaConfig: KafkaConfig, env: Map<String, Stri
 
 internal class ReadAndWriteHendelserToTopic(kafkaConfig: KafkaConfig, env: Map<String, String>) : Stop() {
     private val hendelseProducer = HendelseProducer(kafkaConfig)
-    private val nextSekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
     private val sekvensnummer = Sekvensnummer(kafkaConfig, env)
     private val hendelseClient = HendelseClient(env)
 
@@ -52,7 +51,6 @@ internal class ReadAndWriteHendelserToTopic(kafkaConfig: KafkaConfig, env: Map<S
 
     fun close() {
         hendelseProducer.close()
-        nextSekvensnummerProducer.close()
         sekvensnummer.close()
     }
 
