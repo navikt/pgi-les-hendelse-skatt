@@ -43,7 +43,7 @@ internal class ReadAndWriteHendelserToTopic(kafkaConfig: KafkaConfig, env: Map<S
     internal fun start() {
         var hendelserDto: HendelserDto
         do {
-            if(isStopped()) return
+            if(isStopped()) break
             hendelserDto = hendelseClient.getHendelserSkatt(ANTALL_HENDELSER, sekvensnummer.value)
             hendelseProducer.writeHendelser(hendelserDto)
             sekvensnummer.value = hendelserDto.getNextSekvensnummer()
