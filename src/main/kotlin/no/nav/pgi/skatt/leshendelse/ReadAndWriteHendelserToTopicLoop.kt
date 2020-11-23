@@ -21,7 +21,7 @@ internal class ReadAndWriteHendelserToTopicLoop(kafkaConfig: KafkaConfig, env: M
         } while (hendelserDto.size() >= ANTALL_HENDELSER)
     }
 
-    fun close() {
+    internal fun close() {
         hendelseProducer.close()
         sekvensnummer.close()
     }

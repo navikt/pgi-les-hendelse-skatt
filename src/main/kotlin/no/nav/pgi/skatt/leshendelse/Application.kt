@@ -46,8 +46,9 @@ internal class Application(kafkaConfig: KafkaConfig, env: Map<String, String>, l
     }
 }
 
-//TODO Tester for close
-//TODO Kjør applikasjon mot mock
+
 //TODO Legg inn logging
+//TODO Kjør applikasjon mot mock
 //TODO LEGG in matriser
+//TODO gjør producer kall asynkrone
 //TODO DObbelsjekk tortuga-hiv om det er noe vi mangler

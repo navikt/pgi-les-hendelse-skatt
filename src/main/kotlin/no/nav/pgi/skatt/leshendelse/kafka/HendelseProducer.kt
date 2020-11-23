@@ -13,17 +13,18 @@ internal class HendelseProducer(kafkaConfig: KafkaConfig) {
 
     private val producer = kafkaConfig.hendelseProducer()
 
-    private fun writeHendelse(hendelseDto: HendelseDto) {
-        val record = ProducerRecord(PGI_HENDELSE_TOPIC, hendelseDto.mapToHendelseKey(), hendelseDto.mapToHendelse())
-        producer.send(record).get()
-    }
-
     internal fun writeHendelser(hendelserDto: HendelserDto) {
-        hendelserDto.hendelser.forEach { writeHendelse(it) }
-        LOGGER.info("Added ${hendelserDto.hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. ")
+        hendelserDto.hendelser
+                .map { ProducerRecord(PGI_HENDELSE_TOPIC, it.mapToHendelseKey(), it.mapToHendelse()) }
+                .forEach { producer.send(it).get() }
+        loggWrittenHendelser(hendelserDto)
     }
 
     internal fun close() = producer.close()
+
+    private fun loggWrittenHendelser(hendelserDto: HendelserDto){
+        LOGGER.info("Added ${hendelserDto.hendelser.size} hendelser to $PGI_HENDELSE_TOPIC")
+    }
 }
 
 internal fun HendelseDto.mapToHendelseKey() = HendelseKey(identifikator, gjelderPeriode)
