@@ -1,5 +1,6 @@
 package no.nav.pgi.skatt.leshendelse
 
+import io.prometheus.client.Counter
 import no.nav.pensjon.samhandling.naisserver.naisServer
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import org.slf4j.LoggerFactory
@@ -46,6 +47,14 @@ internal class Application(kafkaConfig: KafkaConfig, env: Map<String, String>, l
     }
 }
 
+
+private val antallHendelserSendt = Counter.build()
+
+        .name("hendelser_processed")
+        .help("Antall hendelser sendt.").register()
+
+
+private val apepikk = Counter.build()
 
 //TODO Legg inn logging
 //TODO Kjør applikasjon mot mock

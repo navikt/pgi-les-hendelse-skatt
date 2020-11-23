@@ -14,27 +14,27 @@ internal class Sekvensnummer(kafkaConfig: KafkaConfig, env: Map<String, String>)
 
     internal var value
         get():Long {
-            if (currentSekvensnummer == NOT_INITIALIZED) {
-                currentSekvensnummer = getInitialSekvensnummer()
-            }
+            if (currentSekvensnummer == NOT_INITIALIZED) setSekvensnummer(getInitialSekvensnummer())
             return currentSekvensnummer
         }
         set(newSekvensnummer) {
-            if (newSekvensnummer > USE_PREVIOUS) {
-                currentSekvensnummer = newSekvensnummer
-                nextSekvensnummerProducer.writeSekvensnummer(newSekvensnummer)
-            }
+            if (newSekvensnummer > USE_PREVIOUS) setSekvensnummer(newSekvensnummer)
         }
-
-    internal fun close(){
-        sekvensnummerConsumer.close()
-        nextSekvensnummerProducer.close()
-    }
 
     private fun getInitialSekvensnummer(): Long =
             sekvensnummerConsumer.getNextSekvensnummer()?.toLong() ?: firstSekvensnummerClient.getFirstSekvensnummer()
 
-    companion object{
+    private fun setSekvensnummer(sekvensnummer: Long) {
+        currentSekvensnummer = sekvensnummer
+        nextSekvensnummerProducer.writeSekvensnummer(sekvensnummer)
+    }
+
+    internal fun close() {
+        sekvensnummerConsumer.close()
+        nextSekvensnummerProducer.close()
+    }
+
+    companion object {
         internal const val NOT_INITIALIZED = -9999L
         internal const val USE_PREVIOUS = -1L
     }
