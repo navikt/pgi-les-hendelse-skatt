@@ -7,7 +7,7 @@ import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
 import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
 import no.nav.pgi.skatt.leshendelse.skatt.size
 
-internal class ReadAndWriteHendelserToTopicLoop(kafkaConfig: KafkaConfig, env: Map<String, String>) : Stop() {
+internal class ReadAndWriteHendelserToTopicLoop(kafkaConfig: KafkaConfig, env: Map<String, String>) {
     private val hendelseProducer = HendelseProducer(kafkaConfig)
     private val sekvensnummer = Sekvensnummer(kafkaConfig, env)
     private val hendelseClient = HendelseClient(env)
@@ -15,11 +15,10 @@ internal class ReadAndWriteHendelserToTopicLoop(kafkaConfig: KafkaConfig, env: M
     internal fun start() {
         var hendelserDto: HendelserDto
         do {
-            if (isStopped()) break
             hendelserDto = hendelseClient.getHendelserSkatt(ANTALL_HENDELSER, sekvensnummer.value)
             hendelseProducer.writeHendelser(hendelserDto)
             sekvensnummer.value = hendelserDto.getNextSekvensnummer()
-        } while (hendelserDto.size() >= ANTALL_HENDELSER && isNotStopped())
+        } while (hendelserDto.size() >= ANTALL_HENDELSER)
     }
 
     fun close() {

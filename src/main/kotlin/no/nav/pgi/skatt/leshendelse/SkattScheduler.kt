@@ -9,7 +9,7 @@ internal const val MINUTES_TO_WAIT_BEFORE_CALLING_SKATT_ENV_KEY = "minutes-to-wa
 
 private const val DEFAULT_HOUR_OF_DAY_TO_START = "0"
 
-internal class SkattScheduler(env: Map<String, String>) : Stop() {
+internal class SkattScheduler(env: Map<String, String>) {
     private val logger = LoggerFactory.getLogger(SkattScheduler::class.java)
     private val startPollingTime: Int? = env.getVal(HOUR_OF_DAY_TO_START_POLLING_SKATT_ENV_KEY, DEFAULT_HOUR_OF_DAY_TO_START).toInt()
     private val waitMinsBetweenPolls: Double? = env[MINUTES_TO_WAIT_BEFORE_CALLING_SKATT_ENV_KEY]?.toDouble()
@@ -17,7 +17,7 @@ internal class SkattScheduler(env: Map<String, String>) : Stop() {
     fun wait(startTime: Calendar = Calendar.getInstance()) {
         do {
             Thread.sleep(100L)
-        } while (shouldWait(startTime) && isNotStopped())
+        } while (shouldWait(startTime))
         logger.info("SkattScheduler: Waiting stopped")
     }
 

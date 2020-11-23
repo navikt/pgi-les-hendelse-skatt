@@ -27,30 +27,26 @@ internal class Application(kafkaConfig: KafkaConfig, env: Map<String, String>, l
 
     internal fun startHendelseSkattLoop() = hendelseSkattLoop.start()
 
-    internal fun stopServer() {
-        try {
-            hendelseSkattLoop.stop()
-            naisServer.stop(300, 300)
-        } catch (e: Exception) {
-            hendelseSkattLoop.close()
-            throw e
-        }
-    }
-
     private fun addShutdownHook() {
         Runtime.getRuntime().addShutdownHook(Thread {
-            try {
-                LOGGER.info("stopping naisServer and hendelseSkattLoop")
-                stopServer()
-            } catch (e: Exception) {
-                LOGGER.error("Error while stopping naisServer and hendelseSkattLoop", e)
-            }
+            stopServer()
         })
+    }
+
+    internal fun stopServer() {
+        try {
+            naisServer.stop(300, 300)
+            LOGGER.info("naisServer stopped")
+            hendelseSkattLoop.close()
+            LOGGER.info("hendelseSkattLoop closed")
+        } catch (e: Exception) {
+            LOGGER.error("Error when when stopping naisServer and hendelseSkattLoop")
+            LOGGER.error(e.message)
+        }
     }
 }
 
-//TODO Vurder skriving sekvensnummer-topic bør være async. Fart!!
-//TODO Tester for close og stop
+//TODO Tester for close
 //TODO Kjør applikasjon mot mock
 //TODO Legg inn logging
 //TODO LEGG in matriser
