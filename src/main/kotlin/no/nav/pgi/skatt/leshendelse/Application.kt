@@ -4,14 +4,14 @@ import no.nav.pensjon.samhandling.naisserver.naisServer
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import org.slf4j.LoggerFactory
 
-private val LOGGER = LoggerFactory.getLogger(Application::class.java)
+private val LOG = LoggerFactory.getLogger(Application::class.java)
 
 fun main() {
     val application = Application(KafkaConfig(), System.getenv())
     try {
         application.startHendelseSkattLoop()
     } catch (e: Throwable) {
-        LOGGER.info(e.javaClass.name)
+        LOG.info(e.message)
         application.stopServer()
     }
 }
@@ -36,12 +36,12 @@ internal class Application(kafkaConfig: KafkaConfig, env: Map<String, String>, l
     internal fun stopServer() {
         try {
             naisServer.stop(300, 300)
-            LOGGER.info("naisServer stopped")
+            LOG.info("naisServer stopped")
             hendelseSkattLoop.close()
-            LOGGER.info("hendelseSkattLoop closed")
+            LOG.info("hendelseSkattLoop closed")
         } catch (e: Exception) {
-            LOGGER.error("Error when when stopping naisServer and hendelseSkattLoop")
-            LOGGER.error(e.message)
+            LOG.error("Error when when stopping naisServer and hendelseSkattLoop")
+            LOG.error(e.message)
         }
     }
 }

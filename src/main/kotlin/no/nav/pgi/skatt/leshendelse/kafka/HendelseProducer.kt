@@ -7,7 +7,7 @@ import no.nav.samordning.pgi.schema.HendelseKey
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.slf4j.LoggerFactory
 
-private val LOGGER = LoggerFactory.getLogger(HendelseProducer::class.java)
+private val LOG = LoggerFactory.getLogger(HendelseProducer::class.java)
 
 internal class HendelseProducer(kafkaConfig: KafkaConfig) {
 
@@ -23,7 +23,7 @@ internal class HendelseProducer(kafkaConfig: KafkaConfig) {
     internal fun close() = producer.close()
 
     private fun loggWrittenHendelser(hendelserDto: HendelserDto){
-        LOGGER.info("Added ${hendelserDto.hendelser.size} hendelser to $PGI_HENDELSE_TOPIC")
+        LOG.info("Added ${hendelserDto.hendelser.size} hendelser to $PGI_HENDELSE_TOPIC")
     }
 }
 

@@ -10,7 +10,7 @@ import java.net.http.HttpResponse.BodyHandlers.ofString
 
 internal const val FIRST_SEKVENSNUMMER_HOST_ENV_KEY = "GRUNNLAG_PGI_FIRST_SEKVENSNUMMER_HOST"
 internal const val FIRST_SEKVENSNUMMER_PATH = "/api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelse/start"
-private val LOGGER = LoggerFactory.getLogger(FirstSekvensnummerClient::class.java)
+private val LOG = LoggerFactory.getLogger(FirstSekvensnummerClient::class.java)
 
 internal class FirstSekvensnummerClient(env: Map<String, String> = System.getenv()) {
     private val host = env.getVal(FIRST_SEKVENSNUMMER_HOST_ENV_KEY)
@@ -20,8 +20,8 @@ internal class FirstSekvensnummerClient(env: Map<String, String> = System.getenv
     fun getFirstSekvensnummer(): Long {
         val response = skattClient.send(skattClient.createGetRequest(host + FIRST_SEKVENSNUMMER_PATH), ofString())
         return when (response.statusCode()) {
-            200 -> mapResponse(response.body()).also{ LOGGER.info("Received $it as first sekvensnummer from skatt")}
-            else -> throw FirstSekvensnummerClientCallException(response).also { LOGGER.error(it.message) }
+            200 -> mapResponse(response.body()).also{ LOG.info("Received $it as first sekvensnummer from skatt")}
+            else -> throw FirstSekvensnummerClientCallException(response).also { LOG.error(it.message) }
         }
     }
 

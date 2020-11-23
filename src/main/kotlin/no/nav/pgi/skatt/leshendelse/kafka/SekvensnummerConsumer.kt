@@ -2,8 +2,11 @@ package no.nav.pgi.skatt.leshendelse.kafka
 
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.TopicPartition
+import org.slf4j.LoggerFactory
 import java.time.Duration.ofSeconds
 import kotlin.math.max
+
+private val LOG = LoggerFactory.getLogger(SekvensnummerConsumer::class.java)
 
 internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topicPartition: TopicPartition = defaultTopicPartition) {
     private val consumer = kafkaConfig.nextSekvensnummerConsumer()
@@ -15,6 +18,7 @@ internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topic
     internal fun getNextSekvensnummer(): String? {
         setConsumerPollOffset(lastSekvensnummerOffset())
         return pollRecords().lastValue()
+                .also { LOG.info("""Polled sekvensnummer "$it" from topic ${topicPartition.topic()}""") }
     }
 
     private fun lastSekvensnummerOffset(): Long = max(getEndOffset() - 1, 0)
