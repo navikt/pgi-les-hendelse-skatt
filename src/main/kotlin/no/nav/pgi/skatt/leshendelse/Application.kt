@@ -59,5 +59,5 @@ private val apepikk = Counter.build()
 //TODO Legg inn logging
 //TODO Kjør applikasjon mot mock
 //TODO LEGG in matriser
-//TODO gjør producer kall asynkrone
+//TODO asynkrone producer kall for hendelse
 //TODO DObbelsjekk tortuga-hiv om det er noe vi mangler
