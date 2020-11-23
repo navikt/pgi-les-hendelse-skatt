@@ -7,7 +7,7 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
-class SkattClient(env: Map<String, String> = System.getenv()) {
+open class SkattClient(env: Map<String, String> = System.getenv()) {
     private val maskinporten: Maskinporten = Maskinporten(env)
     private val httpClient: HttpClient = HttpClient.newHttpClient()
     internal fun <T> send(httpRequest: HttpRequest, responseBodyHandler: HttpResponse.BodyHandler<T>): HttpResponse<T> =

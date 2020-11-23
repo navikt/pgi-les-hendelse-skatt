@@ -12,15 +12,14 @@ internal const val FIRST_SEKVENSNUMMER_HOST_ENV_KEY = "GRUNNLAG_PGI_FIRST_SEKVEN
 internal const val FIRST_SEKVENSNUMMER_PATH = "/api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelse/start"
 private val LOG = LoggerFactory.getLogger(FirstSekvensnummerClient::class.java)
 
-internal class FirstSekvensnummerClient(env: Map<String, String> = System.getenv()) {
+internal class FirstSekvensnummerClient(env: Map<String, String> = System.getenv()) : SkattClient(env) {
     private val host = env.getVal(FIRST_SEKVENSNUMMER_HOST_ENV_KEY)
     private val objectMapper = ObjectMapper().registerModule(KotlinModule())
-    private val skattClient = SkattClient(env)
 
     fun getFirstSekvensnummer(): Long {
-        val response = skattClient.send(skattClient.createGetRequest(host + FIRST_SEKVENSNUMMER_PATH), ofString())
+        val response = send(createGetRequest(host + FIRST_SEKVENSNUMMER_PATH), ofString())
         return when (response.statusCode()) {
-            200 -> mapResponse(response.body()).also{ LOG.info("Received $it as first sekvensnummer from skatt")}
+            200 -> mapResponse(response.body()).also { LOG.info("Received $it as first sekvensnummer from skatt") }
             else -> throw FirstSekvensnummerClientCallException(response).also { LOG.error(it.message) }
         }
     }
