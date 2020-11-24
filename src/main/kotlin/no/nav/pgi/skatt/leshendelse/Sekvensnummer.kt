@@ -18,15 +18,16 @@ internal class Sekvensnummer(kafkaConfig: KafkaConfig, env: Map<String, String>)
             return currentSekvensnummer
         }
         set(newSekvensnummer) {
-            if (newSekvensnummer > USE_PREVIOUS) setSekvensnummer(newSekvensnummer)
+            if (newSekvensnummer > USE_PREVIOUS && newSekvensnummer > currentSekvensnummer)
+                setSekvensnummer(newSekvensnummer)
         }
 
     private fun getInitialSekvensnummer(): Long =
             sekvensnummerConsumer.getNextSekvensnummer()?.toLong() ?: firstSekvensnummerClient.getFirstSekvensnummer()
 
-    private fun setSekvensnummer(sekvensnummer: Long) {
+    internal fun setSekvensnummer(sekvensnummer: Long, synchronous: Boolean = false) {
         currentSekvensnummer = sekvensnummer
-        nextSekvensnummerProducer.writeSekvensnummer(sekvensnummer)
+        nextSekvensnummerProducer.writeSekvensnummer(sekvensnummer, synchronous)
     }
 
     internal fun close() {

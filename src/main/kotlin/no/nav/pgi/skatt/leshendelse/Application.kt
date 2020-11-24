@@ -1,6 +1,5 @@
 package no.nav.pgi.skatt.leshendelse
 
-import io.prometheus.client.Counter
 import no.nav.pensjon.samhandling.naisserver.naisServer
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import org.slf4j.LoggerFactory
@@ -47,17 +46,12 @@ internal class Application(kafkaConfig: KafkaConfig, env: Map<String, String>, l
     }
 }
 
-
-private val antallHendelserSendt = Counter.build()
-
-        .name("hendelser_processed")
-        .help("Antall hendelser sendt.").register()
-
-
-private val apepikk = Counter.build()
-
 //TODO Legg inn logging
 //TODO Kjør applikasjon mot mock
 //TODO LEGG in matriser
-//TODO asynkrone producer kall for hendelse
 //TODO DObbelsjekk tortuga-hiv om det er noe vi mangler
+
+//TODO tester for feilende kall topic
+//TODO Vurder logcompation på hendelse topic noe som gjør at det ikke er så farlig med helt riktig sekvensnummer.
+//     Dette vil hjelpe med duplikater på hendelse topic
+// TODO vurder om nye hendelser skal hentes fra skatt før man validerer om hendelser er peristert til topic.

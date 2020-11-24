@@ -1,5 +1,6 @@
 package no.nav.pgi.skatt.leshendelse
 
+import no.nav.pgi.skatt.leshendelse.kafka.FailedHendelse
 import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducer
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseClient
@@ -20,10 +21,15 @@ internal class ReadAndWriteHendelserToTopicLoop(kafkaConfig: KafkaConfig, env: M
         var hendelserDto: HendelserDto
         do {
             hendelserDto = hendelseClient.getHendelserSkatt(ANTALL_HENDELSER, sekvensnummer.value)
-            hendelseProducer.writeHendelser(hendelserDto)
+            hendelseProducer.writeHendelser(hendelserDto)?.let { handleFailedHendelse(it) }
             sekvensnummer.value = hendelserDto.getNextSekvensnummer()
         } while (hendelserDto.size() >= ANTALL_HENDELSER)
         LOG.info("Stop reading hendelser from skatt because antall hendelser was less then $ANTALL_HENDELSER")
+    }
+
+    private fun handleFailedHendelse(failedHendelse: FailedHendelse) {
+        sekvensnummer.setSekvensnummer(failedHendelse.hendelse.getSekvensnummer(), synchronous = true)
+        throw failedHendelse.exception
     }
 
     internal fun close() {

@@ -10,9 +10,14 @@ private val LOG = LoggerFactory.getLogger(SekvensnummerConsumer::class.java)
 internal class SekvensnummerProducer(kafkaConfig: KafkaConfig) {
     private val sekvensnummerProducer = kafkaConfig.nextSekvensnummerProducer()
 
-    internal fun writeSekvensnummer(sekvensnummer: Long) {
+    internal fun writeSekvensnummer(sekvensnummer: Long, synchronous: Boolean = false) {
         val record = ProducerRecord(NEXT_SEKVENSNUMMER_TOPIC, "sekvensnummer", sekvensnummer.toString())
-        sekvensnummerProducer.send(record, callBack(record))
+        if (synchronous) {
+            sekvensnummerProducer.send(record)
+            persistedSekvensnummerGauge.set(record.value().toDouble())
+        } else {
+            sekvensnummerProducer.send(record, callBack(record))
+        }
     }
 
     internal fun close() = sekvensnummerProducer.close()
