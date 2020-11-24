@@ -3,6 +3,7 @@ package no.nav.pgi.skatt.leshendelse
 import no.nav.pgi.skatt.leshendelse.kafka.FailedHendelse
 import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducer
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
+import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseClient
 import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
 import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
@@ -11,9 +12,9 @@ import org.slf4j.LoggerFactory
 
 private val LOG = LoggerFactory.getLogger(ReadAndWriteHendelserToTopicLoop::class.java)
 
-internal class ReadAndWriteHendelserToTopicLoop(kafkaConfig: KafkaConfig, env: Map<String, String>) {
-    private val hendelseProducer = HendelseProducer(kafkaConfig)
-    private val sekvensnummer = Sekvensnummer(kafkaConfig, env)
+internal class ReadAndWriteHendelserToTopicLoop(kafkaFactory: KafkaFactory, env: Map<String, String>) {
+    private val hendelseProducer = HendelseProducer(kafkaFactory)
+    private val sekvensnummer = Sekvensnummer(kafkaFactory, env)
     private val hendelseClient = HendelseClient(env)
 
     internal fun start() {

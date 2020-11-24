@@ -1,13 +1,14 @@
 package no.nav.pgi.skatt.leshendelse
 
 import no.nav.pensjon.samhandling.naisserver.naisServer
-import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
+import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
+import no.nav.pgi.skatt.leshendelse.kafka.KafkaHendelseFactory
 import org.slf4j.LoggerFactory
 
 private val LOG = LoggerFactory.getLogger(Application::class.java)
 
 fun main() {
-    val application = Application(KafkaConfig(), System.getenv())
+    val application = Application(KafkaHendelseFactory(), System.getenv())
     try {
         application.startHendelseSkattLoop()
     } catch (e: Throwable) {
@@ -16,9 +17,9 @@ fun main() {
     }
 }
 
-internal class Application(kafkaConfig: KafkaConfig, env: Map<String, String>, loopForever: Boolean = true) {
+internal class Application(kafkaFactory: KafkaFactory, env: Map<String, String>, loopForever: Boolean = true) {
     private val naisServer = naisServer()
-    private val hendelseSkattLoop = HendelseSkattLoop(kafkaConfig, env, loopForever)
+    private val hendelseSkattLoop = HendelseSkattLoop(kafkaFactory, env, loopForever)
 
     init {
         naisServer.start()

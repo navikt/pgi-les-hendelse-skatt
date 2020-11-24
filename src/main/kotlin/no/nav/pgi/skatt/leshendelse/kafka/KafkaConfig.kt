@@ -24,17 +24,7 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv(), p
     private val schemaRegUsername = environment.getVal(SCHEMA_REGISTRY_USERNAME)
     private val schemaRegPassword = environment.getVal(SCHEMA_REGISTRY_PASSWORD)
 
-    internal fun nextSekvensnummerProducer() = KafkaProducer<String, String>(
-            commonConfig() + sekvensnummerProducerConfig())
-
-    internal fun nextSekvensnummerConsumer() = KafkaConsumer<String, String>(
-            commonConfig() + sekvensnummerConsumerConfig())
-
-    internal fun hendelseProducer() = KafkaProducer<HendelseKey, Hendelse>(
-            commonConfig() + schemaRegistryConfig() + hendelseProducerConfig()
-    )
-
-    private fun sekvensnummerConsumerConfig() = mapOf(
+    internal fun sekvensnummerConsumerConfig() = mapOf(
             KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
             VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
             GROUP_ID_CONFIG to GROUP_ID,
@@ -42,23 +32,23 @@ internal class KafkaConfig(environment: Map<String, String> = System.getenv(), p
             AUTO_OFFSET_RESET_CONFIG to "earliest"
     )
 
-    private fun sekvensnummerProducerConfig() = mapOf(
+    internal fun sekvensnummerProducerConfig() = mapOf(
             KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
             VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
             ACKS_CONFIG to "all",
             RETRIES_CONFIG to MAX_VALUE
     )
 
-    private fun hendelseProducerConfig() = mapOf(
+    internal fun hendelseProducerConfig() = mapOf(
             KEY_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
             VALUE_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
             ACKS_CONFIG to "all",
             RETRIES_CONFIG to MAX_VALUE
     )
 
-    private fun commonConfig() = mapOf(BOOTSTRAP_SERVERS_CONFIG to bootstrapServers) + securityStrategy.securityConfig()
+    internal fun commonConfig() = mapOf(BOOTSTRAP_SERVERS_CONFIG to bootstrapServers) + securityStrategy.securityConfig()
 
-    private fun schemaRegistryConfig() = mapOf(
+    internal fun schemaRegistryConfig() = mapOf(
             AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
             AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG to "$schemaRegUsername:$schemaRegPassword",
             AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to schemaRegistryUrl

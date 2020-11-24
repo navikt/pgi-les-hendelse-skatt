@@ -12,8 +12,8 @@ import org.junit.jupiter.api.TestInstance
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class HendelseProducerTest {
     private val kafkaTestEnvironment = KafkaTestEnvironment()
-    private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy())
-    private val hendelseProducer = HendelseProducer(kafkaConfig)
+    private val kafkaFactory = KafkaHendelseFactory(KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy()))
+    private val hendelseProducer = HendelseProducer(kafkaFactory)
 
     @AfterAll
     internal fun teardown() {

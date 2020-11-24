@@ -1,13 +1,13 @@
 package no.nav.pgi.skatt.leshendelse
 
-import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
+import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerProducer
 import no.nav.pgi.skatt.leshendelse.skatt.FirstSekvensnummerClient
 
-internal class Sekvensnummer(kafkaConfig: KafkaConfig, env: Map<String, String>) {
-    private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig)
-    private val nextSekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
+internal class Sekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String>) {
+    private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaFactory)
+    private val nextSekvensnummerProducer = SekvensnummerProducer(kafkaFactory)
     private val firstSekvensnummerClient = FirstSekvensnummerClient(env)
 
     private var currentSekvensnummer = NOT_INITIALIZED

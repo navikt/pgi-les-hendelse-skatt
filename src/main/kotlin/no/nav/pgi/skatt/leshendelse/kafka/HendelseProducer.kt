@@ -11,9 +11,9 @@ import java.util.concurrent.Future
 
 private val LOG = LoggerFactory.getLogger(HendelseProducer::class.java)
 
-internal class HendelseProducer(kafkaConfig: KafkaConfig) {
+internal class HendelseProducer(kafkaFactory: KafkaFactory) {
 
-    private val producer = kafkaConfig.hendelseProducer()
+    private val producer = kafkaFactory.hendelseProducer()
 
     internal fun writeHendelser(hendelserDto: HendelserDto): FailedHendelse? {
         val sentHendelseList = hendelserDto.hendelser

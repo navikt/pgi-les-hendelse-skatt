@@ -2,10 +2,7 @@ package no.nav.pgi.skatt.leshendelse
 
 import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
 import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
-import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
-import no.nav.pgi.skatt.leshendelse.kafka.NEXT_SEKVENSNUMMER_TOPIC
-import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
-import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerProducer
+import no.nav.pgi.skatt.leshendelse.kafka.*
 import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_HOST
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
 import no.nav.pgi.skatt.leshendelse.mock.SkattFirstSekvensnummerMock
@@ -18,13 +15,13 @@ import org.junit.jupiter.api.Assertions.assertEquals
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class SekvensnummerTest {
     private val kafkaTestEnvironment = KafkaTestEnvironment()
-    private val kafkaConfig = KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy())
+    private val kafkaFactory = KafkaHendelseFactory(KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy()))
     private val maskinportenMock = MaskinportenMock()
     private val firstSekvensnummerMock = SkattFirstSekvensnummerMock()
-    private val sekvensnummerProducer = SekvensnummerProducer(kafkaConfig)
-    private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaConfig, TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0))
+    private val sekvensnummerProducer = SekvensnummerProducer(kafkaFactory)
+    private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaFactory, TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0))
 
-    private var sekvensnummer = Sekvensnummer(kafkaConfig, createEnvVariables())
+    private var sekvensnummer = Sekvensnummer(kafkaFactory, createEnvVariables())
 
     @BeforeAll
     internal fun init() {
@@ -35,7 +32,7 @@ internal class SekvensnummerTest {
     internal fun beforeEach() {
         firstSekvensnummerMock.reset()
         sekvensnummer.close()
-        sekvensnummer = Sekvensnummer(kafkaConfig, createEnvVariables())
+        sekvensnummer = Sekvensnummer(kafkaFactory, createEnvVariables())
     }
 
     @AfterAll

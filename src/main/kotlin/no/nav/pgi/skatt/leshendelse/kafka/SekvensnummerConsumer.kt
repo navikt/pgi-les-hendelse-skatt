@@ -8,24 +8,23 @@ import kotlin.math.max
 
 private val LOG = LoggerFactory.getLogger(SekvensnummerConsumer::class.java)
 
-internal class SekvensnummerConsumer(kafkaConfig: KafkaConfig, private val topicPartition: TopicPartition = defaultTopicPartition) {
-    private val consumer = kafkaConfig.nextSekvensnummerConsumer()
+internal class SekvensnummerConsumer(kafkaFactory: KafkaFactory, private val topicPartition: TopicPartition = defaultTopicPartition) {
+    private val consumer = kafkaFactory.nextSekvensnummerConsumer()
 
     init {
         consumer.assign(listOf(topicPartition))
     }
 
     internal fun getNextSekvensnummer(): String? {
-        setConsumerPollOffset(lastSekvensnummerOffset())
-        return pollRecords().lastValue()
-                .also { LOG.info("""Polled sekvensnummer "$it" from topic ${topicPartition.topic()}""") }
+        setPollOffset(lastSekvensnummerOffset())
+        return pollRecords().lastValue().also { LOG.info("""Polled sekvensnummer "$it" from topic ${topicPartition.topic()}""") }
     }
 
     private fun lastSekvensnummerOffset(): Long = max(getEndOffset() - 1, 0)
 
     private fun getEndOffset(): Long = consumer.endOffsets(mutableSetOf(topicPartition))[topicPartition]!!
 
-    private fun setConsumerPollOffset(offset: Long) = consumer.seek(topicPartition, offset)
+    private fun setPollOffset(offset: Long) = consumer.seek(topicPartition, offset)
 
     private fun pollRecords() = consumer.poll(ofSeconds(POLLING_DURATION_SECONDS)).records(topicPartition).toList()
 

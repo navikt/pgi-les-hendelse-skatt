@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory
 
 private val LOG = LoggerFactory.getLogger(SekvensnummerConsumer::class.java)
 
-internal class SekvensnummerProducer(kafkaConfig: KafkaConfig) {
-    private val sekvensnummerProducer = kafkaConfig.nextSekvensnummerProducer()
+internal class SekvensnummerProducer(kafkaFactory: KafkaFactory) {
+    private val sekvensnummerProducer = kafkaFactory.nextSekvensnummerProducer()
 
     internal fun writeSekvensnummer(sekvensnummer: Long, synchronous: Boolean = false) {
         val record = ProducerRecord(NEXT_SEKVENSNUMMER_TOPIC, "sekvensnummer", sekvensnummer.toString())
