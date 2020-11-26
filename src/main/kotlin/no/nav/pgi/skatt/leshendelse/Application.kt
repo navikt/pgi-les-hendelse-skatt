@@ -47,6 +47,5 @@ internal class Application(kafkaFactory: KafkaFactory, env: Map<String, String>,
     }
 }
 
-//TODO Legg inn logging
 //TODO LEGG in matriser
 //TODO DObbelsjekk tortuga-hiv om det er noe vi mangler

@@ -16,6 +16,7 @@ internal class HendelseSkattLoop(kafkaFactory: KafkaFactory, env: Map<String, St
     }
 
     internal fun close() {
+        scheduler.close()
         readAndWriteHendelserToTopicLoop.close()
     }
 }

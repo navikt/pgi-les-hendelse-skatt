@@ -14,12 +14,10 @@ import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import java.lang.RuntimeException
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers.ofString
-import java.util.concurrent.ExecutionException
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ShutdownTest {
@@ -31,13 +29,13 @@ internal class ShutdownTest {
     @BeforeAll
     internal fun init() {
         maskinportenMock.`mock maskinporten token enpoint`()
-        hendelseMock.`stub hendelse endpoint skatt`(1)
     }
 
     @AfterEach
     internal fun AfterEach() {
         kafkaMockFactory.close()
         application.stopServer()
+        hendelseMock.reset()
     }
 
     @AfterAll
@@ -48,17 +46,11 @@ internal class ShutdownTest {
         application.stopServer()
     }
 
-    private fun createEnvVariables() = MaskinportenMock.MASKINPORTEN_ENV_VARIABLES +
-            mapOf(
-                    HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
-                    FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
-                    MINUTES_TO_WAIT_BEFORE_CALLING_SKATT_ENV_KEY to "0.01"
-            )
-
     @Test
     fun `should close produsers and consumers when close is called from outside application`() {
         kafkaMockFactory = KafkaMockFactory()
         application = Application(kafkaFactory = kafkaMockFactory, env = createEnvVariables(), loopForever = true)
+        hendelseMock.`stub hendelse endpoint skatt`(1)
 
         GlobalScope.async {
             delay(100)
@@ -76,6 +68,7 @@ internal class ShutdownTest {
     fun `should close naisServer when close is called from outside application`() {
         kafkaMockFactory = KafkaMockFactory()
         application = Application(kafkaFactory = kafkaMockFactory, env = createEnvVariables(), loopForever = true)
+        hendelseMock.`stub hendelse endpoint skatt`(1)
 
         GlobalScope.async {
             application.startHendelseSkattLoop()
@@ -91,12 +84,42 @@ internal class ShutdownTest {
 
     @Test
     fun `should throw unhandled exception out of application`() {
+        hendelseMock.`stub hendelse endpoint skatt`(1)
         kafkaMockFactory = KafkaMockFactory(hendelseProducer = ExceptionKafkaProducer())
         application = Application(kafkaFactory = kafkaMockFactory, env = createEnvVariables(), loopForever = true)
 
-        assertThrows<Throwable>{application.startHendelseSkattLoop()}
+        assertThrows<Throwable> { application.startHendelseSkattLoop() }
     }
 
+
+    @Test
+    fun `should close when waiting to call skatt`() {
+        kafkaMockFactory = KafkaMockFactory()
+        hendelseMock.`stub hendelse endpoint skatt`(1, 10)
+        hendelseMock.`stub hendelse endpoint skatt`(11, 10)
+        val envVariables =
+                mapOf(
+                        HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
+                        FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
+                        MINUTES_TO_WAIT_BEFORE_CALLING_SKATT_ENV_KEY to "30"
+                ) + MaskinportenMock.MASKINPORTEN_ENV_VARIABLES
+
+        application = Application(kafkaFactory = kafkaMockFactory, env = envVariables, loopForever = true)
+
+        GlobalScope.async {
+            delay(100)
+            application.stopServer()
+        }
+
+        assertThrows<Exception> { application.startHendelseSkattLoop() }
+    }
+
+    private fun createEnvVariables() = MaskinportenMock.MASKINPORTEN_ENV_VARIABLES +
+            mapOf(
+                    HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
+                    FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
+                    MINUTES_TO_WAIT_BEFORE_CALLING_SKATT_ENV_KEY to "0.01"
+            )
 
     private fun callIsAlive() =
             HttpClient.newHttpClient().send(
