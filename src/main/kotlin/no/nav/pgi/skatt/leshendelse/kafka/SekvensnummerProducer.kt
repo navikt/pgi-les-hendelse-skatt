@@ -26,7 +26,7 @@ internal class SekvensnummerProducer(kafkaFactory: KafkaFactory) {
 private fun callBack(record: ProducerRecord<String, String>): (metadata: RecordMetadata?, exception: Exception?) -> Unit =
         { recordMetadata, exception ->
             if (exception == null) {
-                LOG.info("""Added sekvensnummer "${record.value()}" to topic ${record.topic()}""")
+                LOG.info("""Added sekvensnummer ${record.value()} to topic ${record.topic()}""")
                 persistedSekvensnummerGauge.set(record.value().toDouble())
             } else {
                 LOG.error("""Error while sending sekvensnummer "${record.value()}" """)

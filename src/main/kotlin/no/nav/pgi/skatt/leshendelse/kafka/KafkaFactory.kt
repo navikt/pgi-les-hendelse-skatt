@@ -2,8 +2,10 @@ package no.nav.pgi.skatt.leshendelse.kafka
 
 import no.nav.samordning.pgi.schema.Hendelse
 import no.nav.samordning.pgi.schema.HendelseKey
+import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
+import org.apache.kafka.clients.producer.Producer
 
 
 internal class KafkaHendelseFactory(private val kafkaConfig: KafkaConfig = KafkaConfig()) : KafkaFactory {
@@ -18,9 +20,9 @@ internal class KafkaHendelseFactory(private val kafkaConfig: KafkaConfig = Kafka
 }
 
 internal interface KafkaFactory {
-    fun nextSekvensnummerProducer(): KafkaProducer<String, String>
+    fun nextSekvensnummerProducer(): Producer<String, String>
 
-    fun nextSekvensnummerConsumer(): KafkaConsumer<String, String>
+    fun nextSekvensnummerConsumer(): Consumer<String, String>
 
-    fun hendelseProducer(): KafkaProducer<HendelseKey, Hendelse>
+    fun hendelseProducer(): Producer<HendelseKey, Hendelse>
 }

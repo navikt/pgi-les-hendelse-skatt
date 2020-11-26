@@ -16,4 +16,11 @@ internal class HendelserDtoTest {
         val hendelseList: List<HendelseDto> = listOf(HendelseDto("12345678901", "2020", 3))
         assertEquals(hendelseList.size, HendelserDto(hendelseList).size())
     }
+
+    @Test
+    fun `HendelserDto returns sekvensnummer + 1 when get nextSekvensnummer`() {
+        val sekvensnummer = 3L
+        val hendelseList: List<HendelseDto> = listOf(HendelseDto("12345678901", "2020", sekvensnummer))
+        assertEquals(sekvensnummer + 1, HendelserDto(hendelseList).getNextSekvensnummer())
+    }
 }

@@ -2,7 +2,6 @@ package no.nav.pgi.skatt.leshendelse
 
 import no.nav.pgi.skatt.leshendelse.kafka.FailedHendelse
 import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducer
-import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseClient
 import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
@@ -10,7 +9,7 @@ import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
 import no.nav.pgi.skatt.leshendelse.skatt.size
 import org.slf4j.LoggerFactory
 
-private val LOG = LoggerFactory.getLogger(ReadAndWriteHendelserToTopicLoop::class.java)
+private val LOG = LoggerFactory.getLogger(ReadAndWriteHendelserToTopicLoop::class.java.simpleName)
 
 internal class ReadAndWriteHendelserToTopicLoop(kafkaFactory: KafkaFactory, env: Map<String, String>) {
     private val hendelseProducer = HendelseProducer(kafkaFactory)
@@ -18,7 +17,7 @@ internal class ReadAndWriteHendelserToTopicLoop(kafkaFactory: KafkaFactory, env:
     private val hendelseClient = HendelseClient(env)
 
     internal fun start() {
-        LOG.info("starting to read hendelser from skatt")
+        LOG.info("Start reading hendelser from skatt and writing them to topic")
         var hendelserDto: HendelserDto
         do {
             hendelserDto = hendelseClient.getHendelserSkatt(ANTALL_HENDELSER, sekvensnummer.value)

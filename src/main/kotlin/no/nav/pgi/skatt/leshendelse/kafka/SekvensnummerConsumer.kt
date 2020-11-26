@@ -17,7 +17,7 @@ internal class SekvensnummerConsumer(kafkaFactory: KafkaFactory, private val top
 
     internal fun getNextSekvensnummer(): String? {
         setPollOffset(lastSekvensnummerOffset())
-        return pollRecords().lastValue().also { LOG.info("""Polled sekvensnummer "$it" from topic ${topicPartition.topic()}""") }
+        return pollRecords().lastValue().also { LOG.info("""Polled sekvensnummer $it from topic ${topicPartition.topic()}""") }
     }
 
     private fun lastSekvensnummerOffset(): Long = max(getEndOffset() - 1, 0)
@@ -32,7 +32,7 @@ internal class SekvensnummerConsumer(kafkaFactory: KafkaFactory, private val top
 
     companion object {
         private const val POLLING_DURATION_SECONDS = 4L
-        private val defaultTopicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
+        internal val defaultTopicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
     }
 }
 
