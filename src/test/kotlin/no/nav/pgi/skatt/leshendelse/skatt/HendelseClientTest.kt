@@ -45,7 +45,7 @@ internal class GrunnlagPgiHendelseDtoClientTest {
 
     @Test
     fun `neste skevensummer should be USE_PREVIOUS_SEKVENSNUMMER when of hendelser is empty`() {
-        hendelseMock.`stub hendelse endpoint that returns no hendelser`(FRA_SEKVENSNUMMER)
+        hendelseMock.`stub hendelse endpoint skatt`(FRA_SEKVENSNUMMER,0)
 
         assertEquals(Sekvensnummer.USE_PREVIOUS, client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER).getNextSekvensnummer())
     }

@@ -28,7 +28,7 @@ internal class SekvensnummerConsumer(kafkaFactory: KafkaFactory, private val top
 
     private fun pollRecords() = consumer.poll(ofSeconds(POLLING_DURATION_SECONDS)).records(topicPartition).toList()
 
-    internal fun close() = consumer.close()
+    internal fun close() = consumer.close().also{LOG.info("nextSekvensnummerConsumer closed")}
 
     companion object {
         private const val POLLING_DURATION_SECONDS = 4L

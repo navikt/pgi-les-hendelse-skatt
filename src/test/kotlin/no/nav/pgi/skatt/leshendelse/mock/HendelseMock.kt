@@ -34,20 +34,23 @@ internal class HendelseMock {
         mock.stop()
     }
 
-    internal fun `stub hendelse endpoint skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
-        val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
+    internal fun `stub hendelse endpoint skatt`(fraSekvensnummer: Long) {
+        var sekvensnummer = fraSekvensnummer
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .withQueryParams(queryParams(fraSekvensnummer))
                 .willReturn(
                         aResponse()
-                                .withBody(ObjectMapper().registerModule(KotlinModule()).writeValueAsString(hendelser))
+                                .withBody(ObjectMapper()
+                                        .registerModule(KotlinModule())
+                                        .writeValueAsString(createHendelser(sekvensnummer, ANTALL_HENDELSER))
+                                        .also {
+                                            sekvensnummer += ANTALL_HENDELSER
+                                        })
                                 .withStatus(200)
                 ))
-        return hendelser
     }
 
-    internal fun `stub hendelse endpoint that returns no hendelser`(fraSekvensnummer: Long): HendelserDto {
-        val hendelser: HendelserDto = createHendelser(fraSekvensnummer, 0)
+    internal fun `stub hendelse endpoint skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
+        val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
                 .willReturn(

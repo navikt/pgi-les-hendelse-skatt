@@ -14,25 +14,29 @@ internal class SekvensnummerProducer(kafkaFactory: KafkaFactory) {
         val record = ProducerRecord(NEXT_SEKVENSNUMMER_TOPIC, "sekvensnummer", sekvensnummer.toString())
         if (synchronous) {
             sekvensnummerProducer.send(record)
-            persistedSekvensnummerGauge.set(record.value().toDouble())
+            logAddedSekvensnummer(record)
         } else {
             sekvensnummerProducer.send(record, callBack(record))
         }
     }
 
-    internal fun close() = sekvensnummerProducer.close()
-}
+    internal fun close() = sekvensnummerProducer.close().also{LOG.info("sekvensnummerProducer closed")}
 
-private fun callBack(record: ProducerRecord<String, String>): (metadata: RecordMetadata?, exception: Exception?) -> Unit =
-        { recordMetadata, exception ->
-            if (exception == null) {
-                LOG.info("""Added sekvensnummer ${record.value()} to topic ${record.topic()}""")
-                persistedSekvensnummerGauge.set(record.value().toDouble())
-            } else {
-                LOG.error("""Error while sending sekvensnummer "${record.value()}" """)
-                throw exception
+    private fun callBack(record: ProducerRecord<String, String>): (metadata: RecordMetadata?, exception: Exception?) -> Unit =
+            { recordMetadata, exception ->
+                if (exception == null) {
+                    logAddedSekvensnummer(record)
+                } else {
+                    LOG.error("""Error while sending sekvensnummer "${record.value()}" """)
+                    throw exception
+                }
             }
-        }
+
+    private fun logAddedSekvensnummer(record:ProducerRecord<String, String>){
+        LOG.info("""Added sekvensnummer ${record.value()} to topic ${record.topic()}""")
+        persistedSekvensnummerGauge.set(record.value().toDouble())
+    }
+}
 
 private val persistedSekvensnummerGauge = Gauge.build()
         .name("persistedSekvensnummer")

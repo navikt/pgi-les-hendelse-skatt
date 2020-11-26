@@ -13,18 +13,18 @@ private val LOG = LoggerFactory.getLogger(HendelseProducer::class.java)
 
 internal class HendelseProducer(kafkaFactory: KafkaFactory) {
 
-    private val producer = kafkaFactory.hendelseProducer()
+    private val hendelseProducer = kafkaFactory.hendelseProducer()
 
     internal fun writeHendelser(hendelserDto: HendelserDto): FailedHendelse? {
         val sentHendelseList = hendelserDto.hendelser
                 .map { ProducerRecord(PGI_HENDELSE_TOPIC, it.mapToHendelseKey(), it.mapToHendelse()) }
-                .map { SentRecord(producer.send(it), it.value()) }
+                .map { SentRecord(hendelseProducer.send(it), it.value()) }
 
         return sentHendelseList.verifyPersisted()
                 .also { loggWrittenHendelser(it, hendelserDto) }
     }
 
-    internal fun close() = producer.close()
+    internal fun close() = hendelseProducer.close().also { LOG.info("closing hendelse hendelseProducer") }
 
     private fun loggWrittenHendelser(failedHendelse: FailedHendelse?, hendelserDto: HendelserDto) {
         if (failedHendelse == null) {

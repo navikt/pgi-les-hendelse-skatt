@@ -48,11 +48,5 @@ internal class Application(kafkaFactory: KafkaFactory, env: Map<String, String>,
 }
 
 //TODO Legg inn logging
-//TODO Kjør applikasjon mot mock
 //TODO LEGG in matriser
 //TODO DObbelsjekk tortuga-hiv om det er noe vi mangler
-
-//TODO tester for feilende kall topic
-//TODO Vurder logcompation på hendelse topic noe som gjør at det ikke er så farlig med helt riktig sekvensnummer.
-//     Dette vil hjelpe med duplikater på hendelse topic
-// TODO vurder om nye hendelser skal hentes fra skatt før man validerer om hendelser er peristert til topic.
