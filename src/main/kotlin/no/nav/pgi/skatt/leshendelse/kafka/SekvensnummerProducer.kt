@@ -22,7 +22,7 @@ internal class SekvensnummerProducer(kafkaFactory: KafkaFactory) {
 
     internal fun close() = sekvensnummerProducer.close().also{LOG.info("sekvensnummerProducer closed")}
 
-    private fun callBack(record: ProducerRecord<String, String>): (metadata: RecordMetadata?, exception: Exception?) -> Unit =
+    private fun callBack(record: ProducerRecord<String, String>): (metadata: RecordMetadata, exception: Exception?) -> Unit =
             { recordMetadata, exception ->
                 if (exception == null) {
                     logAddedSekvensnummer(record)

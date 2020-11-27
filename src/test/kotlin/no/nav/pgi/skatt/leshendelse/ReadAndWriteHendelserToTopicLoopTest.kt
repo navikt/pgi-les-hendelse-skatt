@@ -50,7 +50,7 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
     }
 
     @Test
-    fun `adds 400 hendelser to topic and exits loop`() {
+    fun `adds less then 1000 hendelser to topic and exits loop`() {
         val hendelseCount = 400
         val fraSekvensnummer = 1L
 

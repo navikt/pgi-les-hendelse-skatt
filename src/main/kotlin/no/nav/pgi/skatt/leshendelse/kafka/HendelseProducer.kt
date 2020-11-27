@@ -1,7 +1,6 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
-import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
-import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
+import no.nav.pgi.skatt.leshendelse.skatt.*
 import no.nav.samordning.pgi.schema.Hendelse
 import no.nav.samordning.pgi.schema.HendelseKey
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -28,9 +27,10 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
 
     private fun loggWrittenHendelser(failedHendelse: FailedHendelse?, hendelserDto: HendelserDto) {
         if (failedHendelse == null) {
-            LOG.info("Added ${hendelserDto.hendelser.size} hendelser to $PGI_HENDELSE_TOPIC")
+            LOG.info("Added ${hendelserDto.size()} hendelser to $PGI_HENDELSE_TOPIC. From sekvensnummer ${hendelserDto.fistSekvensnummer()} to ${hendelserDto.lastSekvensnummer()}")
         } else {
-            LOG.info("Failed while adding hendelse to $PGI_HENDELSE_TOPIC at sekvensnummer ${failedHendelse.hendelse.getSekvensnummer()}")
+            val hendelserAdded = hendelserDto.hendelserBefore(failedHendelse.hendelse.getSekvensnummer())
+            LOG.info("Failed after adding $hendelserAdded hendelser to $PGI_HENDELSE_TOPIC at sekvensnummer ${failedHendelse.hendelse.getSekvensnummer()}")
         }
     }
 }

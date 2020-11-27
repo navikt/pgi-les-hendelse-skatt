@@ -19,7 +19,7 @@ internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
     fun getHendelserSkatt(antall: Int, fraSekvensnummer: Long): HendelserDto {
         val response = send(createGetRequest(host + HENDELSE_PATH, createQueryParameters(antall, fraSekvensnummer)), ofString())
         return when (response.statusCode()) {
-            200 -> mapResponse(response.body()).also { LOG.info("Polled ${it.hendelser.size} hendelser from skatt") }
+            200 -> mapResponse(response.body()).also { logPolledHendelser(it) }
             else -> throw HendelseClientCallException(response).also { LOG.error(it.message) }
         }
     }
@@ -32,6 +32,8 @@ internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
             }
 
     private fun createQueryParameters(antall: Int, fraSekvensnummer: Long) = mapOf("antall" to antall, "fraSekvensnummer" to fraSekvensnummer)
+
+    private fun logPolledHendelser(hendelserDto: HendelserDto) = LOG.info("Polled ${hendelserDto.hendelser.size} hendelser from skatt. Containing sekvensnummer from ${hendelserDto.fistSekvensnummer()} to ${hendelserDto.lastSekvensnummer()}")
 }
 
 internal class HendelseClientCallException(response: HttpResponse<String>) : Exception("Feil ved henting av hendelse mot skatt: Status: ${response.statusCode()} , Body: ${response.body()}")

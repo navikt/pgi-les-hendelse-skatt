@@ -17,18 +17,18 @@ internal class ReadAndWriteHendelserToTopicLoop(kafkaFactory: KafkaFactory, env:
     private val hendelseClient = HendelseClient(env)
 
     internal fun start() {
-        LOG.info("Start reading hendelser from skatt and writing them to topic")
+        LOG.info("Starting to read pgi-hendelser and writing them to topic")
         var hendelserDto: HendelserDto
         do {
             hendelserDto = hendelseClient.getHendelserSkatt(ANTALL_HENDELSER, sekvensnummer.value)
             hendelseProducer.writeHendelser(hendelserDto)?.let { handleFailedHendelse(it) }
             sekvensnummer.value = hendelserDto.getNextSekvensnummer()
         } while (hendelserDto.size() >= ANTALL_HENDELSER)
-        LOG.info("Stop reading hendelser from skatt because antall hendelser was less then $ANTALL_HENDELSER")
+        LOG.info("Stopped reading hendelser from skatt because antall hendelser was less then $ANTALL_HENDELSER")
     }
 
     private fun handleFailedHendelse(failedHendelse: FailedHendelse) {
-        sekvensnummer.setSekvensnummer(failedHendelse.hendelse.getSekvensnummer(), synchronous = true)
+        sekvensnummer.addSekvensnummerToTopic(failedHendelse.hendelse.getSekvensnummer(), synchronous = true)
         throw failedHendelse.exception
     }
 
