@@ -3,13 +3,14 @@ package no.nav.pgi.skatt.leshendelse.mock
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED
 import no.nav.pgi.skatt.leshendelse.ANTALL_HENDELSER
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
-import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
+import no.nav.pgi.skatt.leshendelse.skatt.HendelserDtoWrapper
 
 
 private const val ANTALL_KEY = "antall"
@@ -34,30 +35,17 @@ internal class HendelseMock {
         mock.stop()
     }
 
-    internal fun `stub hendelse endpoint skatt`(fraSekvensnummer: Long) {
-        var sekvensnummer = fraSekvensnummer
+    internal fun `stub hendelse endpoint skatt`() {
+        val hendelser: List<HendelseDto> = createHendelser(1, ANTALL_HENDELSER)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
-                .willReturn(
-                        aResponse()
-                                .withBody(ObjectMapper()
-                                        .registerModule(KotlinModule())
-                                        .writeValueAsString(createHendelser(sekvensnummer, ANTALL_HENDELSER))
-                                        .also {
-                                            sekvensnummer += ANTALL_HENDELSER
-                                        })
-                                .withStatus(200)
-                ))
+                .willReturn(responseWithHendelser(hendelser)))
     }
 
-    internal fun `stub hendelse endpoint skatt`(fraSekvensnummer: Long, antall: Int): HendelserDto {
-        val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
+    internal fun `stub hendelse endpoint skatt`(fraSekvensnummer: Long, antall: Int): List<HendelseDto> {
+        val hendelser: List<HendelseDto> = createHendelser(fraSekvensnummer, antall)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
-                .willReturn(
-                        aResponse()
-                                .withBody(ObjectMapper().registerModule(KotlinModule()).writeValueAsString(hendelser))
-                                .withStatus(200)
-                ))
+                .willReturn(responseWithHendelser(hendelser)))
         return hendelser
     }
 
@@ -81,34 +69,34 @@ internal class HendelseMock {
                 ))
     }
 
-    internal fun `stub hendelse endpoint first call`(fraSekvensnummer: Long, antall: Int): HendelserDto {
-        val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
+    internal fun `stub hendelse endpoint first call`(fraSekvensnummer: Long, antall: Int): List<HendelseDto> {
+        val hendelser: List<HendelseDto> = createHendelser(fraSekvensnummer, antall)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
                 .inScenario("Two calls to hendelse")
                 .whenScenarioStateIs(STARTED)
-
-                .willReturn(
-                        aResponse()
-                                .withBody(ObjectMapper().registerModule(KotlinModule()).writeValueAsString(hendelser))
-                                .withStatus(200)
-                )
+                .willReturn(responseWithHendelser(hendelser))
                 .willSetStateTo("First call completed"))
         return hendelser
     }
 
-    internal fun `stub hendelse endpoint second call`(fraSekvensnummer: Long, antall: Int): HendelserDto {
-        val hendelser: HendelserDto = createHendelser(fraSekvensnummer, antall)
+    internal fun `stub hendelse endpoint second call`(fraSekvensnummer: Long, antall: Int): List<HendelseDto> {
+        val hendelser: List<HendelseDto> = createHendelser(fraSekvensnummer, antall)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
                 .inScenario("Two calls to hendelse")
                 .whenScenarioStateIs("First call completed")
-                .willReturn(
-                        aResponse()
-                                .withBody(ObjectMapper().registerModule(KotlinModule()).writeValueAsString(hendelser))
-                                .withStatus(200)
-                ).willSetStateTo("second call completed"))
+                .willReturn(responseWithHendelser(hendelser))
+                .willSetStateTo("second call completed"))
         return hendelser
+    }
+
+    private fun responseWithHendelser(hendelser: List<HendelseDto>): ResponseDefinitionBuilder? {
+        return aResponse()
+                .withBody(ObjectMapper()
+                        .registerModule(KotlinModule())
+                        .writeValueAsString(HendelserDtoWrapper(hendelser)))
+                .withStatus(200)
     }
 
     private fun queryParams(fraSekvensnummer: Long) =
@@ -117,10 +105,8 @@ internal class HendelseMock {
                     ANTALL_KEY to WireMock.equalTo("$ANTALL_HENDELSER")
             )
 
-    private fun createHendelser(startingSekvensnummer: Long, amount: Int): HendelserDto =
-            HendelserDto(createHendelseList(startingSekvensnummer, amount))
 
-    private fun createHendelseList(startingSekvensnummer: Long, amount: Int): List<HendelseDto> =
+    private fun createHendelser(startingSekvensnummer: Long, amount: Int): List<HendelseDto> =
             (startingSekvensnummer until startingSekvensnummer + amount)
                     .toList()
                     .map { HendelseDto((11111111111 + it).toString(), "2020", it) }

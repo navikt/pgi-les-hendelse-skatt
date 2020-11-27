@@ -3,7 +3,6 @@ package no.nav.pgi.skatt.leshendelse.kafka
 import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
 import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
-import no.nav.pgi.skatt.leshendelse.skatt.HendelserDto
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -24,9 +23,7 @@ internal class HendelseProducerTest {
     @Test
     fun `write one pgi hendelse to topic`() {
         val hendelse = HendelseDto("123456", "12345", 1L)
-        val hendelser = HendelserDto(listOf(hendelse))
-
-        hendelseProducer.writeHendelser(hendelser)
+        hendelseProducer.writeHendelser(listOf(hendelse))
 
         val record = kafkaTestEnvironment.getFirstRecordOnTopic()
 
@@ -40,9 +37,8 @@ internal class HendelseProducerTest {
         val hendelse1 = HendelseDto("11111111111", "1111", 1L)
         val hendelse2 = HendelseDto("22222222222", "2222", 2L)
         val hendelse3 = HendelseDto("33333333333", "3333", 3L)
-        val hendelser = HendelserDto(listOf(hendelse1, hendelse2, hendelse3))
 
-        hendelseProducer.writeHendelser(hendelser)
+        hendelseProducer.writeHendelser(listOf(hendelse1, hendelse2, hendelse3))
 
         val record = kafkaTestEnvironment.consumeHendelseTopic()
 

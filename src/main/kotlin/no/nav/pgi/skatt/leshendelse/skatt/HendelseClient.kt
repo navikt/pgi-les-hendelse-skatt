@@ -2,7 +2,6 @@ package no.nav.pgi.skatt.leshendelse.skatt
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.pensjon.samhandling.env.getVal
 import org.slf4j.LoggerFactory
 import java.net.http.HttpResponse
@@ -16,7 +15,7 @@ internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
     private val host: String = env.getVal(HENDELSE_HOST_ENV_KEY)
     private val objectMapper = ObjectMapper().registerModule(KotlinModule())
 
-    fun getHendelserSkatt(antall: Int, fraSekvensnummer: Long): HendelserDto {
+    fun getHendelserSkatt(antall: Int, fraSekvensnummer: Long): List<HendelseDto> {
         val response = send(createGetRequest(host + HENDELSE_PATH, createQueryParameters(antall, fraSekvensnummer)), ofString())
         return when (response.statusCode()) {
             200 -> mapResponse(response.body()).also { logPolledHendelser(it) }
@@ -24,16 +23,16 @@ internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
         }
     }
 
-    private fun mapResponse(body: String): HendelserDto =
+    private fun mapResponse(body: String): List<HendelseDto> =
             try {
-                objectMapper.readValue(body)
+                objectMapper.readValue(body, HendelserDtoWrapper::class.java).hendelser
             } catch (e: Exception) {
                 throw HendelseClientObjectMapperException(e.toString()).also { LOG.error(it.message) }
             }
 
     private fun createQueryParameters(antall: Int, fraSekvensnummer: Long) = mapOf("antall" to antall, "fraSekvensnummer" to fraSekvensnummer)
 
-    private fun logPolledHendelser(hendelserDto: HendelserDto) = LOG.info("Polled ${hendelserDto.hendelser.size} hendelser from skatt. Containing sekvensnummer from ${hendelserDto.fistSekvensnummer()} to ${hendelserDto.lastSekvensnummer()}")
+    private fun logPolledHendelser(hendelser: List<HendelseDto>) = LOG.info("Polled ${hendelser.size} hendelser from skatt. Containing sekvensnummer from ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
 }
 
 internal class HendelseClientCallException(response: HttpResponse<String>) : Exception("Feil ved henting av hendelse mot skatt: Status: ${response.statusCode()} , Body: ${response.body()}")

@@ -40,7 +40,7 @@ internal class GrunnlagPgiHendelseDtoClientTest {
         hendelseMock.`stub hendelse endpoint response with masked data from skatt`(FRA_SEKVENSNUMMER)
 
         val hendelser = client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
-        assertEquals(100, hendelser.size())
+        assertEquals(100, hendelser.size)
     }
 
     @Test

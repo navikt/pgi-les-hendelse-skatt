@@ -2,7 +2,6 @@ package no.nav.pgi.skatt.leshendelse.kafka
 
 import no.nav.pgi.skatt.leshendelse.skatt.*
 import no.nav.samordning.pgi.schema.Hendelse
-import no.nav.samordning.pgi.schema.HendelseKey
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
 import org.slf4j.LoggerFactory
@@ -14,29 +13,26 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
 
     private val hendelseProducer = kafkaFactory.hendelseProducer()
 
-    internal fun writeHendelser(hendelserDto: HendelserDto): FailedHendelse? {
-        val sentHendelseList = hendelserDto.hendelser
-                .map { ProducerRecord(PGI_HENDELSE_TOPIC, it.mapToHendelseKey(), it.mapToHendelse()) }
+    internal fun writeHendelser(hendelser: List<HendelseDto>): FailedHendelse? {
+        val sentHendelseList = hendelser
+                .map { ProducerRecord(PGI_HENDELSE_TOPIC, it.mapToAvroHendelseKey(), it.mapToAvroHendelse()) }
                 .map { SentRecord(hendelseProducer.send(it), it.value()) }
 
-        return sentHendelseList.verifyPersisted()
-                .also { loggWrittenHendelser(it, hendelserDto) }
+        return sentHendelseList.verifyPersisted().also { loggWrittenHendelser(it, hendelser) }
     }
 
     internal fun close() = hendelseProducer.close().also { LOG.info("closing hendelse hendelseProducer") }
 
-    private fun loggWrittenHendelser(failedHendelse: FailedHendelse?, hendelserDto: HendelserDto) {
+    private fun loggWrittenHendelser(failedHendelse: FailedHendelse?, hendelser: List<HendelseDto>) {
         if (failedHendelse == null) {
-            LOG.info("Added ${hendelserDto.size()} hendelser to $PGI_HENDELSE_TOPIC. From sekvensnummer ${hendelserDto.fistSekvensnummer()} to ${hendelserDto.lastSekvensnummer()}")
+            LOG.info("Added ${hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. From sekvensnummer ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
         } else {
-            val hendelserAdded = hendelserDto.amountOfHendelserBefore(failedHendelse.hendelse.getSekvensnummer())
+            val hendelserAdded = hendelser.amountOfHendelserBefore(failedHendelse.hendelse.getSekvensnummer())
             LOG.info("Failed after adding $hendelserAdded hendelser to $PGI_HENDELSE_TOPIC at sekvensnummer ${failedHendelse.hendelse.getSekvensnummer()}")
         }
     }
 }
 
-internal fun HendelseDto.mapToHendelseKey() = HendelseKey(identifikator, gjelderPeriode)
-internal fun HendelseDto.mapToHendelse() = Hendelse(sekvensnummer, identifikator, gjelderPeriode)
 internal fun List<SentRecord>.verifyPersisted(): FailedHendelse? {
     forEach {
         try {

@@ -1,4 +1,4 @@
-package no.nav.pgi.skatt.leshendelse.common
+package no.nav.pgi.skatt.leshendelse.mock
 
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
 import no.nav.pgi.skatt.leshendelse.kafka.NEXT_SEKVENSNUMMER_TOPIC

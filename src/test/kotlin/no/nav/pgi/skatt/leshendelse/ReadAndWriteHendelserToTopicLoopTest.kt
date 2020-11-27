@@ -1,7 +1,7 @@
 package no.nav.pgi.skatt.leshendelse
 
-import no.nav.pgi.skatt.leshendelse.common.ExceptionKafkaProducer
-import no.nav.pgi.skatt.leshendelse.common.KafkaMockFactory
+import no.nav.pgi.skatt.leshendelse.mock.ExceptionKafkaProducer
+import no.nav.pgi.skatt.leshendelse.mock.KafkaMockFactory
 import no.nav.pgi.skatt.leshendelse.kafka.NEXT_SEKVENSNUMMER_TOPIC
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
 import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_HOST
@@ -90,11 +90,11 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
         kafkaMockFactory = KafkaMockFactory(hendelseProducer = failingProducer)
         readAndWriteLoop = ReadAndWriteHendelserToTopicLoop(kafkaMockFactory, createEnvVariables())
 
-        val hendelserReturnedFromSkatt = hendelseMock.`stub hendelse endpoint skatt`(1, 15)
+        val hendelser = hendelseMock.`stub hendelse endpoint skatt`(1, 15)
 
         assertThrows<ExecutionException> { readAndWriteLoop.start() }
 
-        assertEquals(hendelserReturnedFromSkatt.hendelser[0].sekvensnummer.toString(), kafkaMockFactory.nextSekvensnummerProducer.history().last().value())
+        assertEquals(hendelser[0].sekvensnummer.toString(), kafkaMockFactory.nextSekvensnummerProducer.history().last().value())
     }
 
     private fun createEnvVariables() =

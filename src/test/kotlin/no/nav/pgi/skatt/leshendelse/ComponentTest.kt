@@ -11,6 +11,7 @@ import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock.Companion.MASKINPORTEN
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
+import no.nav.pgi.skatt.leshendelse.skatt.mapToAvroHendelse
 import org.apache.kafka.common.TopicPartition
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -50,11 +51,11 @@ internal class ComponentTest {
         val antallHendelserSecondCall = 60
 
         hendelseMock.`stub hendelse endpoint first call`(currentSekvensnummer, antallHendelserFirstCall)
-        val hendelserDto = hendelseMock.`stub hendelse endpoint second call`(currentSekvensnummer + antallHendelserFirstCall, antallHendelserSecondCall)
+        val hendelser = hendelseMock.`stub hendelse endpoint second call`(currentSekvensnummer + antallHendelserFirstCall, antallHendelserSecondCall)
         application.startHendelseSkattLoop()
 
-        assertEquals(hendelserDto.getNextSekvensnummer(), sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
-        assertEquals(hendelserDto.hendelser[hendelserDto.hendelser.size - 1].mapToHendelse(), kafkaTestEnvironment.getLastRecordOnTopic().value())
+        assertEquals(hendelser.getNextSekvensnummer(), sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
+        assertEquals(hendelser[hendelser.size - 1].mapToAvroHendelse(), kafkaTestEnvironment.getLastRecordOnTopic().value())
     }
 
     private fun createEnvVariables() = MASKINPORTEN_ENV_VARIABLES +

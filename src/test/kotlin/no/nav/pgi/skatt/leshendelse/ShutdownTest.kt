@@ -4,8 +4,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import no.nav.pensjon.samhandling.liveness.IS_ALIVE_PATH
-import no.nav.pgi.skatt.leshendelse.common.ExceptionKafkaProducer
-import no.nav.pgi.skatt.leshendelse.common.KafkaMockFactory
+import no.nav.pgi.skatt.leshendelse.mock.ExceptionKafkaProducer
+import no.nav.pgi.skatt.leshendelse.mock.KafkaMockFactory
 import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_HOST
 import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_HOST
 import no.nav.pgi.skatt.leshendelse.mock.HendelseMock
@@ -50,7 +50,7 @@ internal class ShutdownTest {
     fun `should close produsers and consumers when close is called from outside application`() {
         kafkaMockFactory = KafkaMockFactory()
         application = Application(kafkaFactory = kafkaMockFactory, env = createEnvVariables(), loopForever = true)
-        hendelseMock.`stub hendelse endpoint skatt`(1)
+        hendelseMock.`stub hendelse endpoint skatt`()
 
         GlobalScope.async {
             delay(100)
@@ -68,7 +68,7 @@ internal class ShutdownTest {
     fun `should close naisServer when close is called from outside application`() {
         kafkaMockFactory = KafkaMockFactory()
         application = Application(kafkaFactory = kafkaMockFactory, env = createEnvVariables(), loopForever = true)
-        hendelseMock.`stub hendelse endpoint skatt`(1)
+        hendelseMock.`stub hendelse endpoint skatt`()
 
         GlobalScope.async {
             application.startHendelseSkattLoop()
@@ -84,7 +84,7 @@ internal class ShutdownTest {
 
     @Test
     fun `should throw unhandled exception out of application`() {
-        hendelseMock.`stub hendelse endpoint skatt`(1)
+        hendelseMock.`stub hendelse endpoint skatt`()
         kafkaMockFactory = KafkaMockFactory(hendelseProducer = ExceptionKafkaProducer())
         application = Application(kafkaFactory = kafkaMockFactory, env = createEnvVariables(), loopForever = true)
 
