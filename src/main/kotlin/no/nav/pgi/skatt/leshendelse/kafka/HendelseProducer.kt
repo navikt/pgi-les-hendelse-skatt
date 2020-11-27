@@ -29,7 +29,7 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
         if (failedHendelse == null) {
             LOG.info("Added ${hendelserDto.size()} hendelser to $PGI_HENDELSE_TOPIC. From sekvensnummer ${hendelserDto.fistSekvensnummer()} to ${hendelserDto.lastSekvensnummer()}")
         } else {
-            val hendelserAdded = hendelserDto.hendelserBefore(failedHendelse.hendelse.getSekvensnummer())
+            val hendelserAdded = hendelserDto.amountOfHendelserBefore(failedHendelse.hendelse.getSekvensnummer())
             LOG.info("Failed after adding $hendelserAdded hendelser to $PGI_HENDELSE_TOPIC at sekvensnummer ${failedHendelse.hendelse.getSekvensnummer()}")
         }
     }
