@@ -3,8 +3,8 @@ package no.nav.pgi.skatt.leshendelse
 import no.nav.pgi.skatt.leshendelse.kafka.FailedHendelse
 import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducer
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
-import no.nav.pgi.skatt.leshendelse.skatt.*
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseClient
+import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
 import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
 import org.slf4j.LoggerFactory
 
@@ -19,9 +19,9 @@ internal class ReadAndWriteHendelserToTopicLoop(kafkaFactory: KafkaFactory, env:
         LOG.info("Starting to read pgi-hendelser and writing them to topic")
         var hendelser: List<HendelseDto>
         do {
-            hendelser = hendelseClient.getHendelserSkatt(ANTALL_HENDELSER, sekvensnummer.value)
+            hendelser = hendelseClient.getHendelserSkatt(ANTALL_HENDELSER, sekvensnummer.getSekvensnummer())
             hendelseProducer.writeHendelser(hendelser)?.let { handleFailedHendelse(it) }
-            sekvensnummer.value = hendelser.getNextSekvensnummer()
+            sekvensnummer.setSekvensnummer(hendelser.getNextSekvensnummer())
         } while (hendelser.size >= ANTALL_HENDELSER)
         LOG.info("Stopped reading hendelser from skatt because antall hendelser was less then $ANTALL_HENDELSER")
     }

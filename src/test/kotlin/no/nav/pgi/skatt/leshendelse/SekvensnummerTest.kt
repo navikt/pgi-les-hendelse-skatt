@@ -51,7 +51,7 @@ internal class SekvensnummerTest {
     @Order(0)
     internal fun `fails with exception when first sekvensnummer from skatt does not return 200`() {
         firstSekvensnummerMock.`mock 404 response`()
-        assertThrows<Exception> { sekvensnummer.value }
+        assertThrows<Exception> { sekvensnummer.getSekvensnummer() }
     }
 
     @Test
@@ -60,7 +60,7 @@ internal class SekvensnummerTest {
         val firstSekvensnummer = 1L
         firstSekvensnummerMock.`stub first sekvensnummer endpoint`(firstSekvensnummer)
 
-        assertEquals(firstSekvensnummer, sekvensnummer.value)
+        assertEquals(firstSekvensnummer, sekvensnummer.getSekvensnummer())
     }
 
     @Test
@@ -68,22 +68,22 @@ internal class SekvensnummerTest {
         val sekvensnummerOnTopic = 20L
         addSekvensnummerToTopic(listOf(sekvensnummerOnTopic))
 
-        assertEquals(sekvensnummerOnTopic, sekvensnummer.value)
+        assertEquals(sekvensnummerOnTopic, sekvensnummer.getSekvensnummer())
     }
 
     @Test
     internal fun `Gets last sekvensnummer from topic when there are more then one instance on topic`() {
-        val lastSekvensnummer = 51L
-        val sekvensnummerList = (1..50).map { it.toLong() } + lastSekvensnummer
+        val lastSekvensnummer = 21L
+        val sekvensnummerList = (1..20).map { it.toLong() } + lastSekvensnummer
         addSekvensnummerToTopic(sekvensnummerList)
 
-        assertEquals(lastSekvensnummer, sekvensnummer.value)
+        assertEquals(lastSekvensnummer, sekvensnummer.getSekvensnummer())
     }
 
     @Test
     internal fun `adds sekvensnummer to topic when sekvensnummer value is set`() {
         val newSekvensnummer = 100L
-        sekvensnummer.value = newSekvensnummer
+        sekvensnummer.setSekvensnummer(newSekvensnummer)
 
         assertEquals(newSekvensnummer, sekvensnummerConsumer.getNextSekvensnummer()?.toLong())
     }
@@ -92,24 +92,24 @@ internal class SekvensnummerTest {
     internal fun `Using local chash instead of topic after retrieving sekvensnummer ones from topic`() {
         val firstSekvensnummer = 75L
         addSekvensnummerToTopic(listOf(firstSekvensnummer))
-        assertEquals(firstSekvensnummer, sekvensnummer.value)
+        assertEquals(firstSekvensnummer, sekvensnummer.getSekvensnummer())
 
         val cashedSekvensnummer = 76L
         val sekvensnummerAddedDirectlyToTopic = 77L
-        sekvensnummer.value = cashedSekvensnummer
+        sekvensnummer.setSekvensnummer(cashedSekvensnummer)
         addSekvensnummerToTopic(listOf(sekvensnummerAddedDirectlyToTopic))
 
-        assertEquals(cashedSekvensnummer, sekvensnummer.value)
+        assertEquals(cashedSekvensnummer, sekvensnummer.getSekvensnummer())
     }
 
     @Test
     internal fun `should use previous sekvensnummer when sekvensnummer is less than zero`() {
         val validSekvensnummer = 0L
         val invalidSekvensnummer = Sekvensnummer.USE_PREVIOUS
-        sekvensnummer.value = validSekvensnummer
-        sekvensnummer.value = invalidSekvensnummer
+        sekvensnummer.setSekvensnummer(validSekvensnummer)
+        sekvensnummer.setSekvensnummer(invalidSekvensnummer)
 
-        assertEquals(validSekvensnummer, sekvensnummer.value)
+        assertEquals(validSekvensnummer, sekvensnummer.getSekvensnummer())
         assertEquals(validSekvensnummer, sekvensnummerConsumer.getNextSekvensnummer()?.toLong())
     }
 

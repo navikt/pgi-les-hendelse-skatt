@@ -8,32 +8,32 @@ import org.slf4j.LoggerFactory
 
 private val LOG = LoggerFactory.getLogger(Sekvensnummer::class.java.simpleName)
 
-//TODO setter og getter istede for value
 internal class Sekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String>) {
     private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaFactory)
     private val nextSekvensnummerProducer = SekvensnummerProducer(kafkaFactory)
     private val firstSekvensnummerClient = FirstSekvensnummerClient(env)
     private var currentSekvensnummer = NOT_INITIALIZED
 
-    internal var value
-        get():Long {
-            if (currentSekvensnummer == NOT_INITIALIZED) value = getInitialSekvensnummer()
-            return currentSekvensnummer
-        }
-        set(newSekvensnummer) {
-            when {
-                newSekvensnummer <= USE_PREVIOUS -> {
-                    LOG.info("""New sekvensnummer was not set because it was equal or less then $USE_PREVIOUS""")
-                }
-                newSekvensnummer <= currentSekvensnummer -> {
-                    LOG.info("""New sekvensnummer was not set because it was equal or less then current sekvensnummer """)
-                }
-                else -> {
-                    addSekvensnummerToTopic(newSekvensnummer)
-                    currentSekvensnummer = newSekvensnummer
-                }
+    internal fun getSekvensnummer(): Long {
+        if (currentSekvensnummer == NOT_INITIALIZED) setSekvensnummer(getInitialSekvensnummer())
+        return currentSekvensnummer
+    }
+
+    internal fun setSekvensnummer(sekvensnummer: Long) {
+        when {
+            sekvensnummer <= USE_PREVIOUS -> {
+                LOG.info("""New sekvensnummer was not set because it was equal or less then $USE_PREVIOUS""")
+            }
+            sekvensnummer <= currentSekvensnummer -> {
+                LOG.info("""New sekvensnummer was not set because it was equal or less then current sekvensnummer """)
+            }
+            else -> {
+                addSekvensnummerToTopic(sekvensnummer)
+                currentSekvensnummer = sekvensnummer
             }
         }
+    }
+
 
     private fun getInitialSekvensnummer(): Long = sekvensnummerConsumer.getNextSekvensnummer()?.toLong()
             ?: firstSekvensnummerClient.getFirstSekvensnummer()
