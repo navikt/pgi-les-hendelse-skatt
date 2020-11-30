@@ -4,12 +4,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import no.nav.pensjon.samhandling.liveness.IS_ALIVE_PATH
-import no.nav.pgi.skatt.leshendelse.mock.ExceptionKafkaProducer
-import no.nav.pgi.skatt.leshendelse.mock.KafkaMockFactory
-import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_HOST
-import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_HOST
-import no.nav.pgi.skatt.leshendelse.mock.HendelseMock
-import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
+import no.nav.pgi.skatt.leshendelse.mock.*
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
 import org.junit.jupiter.api.*
@@ -101,7 +96,7 @@ internal class ShutdownTest {
                 mapOf(
                         HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
                         FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
-                        MINUTES_TO_WAIT_BEFORE_CALLING_SKATT_ENV_KEY to "30"
+                        SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "180"
                 ) + MaskinportenMock.MASKINPORTEN_ENV_VARIABLES
 
         application = Application(kafkaFactory = kafkaMockFactory, env = envVariables, loopForever = true)
@@ -118,7 +113,7 @@ internal class ShutdownTest {
             mapOf(
                     HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
                     FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
-                    MINUTES_TO_WAIT_BEFORE_CALLING_SKATT_ENV_KEY to "0.01"
+                    SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "0"
             )
 
     private fun callIsAlive() =

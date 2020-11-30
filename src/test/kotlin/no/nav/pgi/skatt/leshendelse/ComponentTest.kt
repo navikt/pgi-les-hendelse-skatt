@@ -62,6 +62,6 @@ internal class ComponentTest {
             mapOf(
                     HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
                     FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
-                    MINUTES_TO_WAIT_BEFORE_CALLING_SKATT_ENV_KEY to "0.01"
+                    SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "0"
             )
 }

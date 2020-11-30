@@ -36,7 +36,7 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
 internal fun List<SentRecord>.verifyPersisted(): FailedHendelse? {
     forEach {
         try {
-            it.promise.get()
+            it.futureRecordMetadata.get()
         } catch (e: Exception) {
             return FailedHendelse(e, it.hendelse)
         }
@@ -44,5 +44,5 @@ internal fun List<SentRecord>.verifyPersisted(): FailedHendelse? {
     return null
 }
 
-internal data class SentRecord(internal val promise: Future<RecordMetadata>, internal val hendelse: Hendelse)
+internal data class SentRecord(internal val futureRecordMetadata: Future<RecordMetadata>, internal val hendelse: Hendelse)
 internal data class FailedHendelse(internal val exception: Exception, internal val hendelse: Hendelse)

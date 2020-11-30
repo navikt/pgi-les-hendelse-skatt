@@ -20,7 +20,7 @@ internal class SekvensnummerProducer(kafkaFactory: KafkaFactory) {
         }
     }
 
-    internal fun close() = sekvensnummerProducer.close().also{LOG.info("sekvensnummerProducer closed")}
+    internal fun close() = sekvensnummerProducer.close().also { LOG.info("sekvensnummerProducer closed") }
 
     private fun callBack(record: ProducerRecord<String, String>): (metadata: RecordMetadata, exception: Exception?) -> Unit =
             { recordMetadata, exception ->
@@ -32,7 +32,7 @@ internal class SekvensnummerProducer(kafkaFactory: KafkaFactory) {
                 }
             }
 
-    private fun logAddedSekvensnummer(record:ProducerRecord<String, String>){
+    private fun logAddedSekvensnummer(record: ProducerRecord<String, String>) {
         LOG.info("""Added sekvensnummer ${record.value()} to topic ${record.topic()}""")
         persistedSekvensnummerGauge.set(record.value().toDouble())
     }
@@ -40,4 +40,5 @@ internal class SekvensnummerProducer(kafkaFactory: KafkaFactory) {
 
 private val persistedSekvensnummerGauge = Gauge.build()
         .name("persistedSekvensnummer")
-        .help("Siste persisterte som brukes når det hentes pgi-hendelser fra skatt").register()
+        .help("Siste persisterte som brukes når det hentes pgi-hendelser fra skatt")
+        .register()

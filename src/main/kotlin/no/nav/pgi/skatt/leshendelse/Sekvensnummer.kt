@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory
 
 private val LOG = LoggerFactory.getLogger(Sekvensnummer::class.java.simpleName)
 
+//TODO setter og getter istede for value
 internal class Sekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String>) {
     private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaFactory)
     private val nextSekvensnummerProducer = SekvensnummerProducer(kafkaFactory)
