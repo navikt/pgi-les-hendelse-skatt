@@ -15,10 +15,10 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
     private val hendelseProducer = kafkaFactory.hendelseProducer()
 
     internal fun writeHendelser(hendelser: List<HendelseDto>): FailedHendelse? {
-        val sendtHendelseRecords = hendelser
+        val sendtRecords = hendelser
                 .map { createRecord(it) }
                 .map { sendRecord(it) }
-        return sendtHendelseRecords.verifyWritten().also { loggWrittenHendelser(it, hendelser) }
+        return sendtRecords.verifyWritten().also { loggWrittenHendelser(it, hendelser) }
     }
 
     internal fun close() = hendelseProducer.close().also { LOG.info("closing hendelse hendelseProducer") }
@@ -39,7 +39,6 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
     }
 }
 
-
 internal fun List<SentRecord>.verifyWritten(): FailedHendelse? {
     forEach {
         try {
@@ -51,7 +50,6 @@ internal fun List<SentRecord>.verifyWritten(): FailedHendelse? {
     return null
 }
 
-internal data class SentRecord(internal val future: Future<RecordMetadata>, internal val hendelse: Hendelse) {
-}
+internal data class SentRecord(internal val future: Future<RecordMetadata>, internal val hendelse: Hendelse)
 
 internal data class FailedHendelse(internal val exception: Exception, internal val hendelse: Hendelse)
