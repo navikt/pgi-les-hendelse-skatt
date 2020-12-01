@@ -47,7 +47,3 @@ internal class Application(kafkaFactory: KafkaFactory, env: Map<String, String>,
     }
 }
 
-//TODO lag exceptions og håndter disse
-//TODO LEGG in matriser
-//TODO DObbelsjekk tortuga-hiv om det er noe vi mangler
-//TODO logcomapction kan eventuelt fjerne mer fra sekvensnummer consumer
