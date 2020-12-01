@@ -50,6 +50,5 @@ internal class Application(kafkaFactory: KafkaFactory, env: Map<String, String>,
 //TODO LEGG in matriser
 //TODO DObbelsjekk tortuga-hiv om det er noe vi mangler
 
-//TODO Sekvensnummer første lag en classe som lukker seg
-//TODO logcomapction delete timer
+//TODO logcomapction kan eventuelt fjerne mer fra sekvensnummer consumer
 //TODO Gjør HendelseProducer litt smudere
