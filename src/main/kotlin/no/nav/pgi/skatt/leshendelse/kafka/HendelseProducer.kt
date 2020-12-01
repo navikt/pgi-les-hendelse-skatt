@@ -15,14 +15,13 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
     private val hendelseProducer = kafkaFactory.hendelseProducer()
 
     internal fun writeHendelser(hendelser: List<HendelseDto>): FailedHendelse? {
-        val sendtHender = sendHendelser(hendelser)
-        return sendtHender.verifyWritten().also { loggWrittenHendelser(it, hendelser) }
+        val sendtHendelseRecords = hendelser
+                .map { createRecord(it) }
+                .map { sendRecord(it) }
+        return sendtHendelseRecords.verifyWritten().also { loggWrittenHendelser(it, hendelser) }
     }
 
-    internal fun sendHendelser(hendelser: List<HendelseDto>) = hendelser
-            .map { createRecord(it) }
-            .map { sendRecord(it) }
-
+    internal fun close() = hendelseProducer.close().also { LOG.info("closing hendelse hendelseProducer") }
 
     private fun createRecord(hendelse: HendelseDto) =
             ProducerRecord(PGI_HENDELSE_TOPIC, hendelse.mapToAvroHendelseKey(), hendelse.mapToAvroHendelse())
@@ -38,8 +37,6 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
             LOG.info("Failed after adding $hendelserAdded hendelser to $PGI_HENDELSE_TOPIC at sekvensnummer ${failedHendelse.hendelse.getSekvensnummer()}")
         }
     }
-
-    internal fun close() = hendelseProducer.close().also { LOG.info("closing hendelse hendelseProducer") }
 }
 
 
@@ -54,6 +51,7 @@ internal fun List<SentRecord>.verifyWritten(): FailedHendelse? {
     return null
 }
 
-internal data class SentRecord(internal val future: Future<RecordMetadata>, internal val hendelse: Hendelse){
+internal data class SentRecord(internal val future: Future<RecordMetadata>, internal val hendelse: Hendelse) {
 }
+
 internal data class FailedHendelse(internal val exception: Exception, internal val hendelse: Hendelse)
