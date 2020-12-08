@@ -28,9 +28,9 @@ internal class KafkaMockFactory(
     override fun nextSekvensnummerConsumer(): Consumer<String, String> = nextSekvensnummerConsumer
 
     internal fun close() {
-        hendelseProducer.apply { if (closed()) close() }
-        nextSekvensnummerProducer.apply { if (closed()) close() }
-        nextSekvensnummerConsumer.apply { if (closed()) close() }
+        hendelseProducer.apply { if (!closed()) close() }
+        nextSekvensnummerProducer.apply { if (!closed()) close() }
+        nextSekvensnummerConsumer.apply { if (!closed()) close() }
     }
 
     companion object {
