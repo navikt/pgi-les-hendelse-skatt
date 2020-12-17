@@ -2,6 +2,7 @@ package no.nav.pgi.skatt.leshendelse.skatt
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.prometheus.client.Counter
 import no.nav.pensjon.samhandling.env.getVal
 import org.slf4j.LoggerFactory
 import java.net.http.HttpResponse
@@ -10,6 +11,7 @@ import java.net.http.HttpResponse.BodyHandlers.ofString
 internal const val HENDELSE_HOST_ENV_KEY = "GRUNNLAG_PGI_HENDELSE_HOST"
 internal const val HENDELSE_PATH = "/api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelse"
 private val LOG = LoggerFactory.getLogger(HendelseClient::class.java)
+private val polledFromSkattCounter = Counter.build("pgi_hendelser_polled_from_skatt", "Antall hendelser hentet fra skatt").register()
 
 internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
     private val host: String = env.getVal(HENDELSE_HOST_ENV_KEY)
@@ -32,7 +34,10 @@ internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
 
     private fun createQueryParameters(antall: Int, fraSekvensnummer: Long) = mapOf("antall" to antall, "fraSekvensnummer" to fraSekvensnummer)
 
-    private fun logPolledHendelser(hendelser: List<HendelseDto>) = LOG.info("Polled ${hendelser.size} hendelser from skatt. Containing sekvensnummer from ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
+    private fun logPolledHendelser(hendelser: List<HendelseDto>) {
+        LOG.info("Polled ${hendelser.size} hendelser from skatt. Containing sekvensnummer from ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
+        polledFromSkattCounter.inc(hendelser.size.toDouble())
+    }
 }
 
 internal class HendelseClientCallException(response: HttpResponse<String>) : Exception("Feil ved henting av hendelse mot skatt: Status: ${response.statusCode()} , Body: ${response.body()}")

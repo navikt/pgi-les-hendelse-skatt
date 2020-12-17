@@ -17,7 +17,7 @@ internal class SkattTimer(env: Map<String, String>) {
 
     internal fun close() {
         closed = true
-        LOG.info("Closing SkattScheduler")
+        LOG.info("closing SkattTimer")
     }
 
     companion object {
@@ -25,4 +25,3 @@ internal class SkattTimer(env: Map<String, String>) {
         private const val DEFAULT_DELAY = "10"
     }
 }
-
