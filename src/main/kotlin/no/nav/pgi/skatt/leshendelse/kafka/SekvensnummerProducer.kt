@@ -13,7 +13,7 @@ internal class SekvensnummerProducer(kafkaFactory: KafkaFactory) {
     internal fun writeSekvensnummer(sekvensnummer: Long, synchronous: Boolean = false) {
         val record = ProducerRecord(NEXT_SEKVENSNUMMER_TOPIC, "sekvensnummer", sekvensnummer.toString())
         if (synchronous) {
-            sekvensnummerProducer.send(record)
+            sekvensnummerProducer.send(record).get()
             logAddedSekvensnummer(record)
         } else {
             sekvensnummerProducer.send(record, callBack(record))
