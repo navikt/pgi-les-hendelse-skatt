@@ -85,6 +85,7 @@ internal class SekvensnummerTest {
         val newSekvensnummer = 100L
         sekvensnummer.setSekvensnummer(newSekvensnummer)
 
+        Thread.sleep(400)
         assertEquals(newSekvensnummer, sekvensnummerConsumer.getNextSekvensnummer()?.toLong())
     }
 
@@ -108,8 +109,8 @@ internal class SekvensnummerTest {
         val invalidSekvensnummer = Sekvensnummer.USE_PREVIOUS
         sekvensnummer.setSekvensnummer(validSekvensnummer)
         sekvensnummer.setSekvensnummer(invalidSekvensnummer)
-        //Thread.sleep(200)
 
+        Thread.sleep(400)
         assertEquals(validSekvensnummer, sekvensnummer.getSekvensnummer())
         assertEquals(validSekvensnummer, sekvensnummerConsumer.getNextSekvensnummer()?.toLong())
     }
