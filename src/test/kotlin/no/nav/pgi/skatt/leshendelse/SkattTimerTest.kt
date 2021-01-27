@@ -3,7 +3,7 @@ package no.nav.pgi.skatt.leshendelse
 import org.junit.jupiter.api.Test
 import java.util.*
 
-private const val ONE_HUNDREDTH_OF_A_SECOND = 10L
+private const val TWO_HUNDREDTH_OF_A_SECOND = 20L
 
 
 internal class SkattTimerTest {
@@ -16,7 +16,7 @@ internal class SkattTimerTest {
         timer.delay()
         val timeAfter = Calendar.getInstance()
 
-        assert(differenceBetween(timeBefore, timeAfter) isLessThen ONE_HUNDREDTH_OF_A_SECOND)
+        assert(differenceBetween(timeBefore, timeAfter) isLessThen TWO_HUNDREDTH_OF_A_SECOND)
     }
 
     @Test
@@ -27,7 +27,7 @@ internal class SkattTimerTest {
         timer.delay()
         val timeAfter = Calendar.getInstance()
 
-        assert(differenceBetween(timeBeforePlusThreeSeconds, timeAfter) isLessThen ONE_HUNDREDTH_OF_A_SECOND)
+        assert(differenceBetween(timeBeforePlusThreeSeconds, timeAfter) isLessThen TWO_HUNDREDTH_OF_A_SECOND)
     }
 }
 
