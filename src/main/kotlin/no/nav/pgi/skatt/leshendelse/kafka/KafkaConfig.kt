@@ -15,8 +15,8 @@ import org.apache.kafka.common.serialization.StringSerializer
 import java.lang.Integer.MAX_VALUE
 
 internal const val GROUP_ID = "pgi-sekvensnummer-consumer-group"
-const val NEXT_SEKVENSNUMMER_TOPIC = "pensjonsamhandling.privat-pgi-nextsekvensnummer"
-const val PGI_HENDELSE_TOPIC = "pensjonsamhandling.privat-pgi-hendelse"
+const val NEXT_SEKVENSNUMMER_TOPIC = "pensjonopptjening.privat-pgi-nextsekvensnummer"
+const val PGI_HENDELSE_TOPIC = "pensjonopptjening.privat-pgi-hendelse"
 
 internal class KafkaConfig(environment: Map<String, String> = System.getenv(), private val securityStrategy: SecurityStrategy = SslStrategy()) {
     private val bootstrapServers = environment.getVal(BOOTSTRAP_SERVERS)

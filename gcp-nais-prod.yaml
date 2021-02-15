@@ -2,12 +2,12 @@ apiVersion: "nais.io/v1alpha1"
 kind: "Application"
 metadata:
   name: pgi-les-hendelse-skatt
-  namespace: pensjonsamhandling
+  namespace: pensjonopptjening
   labels:
-    team: pensjonsamhandling
+    team: pensjonopptjening
 spec:
   image: {{ image }}
-  team: pensjonsamhandling
+  team: pensjonopptjening
   port: 8080
   prometheus:
     enabled: true
@@ -27,4 +27,4 @@ spec:
     max: 1
   env:
     - name: APP_TEAM
-      value: pensjonsamhandling
+      value: pensjonopptjening
