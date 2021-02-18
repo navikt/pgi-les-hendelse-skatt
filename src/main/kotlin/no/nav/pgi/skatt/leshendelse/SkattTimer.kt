@@ -21,7 +21,7 @@ internal class SkattTimer(env: Map<String, String>) {
     }
 
     companion object {
-        internal const val DELAY_IN_SECONDS_ENV_KEY = "DELAY-IN_SECONDS_BEFORE-POLLING-SKATT"
+        internal const val DELAY_IN_SECONDS_ENV_KEY = "DELAY_IN_SECONDS_BEFORE_POLLING_SKATT"
         private const val DEFAULT_DELAY = "10"
     }
 }
