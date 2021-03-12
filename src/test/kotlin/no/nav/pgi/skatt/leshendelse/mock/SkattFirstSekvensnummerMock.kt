@@ -4,7 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_PATH
 
-internal const val FIRST_SEKVENSNUMMER_PORT = 8084
+internal const val FIRST_SEKVENSNUMMER_PORT = 8087
 internal const val FIRST_SEKVENSNUMMER_MOCK_HOST = "http://localhost:$FIRST_SEKVENSNUMMER_PORT"
 
 internal const val SKATT_FIRST_SEKVENSNUMMER = 1L
