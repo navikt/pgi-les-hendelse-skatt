@@ -19,8 +19,8 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
 
     internal fun writeHendelser(hendelser: List<HendelseDto>): FailedHendelse? {
         val sendtRecords = hendelser
-                .map { createRecord(it) }
-                .map { sendRecord(it) }
+            .map { createRecord(it) }
+            .map { sendRecord(it) }
         return sendtRecords.verifyWritten().also { loggWrittenHendelser(it, hendelser) }
     }
 

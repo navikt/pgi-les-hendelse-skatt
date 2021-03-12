@@ -20,10 +20,10 @@ export GITHUB_TOKEN="token"
 
 #### Metrikker
 Grafana dashboards brukes for å f.eks. monitorere minne, cpu-bruk og andre metrikker.
-Se [pgi-les-hendelse-skatt grafana dasboard](https://grafana.adeo.no/) TODO: Fiks link
+Se [pgi-les-hendelse-skatt grafana dasboard](https://grafana.adeo.no/d/qdcTS8JGz/pgi-les-hendelse-skatt)
 
 #### Logging
 [Kibana](https://logs.adeo.no/app/kibana) benyttes til logging. Søk på f.eks. ```application:pgi-les-hendelse-skatt AND envclass:q``` for logginnslag fra preprod.
 
 #### Kontakt
-Kontakt Team Samhandling dersom du har noen spørsmål. Vi finnes blant annet på Slack, i kanalen [#samhandling_pensjonsområdet](https://nav-it.slack.com/archives/CQ08JC3UG)
+Kontakt Team Pensjon Opptjening dersom du har noen spørsmål. Vi finnes blant annet på Slack, i kanalen [#pensjon-opptjening](https://nav-it.slack.com/archives/C01JWB604DP)
