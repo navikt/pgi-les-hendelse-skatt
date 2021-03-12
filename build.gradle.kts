@@ -12,7 +12,7 @@ val log4jVersion = "2.13.3"
 val wiremockVersion = "2.27.2"
 
 val kafkaVersion = "2.5.0"
-val pgiChemaVersion = "0.0.1"
+val pgiSchemaVersion = "0.0.7"
 val kafkaAvroSerializerVersion = "5.5.1"
 val kafkaEmbeddedEnvVersion = "2.5.0"
 
@@ -63,7 +63,7 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
 
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
-    implementation("no.nav.pensjonsamhandling:pgi-schema:$pgiChemaVersion")
+    implementation("no.nav.pgi:pgi-schema:$pgiSchemaVersion")
     implementation("io.confluent:kafka-avro-serializer:$kafkaAvroSerializerVersion")
 
     implementation("ch.qos.logback:logback-classic:1.2.3")

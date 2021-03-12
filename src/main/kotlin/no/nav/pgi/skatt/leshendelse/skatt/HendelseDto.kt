@@ -3,6 +3,7 @@ package no.nav.pgi.skatt.leshendelse.skatt
 import no.nav.pgi.skatt.leshendelse.Sekvensnummer
 import no.nav.samordning.pgi.schema.Hendelse
 import no.nav.samordning.pgi.schema.HendelseKey
+import no.nav.samordning.pgi.schema.HendelseMetadata
 import kotlin.math.max
 
 data class HendelserDtoWrapper(val hendelser: List<HendelseDto> = ArrayList())
@@ -14,4 +15,4 @@ internal fun List<HendelseDto>.lastSekvensnummer() = if (isEmpty()) null else la
 internal fun List<HendelseDto>.amountOfHendelserBefore(sekvensnummer: Long) = max(indexOfFirst { it.sekvensnummer == sekvensnummer }, 0)
 
 internal fun HendelseDto.mapToAvroHendelseKey() = HendelseKey(identifikator, gjelderPeriode)
-internal fun HendelseDto.mapToAvroHendelse() = Hendelse(sekvensnummer, identifikator, gjelderPeriode)
+internal fun HendelseDto.mapToAvroHendelse() = Hendelse(sekvensnummer, identifikator, gjelderPeriode, HendelseMetadata(0))
