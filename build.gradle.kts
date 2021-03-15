@@ -12,7 +12,7 @@ val log4jVersion = "2.13.3"
 val wiremockVersion = "2.27.2"
 
 val kafkaVersion = "2.5.0"
-val pgiSchemaVersion = "0.0.8"
+val pgiSchemaVersion = "0.0.7"
 val kafkaAvroSerializerVersion = "5.5.1"
 val kafkaEmbeddedEnvVersion = "2.5.0"
 
