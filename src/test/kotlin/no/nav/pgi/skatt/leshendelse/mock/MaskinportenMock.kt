@@ -11,10 +11,10 @@ import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
 import no.nav.pensjon.opptjening.gcp.maskinporten.client.config.MaskinportenEnvVariableConfigCreator.Companion.MASKINPORTEN_CLIENT_ID_KEY
-import no.nav.pensjon.opptjening.gcp.maskinporten.client.config.MaskinportenEnvVariableConfigCreator.Companion.MASKINPORTEN_HOST_KEY
-import no.nav.pensjon.opptjening.gcp.maskinporten.client.config.MaskinportenEnvVariableConfigCreator.Companion.MASKINPORTEN_JWK_PRIVATE_KEY
+import no.nav.pensjon.opptjening.gcp.maskinporten.client.config.MaskinportenEnvVariableConfigCreator.Companion.MASKINPORTEN_WELL_KNOWN_URL_KEY
+import no.nav.pensjon.opptjening.gcp.maskinporten.client.config.MaskinportenEnvVariableConfigCreator.Companion.MASKINPORTEN_CLIENT_JWK_KEY
 import no.nav.pensjon.opptjening.gcp.maskinporten.client.config.MaskinportenEnvVariableConfigCreator.Companion.MASKINPORTEN_JWT_EXPIRATION_TIME_IN_SECONDS_KEY
-import no.nav.pensjon.opptjening.gcp.maskinporten.client.config.MaskinportenEnvVariableConfigCreator.Companion.MASKINPORTEN_SCOPE_KEY
+import no.nav.pensjon.opptjening.gcp.maskinporten.client.config.MaskinportenEnvVariableConfigCreator.Companion.MASKINPORTEN_SCOPES_KEY
 import java.util.*
 
 private const val PORT = 8096
@@ -60,11 +60,11 @@ internal class MaskinportenMock {
 
     companion object {
         val MASKINPORTEN_ENV_VARIABLES: Map<String, String> = mapOf(
-            MASKINPORTEN_SCOPE_KEY to "testScope",
+            MASKINPORTEN_SCOPES_KEY to "testScope",
             MASKINPORTEN_CLIENT_ID_KEY to "testClient",
             MASKINPORTEN_JWT_EXPIRATION_TIME_IN_SECONDS_KEY to "120",
-            MASKINPORTEN_JWK_PRIVATE_KEY to RSAKeyGenerator(2048).keyID("123").generate().toJSONString(),
-            MASKINPORTEN_HOST_KEY to MASKINPORTEN_MOCK_HOST
+            MASKINPORTEN_CLIENT_JWK_KEY to RSAKeyGenerator(2048).keyID("123").generate().toJSONString(),
+            MASKINPORTEN_WELL_KNOWN_URL_KEY to MASKINPORTEN_MOCK_HOST
         )
     }
 }

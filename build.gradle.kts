@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val ktorSupportVersion = "0.0.20"
 val ktorVersion = "1.3.2-1.4.0-rc"
-val maskinportenClientVersion = "0.0.1"
+val maskinportenClientVersion = "0.0.3"
 val joseJwtVersion = "9.0.1"
 val micrometerVersion = "1.3.5"
 val slf4jVersion = "1.7.30"
