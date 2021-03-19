@@ -10,7 +10,11 @@ import com.nimbusds.jose.jwk.RSAKey
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator
 import com.nimbusds.jwt.JWTClaimsSet
 import com.nimbusds.jwt.SignedJWT
-import no.nav.pensjon.samhandling.maskinporten.*
+import no.nav.pensjon.opptjening.gcp.maskinporten.client.config.MaskinportenEnvVariableConfigCreator.Companion.MASKINPORTEN_CLIENT_ID_KEY
+import no.nav.pensjon.opptjening.gcp.maskinporten.client.config.MaskinportenEnvVariableConfigCreator.Companion.MASKINPORTEN_HOST_KEY
+import no.nav.pensjon.opptjening.gcp.maskinporten.client.config.MaskinportenEnvVariableConfigCreator.Companion.MASKINPORTEN_JWK_PRIVATE_KEY
+import no.nav.pensjon.opptjening.gcp.maskinporten.client.config.MaskinportenEnvVariableConfigCreator.Companion.MASKINPORTEN_JWT_EXPIRATION_TIME_IN_SECONDS_KEY
+import no.nav.pensjon.opptjening.gcp.maskinporten.client.config.MaskinportenEnvVariableConfigCreator.Companion.MASKINPORTEN_SCOPE_KEY
 import java.util.*
 
 private const val PORT = 8096
@@ -56,10 +60,11 @@ internal class MaskinportenMock {
 
     companion object {
         val MASKINPORTEN_ENV_VARIABLES: Map<String, String> = mapOf(
-                SCOPE_ENV_KEY to "testScope",
-                CLIENT_ID_ENV_KEY to "testClient",
-                VALID_IN_SECONDS_ENV_KEY to "120",
-                PRIVATE_JWK_ENV_KEY to RSAKeyGenerator(2048).keyID("123").generate().toJSONString(),
-                MASKINPORTEN_TOKEN_HOST_ENV_KEY to MASKINPORTEN_MOCK_HOST)
+            MASKINPORTEN_SCOPE_KEY to "testScope",
+            MASKINPORTEN_CLIENT_ID_KEY to "testClient",
+            MASKINPORTEN_JWT_EXPIRATION_TIME_IN_SECONDS_KEY to "120",
+            MASKINPORTEN_JWK_PRIVATE_KEY to RSAKeyGenerator(2048).keyID("123").generate().toJSONString(),
+            MASKINPORTEN_HOST_KEY to MASKINPORTEN_MOCK_HOST
+        )
     }
 }
