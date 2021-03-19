@@ -17,7 +17,7 @@ spec:
   maskinporten:
     enabled: true
     scopes:
-      - name: "nav:skatteetaten:pensjonsgivendeinntektforfolketrygden"
+      - name: "skatteetaten:pensjonsgivendeinntektforfolketrygden"
   envFrom:
     - secret: pgi-les-hendelse-skatt-secrets
   liveness:
