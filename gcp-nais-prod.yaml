@@ -14,6 +14,10 @@ spec:
     path: /metrics
   kafka:
     pool: nav-prod
+  maskinporten:
+    enabled: true
+    scopes:
+      - name: "skatteetaten:pensjonsgivendeinntektforfolketrygden"
   envFrom:
     - secret: pgi-les-hendelse-skatt-secrets
   liveness:
