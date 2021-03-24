@@ -5,6 +5,7 @@ Tilstanden til sekvensnummeret blir lagret på ```privat-pgi-nextSekvensnummer``
 Dokumentasjon REST tjenester til SKE: [HendelseListe API](https://skatteetaten.github.io/datasamarbeid-api-dokumentasjon/reference_feed.html)
 
 
+
 #### Bygge lokalt
 For å bygge lokalt, så må man ha satt environment variablene GITHUB_ACTOR og GITHUB_TOKEN.
 Generer nytt token her: https://github.com/settings/tokens. Husk å KUN gi den følgende tilgangen:
