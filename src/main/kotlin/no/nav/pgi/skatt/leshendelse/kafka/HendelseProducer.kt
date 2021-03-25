@@ -35,7 +35,9 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
     private fun loggWrittenHendelser(failedHendelse: FailedHendelse?, hendelser: List<HendelseDto>) {
         if (failedHendelse == null) {
             addedToTopicCounter.inc(hendelser.size.toDouble())
-            LOG.info("Added ${hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. From sekvensnummer ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
+            if(hendelser.isNotEmpty()){
+                LOG.info("Added ${hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. From sekvensnummer ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
+            }
         } else {
             val hendelserAdded = hendelser.amountOfHendelserBefore(failedHendelse.hendelse.getSekvensnummer())
             addedToTopicCounter.inc(hendelserAdded.toDouble())

@@ -19,14 +19,9 @@ internal class Sekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String
     }
 
     internal fun setSekvensnummer(sekvensnummer: Long) {
-        when {
-            sekvensnummer <= USE_PREVIOUS -> {
-                LOG.info("""New sekvensnummer was not set because it was equal or less then $USE_PREVIOUS""")
-            }
-            else -> {
-                addSekvensnummerToTopic(sekvensnummer)
-                currentSekvensnummer = sekvensnummer
-            }
+        if (sekvensnummer > USE_PREVIOUS) {
+            addSekvensnummerToTopic(sekvensnummer)
+            currentSekvensnummer = sekvensnummer
         }
     }
 

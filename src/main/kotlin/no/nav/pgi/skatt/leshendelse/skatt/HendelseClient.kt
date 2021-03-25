@@ -28,19 +28,25 @@ internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
     }
 
     private fun mapResponse(body: String): List<HendelseDto> =
-            try {
-                objectMapper.readValue(body, HendelserDtoWrapper::class.java).hendelser
-            } catch (e: Exception) {
-                throw HendelseClientObjectMapperException(e.toString()).also { LOG.error(it.message) }
-            }
+        try {
+            objectMapper.readValue(body, HendelserDtoWrapper::class.java).hendelser
+        } catch (e: Exception) {
+            throw HendelseClientObjectMapperException(e.toString()).also { LOG.error(it.message) }
+        }
 
     private fun createQueryParameters(antall: Int, fraSekvensnummer: Long) = mapOf("antall" to antall, "fraSekvensnummer" to fraSekvensnummer)
 
     private fun logPolledHendelser(hendelser: List<HendelseDto>) {
-        LOG.info("Polled ${hendelser.size} hendelser from skatt. Containing sekvensnummer from ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
+        if (hendelser.isNotEmpty()){
+            LOG.info("Polled ${hendelser.size} hendelser from skatt. Containing sekvensnummer from ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
+        } else{
+            LOG.info("Polled ${hendelser.size} hendelser from skatt.")
+        }
         polledFromSkattCounter.inc(hendelser.size.toDouble())
     }
 }
 
-internal class HendelseClientCallException(response: HttpResponse<String>) : Exception("Feil ved henting av hendelse mot skatt: Status: ${response.statusCode()} , Body: ${response.body()}")
+internal class HendelseClientCallException(response: HttpResponse<String>) :
+    Exception("Feil ved henting av hendelse mot skatt: Status: ${response.statusCode()} , Body: ${response.body()}")
+
 internal class HendelseClientObjectMapperException(message: String) : Exception(message)
