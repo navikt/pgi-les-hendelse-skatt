@@ -10,7 +10,7 @@ private val LOG = LoggerFactory.getLogger(Application::class.java)
 fun main() {
     val application = Application(KafkaHendelseFactory(), System.getenv())
     try {
-        application.startHendelseSkattLoop(readAndWrite = false)
+        application.startHendelseSkattLoop()
     } catch (e: Throwable) {
         LOG.error("Unhandled error was caught. stopping server! ${e.message}",e)
         application.stopServer()
@@ -26,7 +26,7 @@ internal class Application(kafkaFactory: KafkaFactory, env: Map<String, String>,
         addShutdownHook()
     }
 
-    internal fun startHendelseSkattLoop(readAndWrite:Boolean = true) = hendelseSkattLoop.start(readAndWrite)
+    internal fun startHendelseSkattLoop() = hendelseSkattLoop.start()
 
     private fun addShutdownHook() {
         Runtime.getRuntime().addShutdownHook(Thread {

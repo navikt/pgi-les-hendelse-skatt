@@ -8,9 +8,9 @@ internal class HendelseSkattLoop(kafkaFactory: KafkaFactory, env: Map<String, St
     private val readAndWriteHendelserToTopicLoop = ReadAndWriteHendelserToTopicLoop(kafkaFactory, env)
     private val skattTimer = SkattTimer(env)
 
-    internal fun start(readAndWrite:Boolean = true) {
+    internal fun start() {
         do {
-            if(readAndWrite) readAndWriteHendelserToTopicLoop.start()
+            readAndWriteHendelserToTopicLoop.start()
             skattTimer.delay()
         } while (loopForever)
     }
