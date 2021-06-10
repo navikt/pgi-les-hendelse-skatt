@@ -43,10 +43,10 @@ jobs:
         run: "docker push $(cat .docker_image):$(cat .docker_tag)"
 
       # Deploy to GCP dev
-      - name: Deploy pgi-les-hendelse-skatt (prod-gcp)
-        uses: nais/deploy/actions/deploy@v1
-        env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: prod-gcp
-          RESOURCE: gcp-nais-prod.yaml
-          IMAGE: ${{ env.IMAGE }}
+#      - name: Deploy pgi-les-hendelse-skatt (prod-gcp)
+#        uses: nais/deploy/actions/deploy@v1
+#        env:
+#          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+#          CLUSTER: prod-gcp
+#          RESOURCE: gcp-nais-prod.yaml
+#          IMAGE: ${{ env.IMAGE }}
