@@ -24,7 +24,7 @@ internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
         val response = send(createGetRequest(url, createQueryParameters(antall, fraSekvensnummer)), ofString())
         return when (response.statusCode()) {
             200 -> mapResponse(response.body()).also { logPolledHendelser(it) }
-            else -> throw HendelseClientCallException(response).also { LOG.error("""Call to:${url} failed: ${it.message}""") }
+            else -> throw HendelseClientCallException(response).also { LOG.error(it.message) }
         }
     }
 
@@ -49,6 +49,6 @@ internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
 }
 
 internal class HendelseClientCallException(response: HttpResponse<String>) :
-    Exception("Feil ved henting av hendelse mot skatt: Status: ${response.statusCode()} , Body: ${response.body()}")
+    Exception("Feil ved henting av hendelse mot skatt: Url:${response.uri()} Status: ${response.statusCode()} , Body: ${response.body()}")
 
 internal class HendelseClientObjectMapperException(message: String) : Exception(message)
