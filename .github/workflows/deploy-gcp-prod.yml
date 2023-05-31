@@ -1,7 +1,7 @@
 name: GCP NAIS Deploy prod
 
 on:
-  workflow-dispatch:
+  workflow_dispatch:
   push:
     branches:
       - master
