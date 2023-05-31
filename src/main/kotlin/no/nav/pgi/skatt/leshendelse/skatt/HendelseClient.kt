@@ -24,7 +24,7 @@ internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
         val response = send(createGetRequest(url, createQueryParameters(antall, fraSekvensnummer)), ofString())
         return when (response.statusCode()) {
             200 -> mapResponse(response.body()).also { logPolledHendelser(it) }
-            else -> throw HendelseClientCallException(response).also { LOG.error(it.message) }
+            else -> throw HendelseClientCallException(response).also { LOG.error("""Call to:${url} failed: ${it.message}""") }
         }
     }
 
