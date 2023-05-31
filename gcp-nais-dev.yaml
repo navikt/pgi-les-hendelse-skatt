@@ -36,4 +36,4 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: pgi-mock.dev.nav.no
+        - host: api-test.sits.no
