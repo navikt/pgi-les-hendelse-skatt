@@ -11,14 +11,14 @@ import java.net.http.HttpResponse.BodyHandlers.ofString
 import javax.ws.rs.core.UriBuilder
 
 internal const val HENDELSE_HOST_ENV_KEY = "GRUNNLAG_PGI_HENDELSE_HOST"
-internal const val HENDELSE_PATH = "/api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelse"
+internal const val HENDELSE_PATH_ENV_KEY = "SKATT_HENDELSE_PATH"
 private val LOG = LoggerFactory.getLogger(HendelseClient::class.java)
 private val polledFromSkattCounter = Counter.build("pgi_hendelser_polled_from_skatt", "Antall hendelser hentet fra skatt").register()
 
 internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
     private val host: String = env.getVal(HENDELSE_HOST_ENV_KEY)
     private val objectMapper = ObjectMapper().registerModule(KotlinModule())
-    private val url: String = UriBuilder.fromPath(host).path(HENDELSE_PATH).build().toString()
+    private val url: String = UriBuilder.fromPath(host).path(env.getVal(HENDELSE_PATH_ENV_KEY)).build().toString()
 
     fun getHendelserSkatt(antall: Int, fraSekvensnummer: Long): List<HendelseDto> {
         val response = send(createGetRequest(url, createQueryParameters(antall, fraSekvensnummer)), ofString())

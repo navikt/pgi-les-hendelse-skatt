@@ -8,7 +8,6 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED
 import no.nav.pgi.skatt.leshendelse.ANTALL_HENDELSER
-import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
 import no.nav.pgi.skatt.leshendelse.skatt.HendelserDtoWrapper
 
@@ -18,6 +17,7 @@ private const val FRA_SEKVENSNUMMER_KEY = "fraSekvensnummer"
 
 private const val HENDELSE_PORT = 8085
 internal const val HENDELSE_MOCK_HOST = "http://localhost:$HENDELSE_PORT"
+internal const val HENDELSE_MOCK_PATH = "/api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelser"
 
 
 internal class HendelseMock {
@@ -37,20 +37,20 @@ internal class HendelseMock {
 
     internal fun `stub hendelse endpoint skatt`() {
         val hendelser: List<HendelseDto> = createHendelser(1, ANTALL_HENDELSER)
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
                 .willReturn(responseWithHendelser(hendelser)))
     }
 
     internal fun `stub hendelse endpoint skatt`(fraSekvensnummer: Long, antall: Int): List<HendelseDto> {
         val hendelser: List<HendelseDto> = createHendelser(fraSekvensnummer, antall)
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
                 .willReturn(responseWithHendelser(hendelser)))
         return hendelser
     }
 
     internal fun `stub hendelse endpoint response that wont map`(fraSekvensnummer: Long) {
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
                 .willReturn(
                         aResponse()
@@ -60,7 +60,7 @@ internal class HendelseMock {
     }
 
     internal fun `stub hendelse endpoint response with masked data from skatt`(fraSekvensnummer: Long) {
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
                 .willReturn(
                         aResponse()
@@ -71,7 +71,7 @@ internal class HendelseMock {
 
     internal fun `stub hendelse endpoint first call`(fraSekvensnummer: Long, antall: Int): List<HendelseDto> {
         val hendelser: List<HendelseDto> = createHendelser(fraSekvensnummer, antall)
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
                 .inScenario("Two calls to hendelse")
                 .whenScenarioStateIs(STARTED)
@@ -82,7 +82,7 @@ internal class HendelseMock {
 
     internal fun `stub hendelse endpoint second call`(fraSekvensnummer: Long, antall: Int): List<HendelseDto> {
         val hendelser: List<HendelseDto> = createHendelser(fraSekvensnummer, antall)
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_PATH))
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
                 .inScenario("Two calls to hendelse")
                 .whenScenarioStateIs("First call completed")

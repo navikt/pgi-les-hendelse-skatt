@@ -6,6 +6,7 @@ import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_HOST
 import no.nav.pgi.skatt.leshendelse.mock.HendelseMock
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock.Companion.MASKINPORTEN_ENV_VARIABLES
+import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_PATH
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 
@@ -59,7 +60,8 @@ internal class GrunnlagPgiHendelseDtoClientTest {
     }
 
     private fun createEnvVariables() = mapOf(
-            HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST
+        HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
+        HENDELSE_PATH_ENV_KEY to HENDELSE_MOCK_PATH,
     )
 
 }

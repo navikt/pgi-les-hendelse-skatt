@@ -33,6 +33,8 @@ spec:
   env:
     - name: APP_TEAM
       value: pensjonopptjening
+    - name: SKATT_HENDELSE_PATH
+      value: /api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelser
   accessPolicy:
     outbound:
       external:

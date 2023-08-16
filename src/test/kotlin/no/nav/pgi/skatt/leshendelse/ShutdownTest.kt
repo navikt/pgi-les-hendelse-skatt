@@ -7,6 +7,7 @@ import no.nav.pensjon.samhandling.liveness.IS_ALIVE_PATH
 import no.nav.pgi.skatt.leshendelse.mock.*
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
+import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH_ENV_KEY
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.net.URI
@@ -94,9 +95,10 @@ internal class ShutdownTest {
         hendelseMock.`stub hendelse endpoint skatt`(11, 10)
         val envVariables =
                 mapOf(
-                        HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
-                        FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
-                        SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "180"
+                    HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
+                    HENDELSE_PATH_ENV_KEY to HENDELSE_MOCK_PATH,
+                    FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
+                    SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "180"
                 ) + MaskinportenMock.MASKINPORTEN_ENV_VARIABLES
 
         application = Application(kafkaFactory = kafkaMockFactory, env = envVariables, loopForever = true)
@@ -111,9 +113,10 @@ internal class ShutdownTest {
 
     private fun createEnvVariables() = MaskinportenMock.MASKINPORTEN_ENV_VARIABLES +
             mapOf(
-                    HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
-                    FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
-                    SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "0"
+                HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
+                HENDELSE_PATH_ENV_KEY to HENDELSE_MOCK_PATH,
+                FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
+                SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "0"
             )
 
     private fun callIsAlive() =
