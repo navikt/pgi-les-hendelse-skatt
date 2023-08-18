@@ -35,6 +35,8 @@ spec:
       value: pensjonopptjening
     - name: SKATT_HENDELSE_PATH
       value: /api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelse
+    - name: SKATT_HENDELSE_START_PATH
+      value: /api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelse/start
   accessPolicy:
     outbound:
       external:

@@ -34,7 +34,9 @@ spec:
     - name: APP_TEAM
       value: pensjonopptjening
     - name: SKATT_HENDELSE_PATH
-      value: /api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelser
+      value: /api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelser/
+    - name: SKATT_HENDELSE_START_PATH
+      value: /api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelser/start
   accessPolicy:
     outbound:
       external:

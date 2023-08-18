@@ -5,11 +5,13 @@ import no.nav.pgi.skatt.leshendelse.mock.KafkaMockFactory
 import no.nav.pgi.skatt.leshendelse.kafka.NEXT_SEKVENSNUMMER_TOPIC
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
 import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_HOST
+import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_PATH
 import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_HOST
 import no.nav.pgi.skatt.leshendelse.mock.HendelseMock
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
 import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_PATH
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
+import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_PATH_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH_ENV_KEY
 import no.nav.samordning.pgi.schema.Hendelse
@@ -104,5 +106,6 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
                 HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
                 HENDELSE_PATH_ENV_KEY to HENDELSE_MOCK_PATH,
                 FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
+                FIRST_SEKVENSNUMMER_PATH_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_PATH,
             ) + MaskinportenMock.MASKINPORTEN_ENV_VARIABLES
 }

@@ -4,12 +4,14 @@ import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
 import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import no.nav.pgi.skatt.leshendelse.kafka.*
 import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_HOST
+import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_PATH
 import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_HOST
 import no.nav.pgi.skatt.leshendelse.mock.HendelseMock
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock.Companion.MASKINPORTEN_ENV_VARIABLES
 import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_PATH
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
+import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_PATH_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
@@ -65,6 +67,7 @@ internal class ComponentTest {
                 HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
                 HENDELSE_PATH_ENV_KEY to HENDELSE_MOCK_PATH,
                 FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
+                FIRST_SEKVENSNUMMER_PATH_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_PATH,
                 SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "0"
             )
 }
