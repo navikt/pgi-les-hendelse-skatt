@@ -69,6 +69,34 @@ internal class HendelseMock {
                 ))
     }
 
+    internal fun `stub hendelse endpoint response with unknown fields from skatt`(fraSekvensnummer: Long) {
+        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
+                         .withQueryParams(queryParams(fraSekvensnummer))
+                         .willReturn(
+                             aResponse()
+                                 .withBody("""
+                                     {
+                                     "hendelser": [
+                                        {
+                                          "sekvensnummer": 1,
+                                          "identifikator": "12345678901",
+                                          "gjelderPeriode": "2019",
+                                          "unkwnown": "property"
+                                        },
+                                        {
+                                          "sekvensnummer": 2,
+                                          "identifikator": "12345678901",
+                                          "gjelderPeriode": "2019",
+                                          "unknown": null
+                                        }
+                                       ]
+                                     }
+                                 """.trimIndent()
+                                 )
+                                 .withStatus(200)
+                         ))
+    }
+
     internal fun `stub hendelse endpoint first call`(fraSekvensnummer: Long, antall: Int): List<HendelseDto> {
         val hendelser: List<HendelseDto> = createHendelser(fraSekvensnummer, antall)
         mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))

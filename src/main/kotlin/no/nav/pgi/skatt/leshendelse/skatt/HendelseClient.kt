@@ -1,5 +1,6 @@
 package no.nav.pgi.skatt.leshendelse.skatt
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.prometheus.client.Counter
@@ -17,7 +18,9 @@ private val polledFromSkattCounter = Counter.build("pgi_hendelser_polled_from_sk
 
 internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
     private val host: String = env.getVal(HENDELSE_HOST_ENV_KEY)
-    private val objectMapper = ObjectMapper().registerModule(KotlinModule())
+    private val objectMapper = ObjectMapper()
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .registerModule(KotlinModule())
     private val url: String = UriBuilder.fromPath(host).path(env.getVal(HENDELSE_PATH_ENV_KEY)).build().toString()
 
     fun getHendelserSkatt(antall: Int, fraSekvensnummer: Long): List<HendelseDto> {

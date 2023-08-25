@@ -59,6 +59,13 @@ internal class GrunnlagPgiHendelseDtoClientTest {
         }
     }
 
+    @Test
+    fun `accept unknown fields when mapping response from skatt`(){
+        hendelseMock.`stub hendelse endpoint response with unknown fields from skatt`(FRA_SEKVENSNUMMER)
+        val hendelser = client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
+        assertEquals(2, hendelser.size)
+    }
+
     private fun createEnvVariables() = mapOf(
         HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
         HENDELSE_PATH_ENV_KEY to HENDELSE_MOCK_PATH,
