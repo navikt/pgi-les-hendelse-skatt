@@ -22,6 +22,12 @@ plugins {
     kotlin("plugin.serialization") version "1.8.0"
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 repositories {
     jcenter()
     mavenCentral()
