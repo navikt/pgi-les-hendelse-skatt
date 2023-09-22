@@ -1,7 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val ktorSupportVersion = "0.0.20"
+val ktorSupportVersion = "0.0.22"
 val ktorVersion = "1.5.4"
 val maskinportenClientVersion = "0.0.4"
 val joseJwtVersion = "9.0.1"
