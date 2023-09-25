@@ -11,8 +11,9 @@ val kafkaVersion = "3.5.1"
 val kafkaAvroSerializerVersion = "7.1.0"
 val pgiSchemaVersion = "0.0.7"
 val junitJupiterVersion = "5.6.0"
-val kafkaEmbeddedEnvVersion = "3.1.0"
+val kafkaEmbeddedEnvVersion = "3.2.3"
 val wiremockVersion = "2.27.2"
+val javaxEl = "3.0.1-b06"
 
 group = "no.nav.pgi"
 
@@ -74,8 +75,11 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testImplementation("com.github.tomakehurst:wiremock:$wiremockVersion")
+
     testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedEnvVersion") {
         exclude(group = "org.slf4j", module = "slf4j-log4j12")
+        testRuntimeOnly("javax.el:javax.el-api:$javaxEl")
+        testRuntimeOnly("org.glassfish:javax.el:$javaxEl")
     }
 }
 
