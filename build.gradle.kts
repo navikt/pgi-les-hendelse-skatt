@@ -72,12 +72,11 @@ dependencies {
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testImplementation("com.github.tomakehurst:wiremock:$wiremockVersion")
     testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedEnvVersion") {
         exclude(group = "org.slf4j", module = "slf4j-log4j12")
     }
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
 }
 
 tasks.withType<KotlinCompile> {
