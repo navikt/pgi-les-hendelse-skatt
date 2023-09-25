@@ -77,7 +77,7 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
         val failingConsumer = MockConsumer<String, String>(OffsetResetStrategy.LATEST)
                 .apply {
                     assign(listOf(TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)))
-                    addEndOffsets(mapOf(SekvensnummerConsumer.defaultTopicPartition to 2))
+                    updateEndOffsets(mapOf(SekvensnummerConsumer.defaultTopicPartition to 2))
                     setPollException(InterruptException("Test exception"))
                 }
 

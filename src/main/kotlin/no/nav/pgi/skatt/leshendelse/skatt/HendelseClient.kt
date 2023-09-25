@@ -9,7 +9,6 @@ import no.nav.pensjon.samhandling.maskfnr.maskFnr
 import org.slf4j.LoggerFactory
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
-import javax.ws.rs.core.UriBuilder
 
 internal const val HENDELSE_HOST_ENV_KEY = "GRUNNLAG_PGI_HENDELSE_HOST"
 internal const val HENDELSE_PATH_ENV_KEY = "SKATT_HENDELSE_PATH"
@@ -20,8 +19,8 @@ internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
     private val host: String = env.getVal(HENDELSE_HOST_ENV_KEY)
     private val objectMapper = ObjectMapper()
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        .registerModule(KotlinModule())
-    private val url: String = UriBuilder.fromPath(host).path(env.getVal(HENDELSE_PATH_ENV_KEY)).build().toString()
+        .registerModule(KotlinModule.Builder().build())
+    private val url: String = """$host${env.getVal(HENDELSE_PATH_ENV_KEY)}"""
 
     fun getHendelserSkatt(antall: Int, fraSekvensnummer: Long): List<HendelseDto> {
         val response = send(createGetRequest(url, createQueryParameters(antall, fraSekvensnummer)), ofString())

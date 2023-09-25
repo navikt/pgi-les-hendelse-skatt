@@ -2,17 +2,17 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val ktorSupportVersion = "0.0.22"
-val ktorVersion = "1.5.4"
-val maskinportenClientVersion = "0.0.4"
+val ktorVersion = "1.6.8"
+val maskinportenClientVersion = "0.0.9"
 val joseJwtVersion = "9.0.1"
 val micrometerVersion = "1.3.5"
 val slf4jVersion = "1.7.30"
 val log4jVersion = "2.17.1"
 val kafkaVersion = "3.5.1"
-val kafkaAvroSerializerVersion = "5.5.1"
+val kafkaAvroSerializerVersion = "7.1.0"
 val pgiSchemaVersion = "0.0.7"
 val junitJupiterVersion = "5.6.0"
-val kafkaEmbeddedEnvVersion = "2.5.0"
+val kafkaEmbeddedEnvVersion = "3.1.0"
 val wiremockVersion = "2.27.2"
 
 group = "no.nav.pgi"

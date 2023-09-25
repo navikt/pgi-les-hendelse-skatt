@@ -7,7 +7,6 @@ import no.nav.pensjon.samhandling.env.getVal
 import org.slf4j.LoggerFactory
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
-import javax.ws.rs.core.UriBuilder
 
 internal const val FIRST_SEKVENSNUMMER_HOST_ENV_KEY = "GRUNNLAG_PGI_FIRST_SEKVENSNUMMER_HOST"
 internal const val FIRST_SEKVENSNUMMER_PATH_ENV_KEY = "SKATT_HENDELSE_START_PATH"
@@ -15,8 +14,8 @@ private val LOG = LoggerFactory.getLogger(FirstSekvensnummerClient::class.java)
 
 internal class FirstSekvensnummerClient(env: Map<String, String> = System.getenv()) : SkattClient(env) {
     private val host = env.getVal(FIRST_SEKVENSNUMMER_HOST_ENV_KEY)
-    private val objectMapper = ObjectMapper().registerModule(KotlinModule())
-    private val url = UriBuilder.fromPath(host).path(env.getVal(FIRST_SEKVENSNUMMER_PATH_ENV_KEY)).build().toString()
+    private val objectMapper = ObjectMapper().registerModule(KotlinModule.Builder().build())
+    private val url = """$host${env.getVal(FIRST_SEKVENSNUMMER_PATH_ENV_KEY)}"""
 
     fun getFirstSekvensnummer(): Long {
         val response = send(createGetRequest(url), ofString())

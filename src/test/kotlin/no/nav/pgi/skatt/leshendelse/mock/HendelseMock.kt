@@ -122,7 +122,7 @@ internal class HendelseMock {
     private fun responseWithHendelser(hendelser: List<HendelseDto>): ResponseDefinitionBuilder? {
         return aResponse()
                 .withBody(ObjectMapper()
-                        .registerModule(KotlinModule())
+                        .registerModule(KotlinModule.Builder().build())
                         .writeValueAsString(HendelserDtoWrapper(hendelser)))
                 .withStatus(200)
     }
