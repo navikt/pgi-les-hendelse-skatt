@@ -67,7 +67,7 @@ dependencies {
     implementation("no.nav.pgi:pgi-schema:$pgiSchemaVersion")
 
     implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
-    implementation("ch.qos.logback:logback-classic:1.2.3")
+    implementation("ch.qos.logback:logback-classic:1.4.11")
     implementation("net.logstash.logback:logstash-logback-encoder:5.2")
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
 
