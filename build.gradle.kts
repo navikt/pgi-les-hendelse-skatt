@@ -79,6 +79,13 @@ dependencies {
     }
 }
 
+configurations {
+    all {
+        exclude(group = "log4j", module = "log4j")
+    }
+}
+
+
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
 }
