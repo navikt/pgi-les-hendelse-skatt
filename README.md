@@ -4,7 +4,15 @@ Tilstanden til sekvensnummeret blir lagret på ```privat-pgi-nextSekvensnummer``
 
 Dokumentasjon REST tjenester til SKE: [HendelseListe API](https://skatteetaten.github.io/datasamarbeid-api-dokumentasjon/reference_feed.html)
 
+### Hente hendelser på nytt
+Ved behov for å hente hendelser må man unngå at sekvensnummer leses fra tilstanden på topic
+`privat-pgi-nextSekvensnummer`. Dette kan gjøres ved å sette miljøvariabelen `TILBAKESTILL_SEKVENSNUMMER` til `"true"`.
+Her kan man alternativt også sette miljvariabelen `TILBAKESTILL_SEKVENSNUMMER_TIL` til `"yyyy-MM-dd"` man ønsker å hente
+hendelser fra (første sekvensnummer fra og med angitt dato). Dersom sistnevnte variabel ikke er spesifisert vil
+det første mulige sekvensnummer hentes (siden tidenes morgen).
 
+**NB** For å unngå at man alltid tilbakestiller ved oppstart, må man oppdatere `TILBAKESTILL_SEKVENSNUMMER` 
+til `"false"` så fort applikasjonen har startet å lese inn hendelser fra ønsket tidspunkt.
 
 #### Bygge lokalt
 For å bygge lokalt, så må man ha satt environment variablene GITHUB_ACTOR og GITHUB_TOKEN.

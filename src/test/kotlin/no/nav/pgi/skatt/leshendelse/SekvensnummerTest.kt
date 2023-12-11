@@ -117,7 +117,60 @@ internal class SekvensnummerTest {
         assertEquals(validSekvensnummer, sekvensnummerConsumer.getNextSekvensnummer()?.toLong())
     }
 
-    private fun addSekvensnummerToTopic(sekvensnummerList: List<Long>) = sekvensnummerList.forEach { sekvensnummerProducer.writeSekvensnummer(it) }
+    @Test
+    internal fun `resets sekvensnummer to earliest possible`() {
+        val firstSekvensnummer = 14L
+        firstSekvensnummerMock.`stub first sekvensnummer endpoint`(firstSekvensnummer)
+
+        val sekvensnummerOnTopic = 20L
+        val env = createEnvVariables() + mapOf(
+            "TILBAKESTILL_SEKVENSNUMMER" to "true",
+        )
+        addSekvensnummerToTopic(listOf(sekvensnummerOnTopic))
+        assertEquals(sekvensnummerOnTopic, sekvensnummer.getSekvensnummer())
+
+        sekvensnummer = Sekvensnummer(kafkaFactory, env)
+
+        assertEquals(14, sekvensnummer.getSekvensnummer())
+    }
+
+    @Test
+    internal fun `resets sekvensnummer to specific date`() {
+        val firstSekvensnummer = 15L
+        firstSekvensnummerMock.`stub first sekvensnummer endpoint med dato`(firstSekvensnummer)
+
+        val sekvensnummerOnTopic = 20L
+        val env = createEnvVariables() + mapOf(
+            "TILBAKESTILL_SEKVENSNUMMER" to "true",
+            "TILBAKESTILL_SEKVENSNUMMER_TIL" to "2023-06-01",
+        )
+        addSekvensnummerToTopic(listOf(sekvensnummerOnTopic))
+        assertEquals(sekvensnummerOnTopic, sekvensnummer.getSekvensnummer())
+
+        sekvensnummer = Sekvensnummer(kafkaFactory, env)
+
+        assertEquals(15, sekvensnummer.getSekvensnummer())
+    }
+
+    @Test
+    internal fun `does not reset if disabled`() {
+        val firstSekvensnummer = 15L
+        firstSekvensnummerMock.`stub first sekvensnummer endpoint med dato`(firstSekvensnummer)
+
+        val sekvensnummerOnTopic = 20L
+        val env = createEnvVariables() + mapOf(
+            "TILBAKESTILL_SEKVENSNUMMER" to "false",
+        )
+        addSekvensnummerToTopic(listOf(sekvensnummerOnTopic))
+        assertEquals(sekvensnummerOnTopic, sekvensnummer.getSekvensnummer())
+
+        sekvensnummer = Sekvensnummer(kafkaFactory, env)
+
+        assertEquals(20, sekvensnummer.getSekvensnummer())
+    }
+
+    private fun addSekvensnummerToTopic(sekvensnummerList: List<Long>) =
+        sekvensnummerList.forEach { sekvensnummerProducer.writeSekvensnummer(it) }
 
     private fun createEnvVariables() = MaskinportenMock.MASKINPORTEN_ENV_VARIABLES + mapOf(
         FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,

@@ -1,10 +1,12 @@
 package no.nav.pgi.skatt.leshendelse
 
+import no.nav.pensjon.samhandling.env.getVal
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerProducer
 import no.nav.pgi.skatt.leshendelse.skatt.FirstSekvensnummerClient
 import org.slf4j.LoggerFactory
+import java.time.LocalDate
 
 private val LOG = LoggerFactory.getLogger(Sekvensnummer::class.java.simpleName)
 
@@ -42,7 +44,47 @@ internal class Sekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String
 private fun getInitialSekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String>): Long {
     val consumer = SekvensnummerConsumer(kafkaFactory)
     val client = FirstSekvensnummerClient(env)
-    val sekvensnummer = consumer.getNextSekvensnummer()?.toLong() ?: client.getFirstSekvensnummer()
+    val tilbakestillSekvensnummer = TilbakestillSekvensnummer(env)
+    val sekvensnummer = if (tilbakestillSekvensnummer.skalTilbakestille()) {
+        client.getSekvensnummer(tilbakestillSekvensnummer.hentFra())
+    } else {
+        consumer.getNextSekvensnummer()?.toLong() ?: client.getSekvensnummer(HentSekvensnummer.FørsteMulige)
+    }
     consumer.close()
     return sekvensnummer
+}
+
+
+sealed class HentSekvensnummer {
+    object FørsteMulige : HentSekvensnummer()
+    data class FraDato(val date: LocalDate) : HentSekvensnummer()
+}
+
+class TilbakestillSekvensnummer(
+    env: Map<String, String> = System.getenv()
+) {
+    private val tilbakestill: Boolean = env.getVal("TILBAKESTILL_SEKVENSNUMMER", "false").toBoolean()
+    private val hentFra: String = env.getVal("TILBAKESTILL_SEKVENSNUMMER_TIL", FIRST)
+
+    companion object {
+        private const val FIRST = "first"
+        private val log = LoggerFactory.getLogger(this::class.java)
+    }
+
+    fun skalTilbakestille() = tilbakestill
+    fun hentFra(): HentSekvensnummer {
+        require(tilbakestill) { "Tilbakestilling av sekvensnummer er ikke aktivert" }
+        return when (hentFra == FIRST) {
+            true -> {
+                log.info("Tilbakestilling av sekvensnummer aktivert - tilbakestiller til første mulige sekvensnummer.")
+                HentSekvensnummer.FørsteMulige
+            }
+
+            false -> {
+                val dato = LocalDate.parse(hentFra)
+                log.info("Tilbakestilling av sekvensnummer aktivert - tilbakestiller til første sekvensnummer for dato:$dato")
+                HentSekvensnummer.FraDato(LocalDate.parse(hentFra))
+            }
+        }
+    }
 }
