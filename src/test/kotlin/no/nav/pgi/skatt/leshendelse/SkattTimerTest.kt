@@ -2,6 +2,7 @@ package no.nav.pgi.skatt.leshendelse
 
 import org.junit.jupiter.api.Test
 import java.util.*
+import kotlin.math.abs
 
 private const val TWO_HUNDREDTH_OF_A_SECOND = 20L
 
@@ -32,6 +33,6 @@ internal class SkattTimerTest {
 }
 
 internal fun differenceBetween(calendar1: Calendar, calendar2: Calendar): Long =
-    Math.abs(calendar1.timeInMillis - calendar2.timeInMillis)
+    abs(calendar1.timeInMillis - calendar2.timeInMillis)
 
 internal infix fun Long.isLessThen(errorMargin: Long): Boolean = this < errorMargin

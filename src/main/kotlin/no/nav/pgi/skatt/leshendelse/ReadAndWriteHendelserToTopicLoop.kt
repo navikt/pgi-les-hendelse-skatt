@@ -8,8 +8,6 @@ import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
 import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
 import org.slf4j.LoggerFactory
 
-private val LOG = LoggerFactory.getLogger(ReadAndWriteHendelserToTopicLoop::class.java.simpleName)
-
 internal class ReadAndWriteHendelserToTopicLoop(kafkaFactory: KafkaFactory, env: Map<String, String>) {
     private val hendelseProducer = HendelseProducer(kafkaFactory)
     private val sekvensnummer = Sekvensnummer(kafkaFactory, env)

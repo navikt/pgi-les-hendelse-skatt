@@ -8,8 +8,6 @@ import no.nav.pgi.skatt.leshendelse.skatt.FirstSekvensnummerClient
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
-private val LOG = LoggerFactory.getLogger(Sekvensnummer::class.java.simpleName)
-
 internal class Sekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String>) {
     private val nextSekvensnummerProducer = SekvensnummerProducer(kafkaFactory)
     private val firstSekvensnummer: Long by lazy { getInitialSekvensnummer(kafkaFactory, env) }
@@ -56,7 +54,7 @@ private fun getInitialSekvensnummer(kafkaFactory: KafkaFactory, env: Map<String,
 
 
 sealed class HentSekvensnummer {
-    object FørsteMulige : HentSekvensnummer()
+    data object FørsteMulige : HentSekvensnummer()
     data class FraDato(val date: LocalDate) : HentSekvensnummer()
 }
 

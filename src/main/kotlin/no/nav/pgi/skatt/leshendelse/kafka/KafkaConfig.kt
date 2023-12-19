@@ -3,12 +3,8 @@ package no.nav.pgi.skatt.leshendelse.kafka
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.pensjon.samhandling.env.getVal
-import no.nav.samordning.pgi.schema.Hendelse
-import no.nav.samordning.pgi.schema.HendelseKey
 import org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
-import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig.*
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer

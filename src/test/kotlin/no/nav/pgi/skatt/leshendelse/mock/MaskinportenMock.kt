@@ -54,10 +54,10 @@ internal class MaskinportenMock {
         val claimsSet = JWTClaimsSet.Builder()
             .subject("alice")
             .issuer("https://c2id.com")
-            .expirationTime(Date(Date().getTime() + (60 * 1000)))
+            .expirationTime(Date(Date().time + (60 * 1000)))
             .build()
         val signedJWT = SignedJWT(
-            JWSHeader.Builder(JWSAlgorithm.RS256).keyID(privateKey.getKeyID()).build(),
+            JWSHeader.Builder(JWSAlgorithm.RS256).keyID(privateKey.keyID).build(),
             claimsSet
         )
         val signer: JWSSigner = RSASSASigner(privateKey)

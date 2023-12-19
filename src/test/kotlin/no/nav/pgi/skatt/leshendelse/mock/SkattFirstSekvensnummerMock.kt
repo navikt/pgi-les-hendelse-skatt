@@ -28,14 +28,14 @@ internal class SkattFirstSekvensnummerMock {
     internal fun `stub first sekvensnummer endpoint`(firstSekvensnummer: Long = SKATT_FIRST_SEKVENSNUMMER) {
         mock.stubFor(
             get(urlPathEqualTo(FIRST_SEKVENSNUMMER_MOCK_PATH))
-                .willReturn(okJson("{\"sekvensnummer\": " + firstSekvensnummer + "}"))
+                .willReturn(okJson("{\"sekvensnummer\": $firstSekvensnummer}"))
         )
     }
 
     internal fun `stub first sekvensnummer endpoint med dato`(firstSekvensnummer: Long = SKATT_FIRST_SEKVENSNUMMER) {
         mock.stubFor(
             get(urlPathEqualTo(FIRST_SEKVENSNUMMER_MOCK_PATH)).withQueryParam("dato", AnythingPattern())
-                .willReturn(okJson("{\"sekvensnummer\": " + firstSekvensnummer + "}"))
+                .willReturn(okJson("{\"sekvensnummer\": $firstSekvensnummer}"))
         )
     }
 
@@ -60,4 +60,3 @@ internal class SkattFirstSekvensnummerMock {
         )
     }
 }
-
