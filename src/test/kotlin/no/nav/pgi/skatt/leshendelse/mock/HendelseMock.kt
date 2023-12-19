@@ -37,44 +37,54 @@ internal class HendelseMock {
 
     internal fun `stub hendelse endpoint skatt`() {
         val hendelser: List<HendelseDto> = createHendelser(1, ANTALL_HENDELSER)
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
-                .willReturn(responseWithHendelser(hendelser)))
+        mock.stubFor(
+            WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
+                .willReturn(responseWithHendelser(hendelser))
+        )
     }
 
     internal fun `stub hendelse endpoint skatt`(fraSekvensnummer: Long, antall: Int): List<HendelseDto> {
         val hendelser: List<HendelseDto> = createHendelser(fraSekvensnummer, antall)
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
+        mock.stubFor(
+            WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
-                .willReturn(responseWithHendelser(hendelser)))
+                .willReturn(responseWithHendelser(hendelser))
+        )
         return hendelser
     }
 
     internal fun `stub hendelse endpoint response that wont map`(fraSekvensnummer: Long) {
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
+        mock.stubFor(
+            WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
                 .willReturn(
-                        aResponse()
-                                .withBody("[")
-                                .withStatus(200)
-                ))
+                    aResponse()
+                        .withBody("[")
+                        .withStatus(200)
+                )
+        )
     }
 
     internal fun `stub hendelse endpoint response with masked data from skatt`(fraSekvensnummer: Long) {
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
+        mock.stubFor(
+            WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
                 .willReturn(
-                        aResponse()
-                                .withBodyFile("Hendelser1To100.json")
-                                .withStatus(200)
-                ))
+                    aResponse()
+                        .withBodyFile("Hendelser1To100.json")
+                        .withStatus(200)
+                )
+        )
     }
 
     internal fun `stub hendelse endpoint response with unknown fields from skatt`(fraSekvensnummer: Long) {
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
-                         .withQueryParams(queryParams(fraSekvensnummer))
-                         .willReturn(
-                             aResponse()
-                                 .withBody("""
+        mock.stubFor(
+            WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
+                .withQueryParams(queryParams(fraSekvensnummer))
+                .willReturn(
+                    aResponse()
+                        .withBody(
+                            """
                                      {
                                      "hendelser": [
                                         {
@@ -92,50 +102,57 @@ internal class HendelseMock {
                                        ]
                                      }
                                  """.trimIndent()
-                                 )
-                                 .withStatus(200)
-                         ))
+                        )
+                        .withStatus(200)
+                )
+        )
     }
 
     internal fun `stub hendelse endpoint first call`(fraSekvensnummer: Long, antall: Int): List<HendelseDto> {
         val hendelser: List<HendelseDto> = createHendelser(fraSekvensnummer, antall)
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
+        mock.stubFor(
+            WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
                 .inScenario("Two calls to hendelse")
                 .whenScenarioStateIs(STARTED)
                 .willReturn(responseWithHendelser(hendelser))
-                .willSetStateTo("First call completed"))
+                .willSetStateTo("First call completed")
+        )
         return hendelser
     }
 
     internal fun `stub hendelse endpoint second call`(fraSekvensnummer: Long, antall: Int): List<HendelseDto> {
         val hendelser: List<HendelseDto> = createHendelser(fraSekvensnummer, antall)
-        mock.stubFor(WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
+        mock.stubFor(
+            WireMock.get(WireMock.urlPathEqualTo(HENDELSE_MOCK_PATH))
                 .withQueryParams(queryParams(fraSekvensnummer))
                 .inScenario("Two calls to hendelse")
                 .whenScenarioStateIs("First call completed")
                 .willReturn(responseWithHendelser(hendelser))
-                .willSetStateTo("second call completed"))
+                .willSetStateTo("second call completed")
+        )
         return hendelser
     }
 
     private fun responseWithHendelser(hendelser: List<HendelseDto>): ResponseDefinitionBuilder? {
         return aResponse()
-                .withBody(ObjectMapper()
-                        .registerModule(KotlinModule.Builder().build())
-                        .writeValueAsString(HendelserDtoWrapper(hendelser)))
-                .withStatus(200)
+            .withBody(
+                ObjectMapper()
+                    .registerModule(KotlinModule.Builder().build())
+                    .writeValueAsString(HendelserDtoWrapper(hendelser))
+            )
+            .withStatus(200)
     }
 
     private fun queryParams(fraSekvensnummer: Long) =
-            mapOf(
-                    FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString())),
-                    ANTALL_KEY to WireMock.equalTo("$ANTALL_HENDELSER")
-            )
+        mapOf(
+            FRA_SEKVENSNUMMER_KEY to WireMock.equalTo((fraSekvensnummer.toString())),
+            ANTALL_KEY to WireMock.equalTo("$ANTALL_HENDELSER")
+        )
 
 
     private fun createHendelser(startingSekvensnummer: Long, amount: Int): List<HendelseDto> =
-            (startingSekvensnummer until startingSekvensnummer + amount)
-                    .toList()
-                    .map { HendelseDto((11111111111 + it).toString(), "2020", it) }
+        (startingSekvensnummer until startingSekvensnummer + amount)
+            .toList()
+            .map { HendelseDto((11111111111 + it).toString(), "2020", it) }
 }

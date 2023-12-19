@@ -18,40 +18,44 @@ internal const val GROUP_ID = "pgi-sekvensnummer-consumer-group"
 const val NEXT_SEKVENSNUMMER_TOPIC = "pensjonopptjening.privat-pgi-nextsekvensnummer"
 const val PGI_HENDELSE_TOPIC = "pensjonopptjening.privat-pgi-hendelse"
 
-internal class KafkaConfig(environment: Map<String, String> = System.getenv(), private val securityStrategy: SecurityStrategy = SslStrategy()) {
+internal class KafkaConfig(
+    environment: Map<String, String> = System.getenv(),
+    private val securityStrategy: SecurityStrategy = SslStrategy()
+) {
     private val bootstrapServers = environment.getVal(BOOTSTRAP_SERVERS)
     private val schemaRegistryUrl = environment.getVal(SCHEMA_REGISTRY)
     private val schemaRegUsername = environment.getVal(SCHEMA_REGISTRY_USERNAME)
     private val schemaRegPassword = environment.getVal(SCHEMA_REGISTRY_PASSWORD)
 
     internal fun sekvensnummerConsumerConfig() = mapOf(
-            KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-            VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-            GROUP_ID_CONFIG to GROUP_ID,
-            ENABLE_AUTO_COMMIT_CONFIG to false,
-            AUTO_OFFSET_RESET_CONFIG to "earliest"
+        KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+        VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+        GROUP_ID_CONFIG to GROUP_ID,
+        ENABLE_AUTO_COMMIT_CONFIG to false,
+        AUTO_OFFSET_RESET_CONFIG to "earliest"
     )
 
     internal fun sekvensnummerProducerConfig() = mapOf(
-            KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
-            VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
-            ACKS_CONFIG to "all",
-            RETRIES_CONFIG to MAX_VALUE
+        KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
+        VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
+        ACKS_CONFIG to "all",
+        RETRIES_CONFIG to MAX_VALUE
     )
 
     internal fun hendelseProducerConfig() = mapOf(
-            KEY_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
-            VALUE_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
-            ACKS_CONFIG to "all",
-            RETRIES_CONFIG to MAX_VALUE
+        KEY_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
+        VALUE_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
+        ACKS_CONFIG to "all",
+        RETRIES_CONFIG to MAX_VALUE
     )
 
-    internal fun commonConfig() = mapOf(BOOTSTRAP_SERVERS_CONFIG to bootstrapServers) + securityStrategy.securityConfig()
+    internal fun commonConfig() =
+        mapOf(BOOTSTRAP_SERVERS_CONFIG to bootstrapServers) + securityStrategy.securityConfig()
 
     internal fun schemaRegistryConfig() = mapOf(
-            AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
-            AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG to "$schemaRegUsername:$schemaRegPassword",
-            AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to schemaRegistryUrl
+        AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
+        AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG to "$schemaRegUsername:$schemaRegPassword",
+        AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to schemaRegistryUrl
     )
 
     internal interface SecurityStrategy {

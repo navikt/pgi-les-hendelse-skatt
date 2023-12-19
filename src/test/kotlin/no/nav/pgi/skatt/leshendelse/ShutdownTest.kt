@@ -95,12 +95,12 @@ internal class ShutdownTest {
         hendelseMock.`stub hendelse endpoint skatt`(1, 10)
         hendelseMock.`stub hendelse endpoint skatt`(11, 10)
         val envVariables =
-                mapOf(
-                    HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
-                    HENDELSE_PATH_ENV_KEY to HENDELSE_MOCK_PATH,
-                    FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
-                    SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "180"
-                ) + MaskinportenMock.MASKINPORTEN_ENV_VARIABLES
+            mapOf(
+                HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
+                HENDELSE_PATH_ENV_KEY to HENDELSE_MOCK_PATH,
+                FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
+                SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "180"
+            ) + MaskinportenMock.MASKINPORTEN_ENV_VARIABLES
 
         application = Application(kafkaFactory = kafkaMockFactory, env = envVariables, loopForever = true)
 
@@ -122,9 +122,10 @@ internal class ShutdownTest {
             )
 
     private fun callIsAlive() =
-            HttpClient.newHttpClient().send(
-                    HttpRequest.newBuilder()
-                            .uri(URI.create("http://localhost:8080$IS_ALIVE_PATH")).GET().build(), ofString())
+        HttpClient.newHttpClient().send(
+            HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080$IS_ALIVE_PATH")).GET().build(), ofString()
+        )
 
 }
 

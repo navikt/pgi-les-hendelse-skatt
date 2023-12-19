@@ -24,7 +24,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class ComponentTest {
     private val kafkaTestEnvironment = KafkaTestEnvironment()
-    private val kafkaFactory = KafkaHendelseFactory(KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy()))
+    private val kafkaFactory =
+        KafkaHendelseFactory(KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy()))
     private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaFactory, TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0))
     private val sekvensnummerProducer = SekvensnummerProducer(kafkaFactory)
 
@@ -55,11 +56,17 @@ internal class ComponentTest {
         val antallHendelserSecondCall = 60
 
         hendelseMock.`stub hendelse endpoint first call`(currentSekvensnummer, antallHendelserFirstCall)
-        val hendelser = hendelseMock.`stub hendelse endpoint second call`(currentSekvensnummer + antallHendelserFirstCall, antallHendelserSecondCall)
+        val hendelser = hendelseMock.`stub hendelse endpoint second call`(
+            currentSekvensnummer + antallHendelserFirstCall,
+            antallHendelserSecondCall
+        )
         application.startHendelseSkattLoop()
 
         assertEquals(hendelser.getNextSekvensnummer(), sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
-        assertEquals(hendelser[hendelser.size - 1].mapToAvroHendelse(), kafkaTestEnvironment.getLastRecordOnTopic().value())
+        assertEquals(
+            hendelser[hendelser.size - 1].mapToAvroHendelse(),
+            kafkaTestEnvironment.getLastRecordOnTopic().value()
+        )
     }
 
     private fun createEnvVariables() = MASKINPORTEN_ENV_VARIABLES +

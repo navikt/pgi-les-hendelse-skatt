@@ -21,8 +21,8 @@ internal class HendelseDtoTest {
         val firstSekvensnummer = 3L
 
         val hendelseList: List<HendelseDto> = listOf(
-                HendelseDto("12345678901", "2020", firstSekvensnummer),
-                HendelseDto("12345678901", "2020", 4L)
+            HendelseDto("12345678901", "2020", firstSekvensnummer),
+            HendelseDto("12345678901", "2020", 4L)
         )
 
         assertEquals(firstSekvensnummer, hendelseList.fistSekvensnummer())
@@ -33,8 +33,8 @@ internal class HendelseDtoTest {
         val lastSekvensnummer = 4L
 
         val hendelseList: List<HendelseDto> = listOf(
-                HendelseDto("12345678901", "2020", 3L),
-                HendelseDto("12345678901", "2020", lastSekvensnummer)
+            HendelseDto("12345678901", "2020", 3L),
+            HendelseDto("12345678901", "2020", lastSekvensnummer)
         )
 
         assertEquals(lastSekvensnummer, hendelseList.lastSekvensnummer())
@@ -55,9 +55,9 @@ internal class HendelseDtoTest {
         val sekvensnummer = 3L
 
         val hendelseList: List<HendelseDto> = listOf(
-                HendelseDto("12345678901", "2020", 1L),
-                HendelseDto("12345678901", "2020", 2L),
-                HendelseDto("12345678901", "2020", sekvensnummer)
+            HendelseDto("12345678901", "2020", 1L),
+            HendelseDto("12345678901", "2020", 2L),
+            HendelseDto("12345678901", "2020", sekvensnummer)
         )
 
         assertEquals(2, hendelseList.amountOfHendelserBefore(sekvensnummer))
@@ -68,8 +68,8 @@ internal class HendelseDtoTest {
         val sekvensnummer = 3L
 
         val hendelseList: List<HendelseDto> = listOf(
-                HendelseDto("12345678901", "2020", 1L),
-                HendelseDto("12345678901", "2020", 2L)
+            HendelseDto("12345678901", "2020", 1L),
+            HendelseDto("12345678901", "2020", 2L)
         )
 
         assertEquals(0, hendelseList.amountOfHendelserBefore(sekvensnummer))

@@ -9,8 +9,12 @@ import org.apache.kafka.clients.producer.RecordMetadata
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Future
 
-private val addedToTopicCounter = Counter.build("pgi_hendelser_added_to_topic", "Antall hendelser lagt til topic").register()
-private val failToAddToTopicCounter = Counter.build("pgi_hendelser_failed_to_topic", "Antall hendelser som feilet når de skulle legges til topic eller vil bli overskrevet").register()
+private val addedToTopicCounter =
+    Counter.build("pgi_hendelser_added_to_topic", "Antall hendelser lagt til topic").register()
+private val failToAddToTopicCounter = Counter.build(
+    "pgi_hendelser_failed_to_topic",
+    "Antall hendelser som feilet når de skulle legges til topic eller vil bli overskrevet"
+).register()
 
 internal class HendelseProducer(kafkaFactory: KafkaFactory) {
 
@@ -27,15 +31,15 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
     internal fun close() = hendelseProducer.close().also { LOG.info("closing hendelse hendelseProducer") }
 
     private fun createRecord(hendelse: HendelseDto) =
-            ProducerRecord(PGI_HENDELSE_TOPIC, hendelse.mapToAvroHendelseKey(), hendelse.mapToAvroHendelse())
+        ProducerRecord(PGI_HENDELSE_TOPIC, hendelse.mapToAvroHendelseKey(), hendelse.mapToAvroHendelse())
 
     private fun sendRecord(record: ProducerRecord<HendelseKey, Hendelse>) =
-            SentRecord(hendelseProducer.send(record), record.value())
+        SentRecord(hendelseProducer.send(record), record.value())
 
     private fun loggWrittenHendelser(failedHendelse: FailedHendelse?, hendelser: List<HendelseDto>) {
         if (failedHendelse == null) {
             addedToTopicCounter.inc(hendelser.size.toDouble())
-            if(hendelser.isNotEmpty()){
+            if (hendelser.isNotEmpty()) {
                 LOG.info("Added ${hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. From sekvensnummer ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
             }
         } else {

@@ -18,11 +18,11 @@ import java.time.Duration
 class KafkaTestEnvironment {
 
     private val kafkaTestEnvironment: KafkaEnvironment = KafkaEnvironment(
-            withSchemaRegistry = true,
-            topicInfos = listOf(
-                    TopicInfo(NEXT_SEKVENSNUMMER_TOPIC, partitions = 1),
-                    TopicInfo(PGI_HENDELSE_TOPIC, partitions = 1)
-            )
+        withSchemaRegistry = true,
+        topicInfos = listOf(
+            TopicInfo(NEXT_SEKVENSNUMMER_TOPIC, partitions = 1),
+            TopicInfo(PGI_HENDELSE_TOPIC, partitions = 1)
+        )
     )
 
     private var hendelseTestConsumer: KafkaConsumer<HendelseKey, Hendelse> = hendelseTestConsumer()
@@ -35,27 +35,28 @@ class KafkaTestEnvironment {
     internal fun tearDown() = kafkaTestEnvironment.tearDown()
 
     internal fun kafkaTestEnvironmentVariables() = mapOf<String, String>(
-            KafkaConfig.BOOTSTRAP_SERVERS to kafkaTestEnvironment.brokersURL,
-            KafkaConfig.SCHEMA_REGISTRY to kafkaTestEnvironment.schemaRegistry!!.url,
-            KafkaConfig.SCHEMA_REGISTRY_USERNAME to "mrOpensource",
-            KafkaConfig.SCHEMA_REGISTRY_PASSWORD to "opensourcedPassword"
+        KafkaConfig.BOOTSTRAP_SERVERS to kafkaTestEnvironment.brokersURL,
+        KafkaConfig.SCHEMA_REGISTRY to kafkaTestEnvironment.schemaRegistry!!.url,
+        KafkaConfig.SCHEMA_REGISTRY_USERNAME to "mrOpensource",
+        KafkaConfig.SCHEMA_REGISTRY_PASSWORD to "opensourcedPassword"
     )
 
     private fun hendelseTestConsumer() = KafkaConsumer<HendelseKey, Hendelse>(
-            mapOf(
-                    CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG to kafkaTestEnvironment.brokersURL,
-                    KEY_DESERIALIZER_CLASS_CONFIG to KafkaAvroDeserializer::class.java,
-                    VALUE_DESERIALIZER_CLASS_CONFIG to KafkaAvroDeserializer::class.java,
-                    SPECIFIC_AVRO_READER_CONFIG to true,
-                    GROUP_ID_CONFIG to "LOL",
-                    AUTO_OFFSET_RESET_CONFIG to "earliest",
-                    ENABLE_AUTO_COMMIT_CONFIG to false,
-                    "schema.registry.url" to kafkaTestEnvironment.schemaRegistry!!.url
-            )
+        mapOf(
+            CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG to kafkaTestEnvironment.brokersURL,
+            KEY_DESERIALIZER_CLASS_CONFIG to KafkaAvroDeserializer::class.java,
+            VALUE_DESERIALIZER_CLASS_CONFIG to KafkaAvroDeserializer::class.java,
+            SPECIFIC_AVRO_READER_CONFIG to true,
+            GROUP_ID_CONFIG to "LOL",
+            AUTO_OFFSET_RESET_CONFIG to "earliest",
+            ENABLE_AUTO_COMMIT_CONFIG to false,
+            "schema.registry.url" to kafkaTestEnvironment.schemaRegistry!!.url
+        )
     )
 
     //Duration 4 seconds to allow for hendelse to be added to topic
-    fun consumeHendelseTopic(): List<ConsumerRecord<HendelseKey, Hendelse>> = hendelseTestConsumer.poll(Duration.ofSeconds(4)).records(PGI_HENDELSE_TOPIC).toList()
+    fun consumeHendelseTopic(): List<ConsumerRecord<HendelseKey, Hendelse>> =
+        hendelseTestConsumer.poll(Duration.ofSeconds(4)).records(PGI_HENDELSE_TOPIC).toList()
 
     fun getFirstRecordOnTopic() = consumeHendelseTopic()[0]
 

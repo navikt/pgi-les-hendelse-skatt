@@ -46,9 +46,12 @@ internal class GrunnlagPgiHendelseDtoClientTest {
 
     @Test
     fun `neste skevensummer should return USE_PREVIOUS_SEKVENSNUMMER when hendelser is empty`() {
-        hendelseMock.`stub hendelse endpoint skatt`(FRA_SEKVENSNUMMER,0)
+        hendelseMock.`stub hendelse endpoint skatt`(FRA_SEKVENSNUMMER, 0)
 
-        assertEquals(Sekvensnummer.USE_PREVIOUS, client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER).getNextSekvensnummer())
+        assertEquals(
+            Sekvensnummer.USE_PREVIOUS,
+            client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER).getNextSekvensnummer()
+        )
     }
 
     @Test
@@ -60,7 +63,7 @@ internal class GrunnlagPgiHendelseDtoClientTest {
     }
 
     @Test
-    fun `accept unknown fields when mapping response from skatt`(){
+    fun `accept unknown fields when mapping response from skatt`() {
         hendelseMock.`stub hendelse endpoint response with unknown fields from skatt`(FRA_SEKVENSNUMMER)
         val hendelser = client.getHendelserSkatt(ANTALL_HENDELSER, FRA_SEKVENSNUMMER)
         assertEquals(2, hendelser.size)

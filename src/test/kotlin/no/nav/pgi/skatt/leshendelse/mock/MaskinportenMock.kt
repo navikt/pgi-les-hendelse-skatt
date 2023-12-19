@@ -34,25 +34,32 @@ internal class MaskinportenMock {
     }
 
     internal fun `mock maskinporten token enpoint`() {
-        mock.stubFor(WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
-                .willReturn(WireMock.ok("""{
+        mock.stubFor(
+            WireMock.post(WireMock.urlPathEqualTo(TOKEN_PATH))
+                .willReturn(
+                    WireMock.ok(
+                        """{
                       "access_token" : "${createMaskinportenToken()}",
                       "token_type" : "Bearer",
                       "expires_in" : 599,
                       "scope" : "difitest:test1"
                     }
-                """)))
+                """
+                    )
+                )
+        )
     }
 
     private fun createMaskinportenToken(): String {
         val claimsSet = JWTClaimsSet.Builder()
-                .subject("alice")
-                .issuer("https://c2id.com")
-                .expirationTime(Date(Date().getTime() + (60 * 1000)))
-                .build()
+            .subject("alice")
+            .issuer("https://c2id.com")
+            .expirationTime(Date(Date().getTime() + (60 * 1000)))
+            .build()
         val signedJWT = SignedJWT(
-                JWSHeader.Builder(JWSAlgorithm.RS256).keyID(privateKey.getKeyID()).build(),
-                claimsSet)
+            JWSHeader.Builder(JWSAlgorithm.RS256).keyID(privateKey.getKeyID()).build(),
+            claimsSet
+        )
         val signer: JWSSigner = RSASSASigner(privateKey)
         signedJWT.sign(signer)
         return signedJWT.serialize()

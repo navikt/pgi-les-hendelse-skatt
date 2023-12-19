@@ -12,7 +12,7 @@ fun main() {
     try {
         application.startHendelseSkattLoop()
     } catch (e: Throwable) {
-        LOG.error("Unhandled error was caught. stopping server! ${e.message}",e)
+        LOG.error("Unhandled error was caught. stopping server! ${e.message}", e)
         application.stopServer()
     }
 }

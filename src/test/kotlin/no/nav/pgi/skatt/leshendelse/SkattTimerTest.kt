@@ -31,5 +31,7 @@ internal class SkattTimerTest {
     }
 }
 
-internal fun differenceBetween(calendar1: Calendar, calendar2: Calendar): Long = Math.abs(calendar1.timeInMillis - calendar2.timeInMillis)
+internal fun differenceBetween(calendar1: Calendar, calendar2: Calendar): Long =
+    Math.abs(calendar1.timeInMillis - calendar2.timeInMillis)
+
 internal infix fun Long.isLessThen(errorMargin: Long): Boolean = this < errorMargin

@@ -17,7 +17,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class SekvensnummerTest {
     private val kafkaTestEnvironment = KafkaTestEnvironment()
-    private val kafkaFactory = KafkaHendelseFactory(KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy()))
+    private val kafkaFactory =
+        KafkaHendelseFactory(KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy()))
     private val maskinportenMock = MaskinportenMock()
     private val firstSekvensnummerMock = SkattFirstSekvensnummerMock()
     private val sekvensnummerProducer = SekvensnummerProducer(kafkaFactory)

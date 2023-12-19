@@ -48,13 +48,20 @@ internal class SkattClientTest {
         val key2 = "key2"
         val value2 = "value2"
 
-        skattMock.stubFor(WireMock.get(WireMock.urlPathEqualTo(PATH))
-                .withQueryParams(mapOf(
+        skattMock.stubFor(
+            WireMock.get(WireMock.urlPathEqualTo(PATH))
+                .withQueryParams(
+                    mapOf(
                         key1 to WireMock.equalTo((value1)),
                         key2 to WireMock.equalTo((value2))
-                ))
-                .willReturn(WireMock.ok()))
-        val response = skattClient.send(skattClient.createGetRequest(URL, mapOf(key1 to value1, key2 to value2)), HttpResponse.BodyHandlers.discarding())
+                    )
+                )
+                .willReturn(WireMock.ok())
+        )
+        val response = skattClient.send(
+            skattClient.createGetRequest(URL, mapOf(key1 to value1, key2 to value2)),
+            HttpResponse.BodyHandlers.discarding()
+        )
 
         assertEquals(response.statusCode(), 200)
     }

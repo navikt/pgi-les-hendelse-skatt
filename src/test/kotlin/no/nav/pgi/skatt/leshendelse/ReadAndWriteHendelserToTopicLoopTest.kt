@@ -69,17 +69,20 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
 
         assertEquals(hendelseCount, hendelseProducerHistory.size)
         assertEquals(fraSekvensnummer.toString(), nextSekvensnummerHistory[0].value())
-        assertEquals((hendelseProducerHistory.last().value().getSekvensnummer() + 1).toString(), nextSekvensnummerHistory[1].value())
+        assertEquals(
+            (hendelseProducerHistory.last().value().getSekvensnummer() + 1).toString(),
+            nextSekvensnummerHistory[1].value()
+        )
     }
 
     @Test
     fun `should throw exception if read sekvensnummer throws exception`() {
         val failingConsumer = MockConsumer<String, String>(OffsetResetStrategy.LATEST)
-                .apply {
-                    assign(listOf(TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)))
-                    updateEndOffsets(mapOf(SekvensnummerConsumer.defaultTopicPartition to 2))
-                    setPollException(InterruptException("Test exception"))
-                }
+            .apply {
+                assign(listOf(TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)))
+                updateEndOffsets(mapOf(SekvensnummerConsumer.defaultTopicPartition to 2))
+                setPollException(InterruptException("Test exception"))
+            }
 
         kafkaMockFactory = KafkaMockFactory(nextSekvensnummerConsumer = failingConsumer)
         readAndWriteLoop = ReadAndWriteHendelserToTopicLoop(kafkaMockFactory, createEnvVariables())
@@ -98,14 +101,17 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
 
         assertThrows<ExecutionException> { readAndWriteLoop.start() }
 
-        assertEquals(hendelser[0].sekvensnummer.toString(), kafkaMockFactory.nextSekvensnummerProducer.history().last().value())
+        assertEquals(
+            hendelser[0].sekvensnummer.toString(),
+            kafkaMockFactory.nextSekvensnummerProducer.history().last().value()
+        )
     }
 
     private fun createEnvVariables() =
-            mapOf(
-                HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
-                HENDELSE_PATH_ENV_KEY to HENDELSE_MOCK_PATH,
-                FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
-                FIRST_SEKVENSNUMMER_PATH_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_PATH,
-            ) + MaskinportenMock.MASKINPORTEN_ENV_VARIABLES
+        mapOf(
+            HENDELSE_HOST_ENV_KEY to HENDELSE_MOCK_HOST,
+            HENDELSE_PATH_ENV_KEY to HENDELSE_MOCK_PATH,
+            FIRST_SEKVENSNUMMER_HOST_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_HOST,
+            FIRST_SEKVENSNUMMER_PATH_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_PATH,
+        ) + MaskinportenMock.MASKINPORTEN_ENV_VARIABLES
 }

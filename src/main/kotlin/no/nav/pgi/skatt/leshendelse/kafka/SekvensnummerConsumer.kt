@@ -8,7 +8,10 @@ import kotlin.math.max
 
 private val LOG = LoggerFactory.getLogger(SekvensnummerConsumer::class.java)
 
-internal class SekvensnummerConsumer(kafkaFactory: KafkaFactory, private val topicPartition: TopicPartition = defaultTopicPartition) {
+internal class SekvensnummerConsumer(
+    kafkaFactory: KafkaFactory,
+    private val topicPartition: TopicPartition = defaultTopicPartition
+) {
     private val consumer = kafkaFactory.nextSekvensnummerConsumer()
 
     init {
@@ -17,7 +20,8 @@ internal class SekvensnummerConsumer(kafkaFactory: KafkaFactory, private val top
 
     internal fun getNextSekvensnummer(): String? {
         setPollOffset(lastSekvensnummerOffset())
-        return pollRecords().lastValue().also { LOG.info("""Polled sekvensnummer $it from topic ${topicPartition.topic()}""") }
+        return pollRecords().lastValue()
+            .also { LOG.info("""Polled sekvensnummer $it from topic ${topicPartition.topic()}""") }
     }
 
     private fun lastSekvensnummerOffset(): Long = max(getEndOffset() - 1, 0)
@@ -28,7 +32,7 @@ internal class SekvensnummerConsumer(kafkaFactory: KafkaFactory, private val top
 
     private fun pollRecords() = consumer.poll(ofSeconds(POLLING_DURATION_SECONDS)).records(topicPartition).toList()
 
-    internal fun close() = consumer.close().also{LOG.info("nextSekvensnummerConsumer closed")}
+    internal fun close() = consumer.close().also { LOG.info("nextSekvensnummerConsumer closed") }
 
     companion object {
         private const val POLLING_DURATION_SECONDS = 4L

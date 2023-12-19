@@ -43,7 +43,10 @@ internal class FirstSekvensnummerClientTest {
     @Test
     fun `get first sekvensnummer from date skatt`() {
         firstSekvensnummerMock.`stub first sekvensnummer endpoint med dato`()
-        Assertions.assertEquals(1L, firstSekvensnummerClient.getSekvensnummer(HentSekvensnummer.FraDato(LocalDate.of(2023, Month.JUNE, 1))))
+        Assertions.assertEquals(
+            1L,
+            firstSekvensnummerClient.getSekvensnummer(HentSekvensnummer.FraDato(LocalDate.of(2023, Month.JUNE, 1)))
+        )
     }
 
     @Test

@@ -10,13 +10,16 @@ import org.apache.kafka.clients.producer.Producer
 
 internal class KafkaHendelseFactory(private val kafkaConfig: KafkaConfig = KafkaConfig()) : KafkaFactory {
     override fun nextSekvensnummerProducer() = KafkaProducer<String, String>(
-            kafkaConfig.commonConfig() + kafkaConfig.sekvensnummerProducerConfig())
+        kafkaConfig.commonConfig() + kafkaConfig.sekvensnummerProducerConfig()
+    )
 
     override fun nextSekvensnummerConsumer() = KafkaConsumer<String, String>(
-            kafkaConfig.commonConfig() + kafkaConfig.sekvensnummerConsumerConfig())
+        kafkaConfig.commonConfig() + kafkaConfig.sekvensnummerConsumerConfig()
+    )
 
     override fun hendelseProducer() = KafkaProducer<HendelseKey, Hendelse>(
-            kafkaConfig.commonConfig() + kafkaConfig.schemaRegistryConfig() + kafkaConfig.hendelseProducerConfig())
+        kafkaConfig.commonConfig() + kafkaConfig.schemaRegistryConfig() + kafkaConfig.hendelseProducerConfig()
+    )
 }
 
 internal interface KafkaFactory {
