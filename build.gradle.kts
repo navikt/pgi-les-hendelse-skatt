@@ -10,16 +10,17 @@ val slf4jVersion = "2.0.9"
 val kafkaVersion = "3.5.1"
 val kafkaAvroSerializerVersion = "7.1.0"
 val pgiSchemaVersion = "0.0.7"
-val junitJupiterVersion = "5.6.0"
-val kafkaEmbeddedEnvVersion = "3.2.3"
+val junitJupiterVersion = "5.10.1"
+val kafkaEmbeddedEnvVersion = "3.2.4"
 val wiremockVersion = "2.27.2"
 val javaxEl = "3.0.1-b06"
 
 group = "no.nav.pgi"
 
 plugins {
-    kotlin("jvm") version "1.8.0"
-    kotlin("plugin.serialization") version "1.8.0"
+    kotlin("jvm") version "1.9.20"
+    kotlin("plugin.serialization") version "1.9.20"
+    id("com.github.ben-manes.versions") version "0.50.0"
 }
 
 java {
