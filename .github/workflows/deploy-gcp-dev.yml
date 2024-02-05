@@ -13,6 +13,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
     steps:
       # Checkout
       - uses: actions/checkout@v4
@@ -49,9 +50,8 @@ jobs:
 
       # Deploy to GCP dev
       - name: Deploy pgi-les-hendelse-skatt (dev-gcp)
-        uses: nais/deploy/actions/deploy@v1
+        uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
           RESOURCE: gcp-nais-dev.yaml
           IMAGE: ${{ env.IMAGE }}
