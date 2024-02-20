@@ -53,5 +53,5 @@ jobs:
         uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
-          RESOURCE: gcp-nais-dev.yaml
+          RESOURCE: gcp-nais-dev.yaml, alerts.yaml
           IMAGE: ${{ env.IMAGE }}

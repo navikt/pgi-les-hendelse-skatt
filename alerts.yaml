@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: pgi-les-hendelse-skatt-alerts
+  namespace: pensjonopptjening
+  labels:
+    team: pensjonopptjening
+spec:
+  groups:
+  - name: pgi-les-hendelse-skatt-alerts
+    rules:
+    - alert: ForMangeRestarts
+      expr: sum(increase(kube_pod_container_status_restarts_total{pod=~"pgi-les-hendelse-skatt.*"}[1h]) > 5)
+      for: 10m
+      annotations:
+        summary: "pgi-les-hendelse-skatt har hatt for mange restarter i løpet av den siste timen"
+        consequence: "får ikke lest hendelser fra skatt"
+        action: "Sjekk logger og finn ut hva som er årsaken"
+      labels:
+        severity: critical
