@@ -1,8 +1,11 @@
 package no.nav.pgi.skatt.leshendelse
 
+import no.nav.pensjon.samhandling.maskfnr.maskFnr
 import no.nav.pensjon.samhandling.naisserver.naisServer
+import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducerException
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaHendelseFactory
+import no.nav.pgi.skatt.leshendelse.skatt.HendelseClientCallException
 import org.slf4j.LoggerFactory
 
 private val LOG = LoggerFactory.getLogger(Application::class.java)
@@ -12,7 +15,8 @@ fun main() {
     try {
         application.startHendelseSkattLoop()
     } catch (e: Throwable) {
-        LOG.error("Unhandled error was caught. stopping server! ${e.message}", e)
+        val causeString = e.cause?.let { "Cause: ${it::class.simpleName}" }?:""
+        LOG.warn("${e::class.simpleName} ${e.message?.maskFnr()} $causeString")
         application.stopServer()
     }
 }

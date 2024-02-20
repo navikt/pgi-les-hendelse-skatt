@@ -1,5 +1,6 @@
 package no.nav.pgi.skatt.leshendelse
 
+import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducerException
 import no.nav.pgi.skatt.leshendelse.mock.ExceptionKafkaProducer
 import no.nav.pgi.skatt.leshendelse.mock.KafkaMockFactory
 import no.nav.pgi.skatt.leshendelse.kafka.NEXT_SEKVENSNUMMER_TOPIC
@@ -99,7 +100,7 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
 
         val hendelser = hendelseMock.`stub hendelse endpoint skatt`(1, 15)
 
-        assertThrows<ExecutionException> { readAndWriteLoop.start() }
+        assertThrows<HendelseProducerException> { readAndWriteLoop.start() }
 
         assertEquals(
             hendelser[0].sekvensnummer.toString(),

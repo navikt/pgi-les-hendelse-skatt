@@ -22,10 +22,14 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
     private val hendelseProducer = kafkaFactory.hendelseProducer()
 
     internal fun writeHendelser(hendelser: List<HendelseDto>): FailedHendelse? {
-        val sendtRecords = hendelser
-            .map { createRecord(it) }
-            .map { sendRecord(it) }
-        return sendtRecords.verifyWritten().also { loggWrittenHendelser(it, hendelser) }
+        try {
+            val sendtRecords = hendelser
+                .map { createRecord(it) }
+                .map { sendRecord(it) }
+            return sendtRecords.verifyWritten().also { loggWrittenHendelser(it, hendelser) }
+        } catch (e: Throwable) {
+            throw HendelseProducerException("Feil ved skriving til kafka", e)
+        }
     }
 
     internal fun close() = hendelseProducer.close().also { LOG.info("closing hendelse hendelseProducer") }
@@ -56,7 +60,7 @@ internal fun List<SentRecord>.verifyWritten(): FailedHendelse? {
         try {
             it.future.get()
         } catch (e: Exception) {
-            return FailedHendelse(e, it.hendelse)
+            return FailedHendelse(HendelseProducerException("Feil ved henting av resultat fra kafka", e), it.hendelse)
         }
     }
     return null
@@ -65,3 +69,7 @@ internal fun List<SentRecord>.verifyWritten(): FailedHendelse? {
 internal data class SentRecord(internal val future: Future<RecordMetadata>, internal val hendelse: Hendelse)
 
 internal data class FailedHendelse(internal val exception: Exception, internal val hendelse: Hendelse)
+
+class HendelseProducerException(msg: String, e: Throwable?) : RuntimeException(msg, e) {
+    constructor(msg: String) : this(msg, null)
+}
