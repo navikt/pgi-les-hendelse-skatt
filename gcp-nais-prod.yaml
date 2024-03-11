@@ -39,7 +39,7 @@ spec:
     - name: SKATT_HENDELSE_START_PATH
       value: /api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelser/start
     - name: DELAY_IN_SECONDS_BEFORE_POLLING_SKATT
-      value: 30
+      value: "30"
 #    - name: TILBAKESTILL_SEKVENSNUMMER
 #      value: "true"
 #    - name: TILBAKESTILL_SEKVENSNUMMER_TIL

@@ -39,7 +39,7 @@ spec:
     - name: SKATT_HENDELSE_START_PATH
       value: /v1/hendelser/start
     - name: DELAY_IN_SECONDS_BEFORE_POLLING_SKATT
-      value: 30
+      value: "30"
 #    - name: TILBAKESTILL_SEKVENSNUMMER
 #      value: "false"
 #    - name: TILBAKESTILL_SEKVENSNUMMER_TIL
