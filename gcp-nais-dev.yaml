@@ -32,10 +32,16 @@ spec:
   env:
     - name: APP_TEAM
       value: pensjonopptjening
+    - name: GRUNNLAG_PGI_HENDELSE_HOST
+      value: https://pgiforfolketrygdenhendelser.api.skatteetaten-test.no
+    - name: GRUNNLAG_PGI_FIRST_SEKVENSNUMMER_HOST
+      value: https://pgiforfolketrygdenhendelser.api.skatteetaten-test.no
     - name: SKATT_HENDELSE_PATH
-      value: /api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelser/
+      value: /v1/hendelser/
     - name: SKATT_HENDELSE_START_PATH
-      value: /api/formueinntekt/pensjonsgivendeinntektforfolketrygden/hendelser/start
+      value: /v1/hendelser/start
+    - name: DELAY_IN_SECONDS_BEFORE_POLLING_SKATT
+      value: 30
 #    - name: TILBAKESTILL_SEKVENSNUMMER
 #      value: "false"
 #    - name: TILBAKESTILL_SEKVENSNUMMER_TIL
@@ -43,4 +49,4 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: api-test.sits.no
+        - host: pgiforfolketrygdenhendelser.api.skatteetaten-test.no
