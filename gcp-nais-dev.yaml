@@ -35,7 +35,7 @@ spec:
     - name: GRUNNLAG_PGI_FIRST_SEKVENSNUMMER_HOST
       value: https://pgiforfolketrygdenhendelser.api.skatteetaten-test.no
     - name: SKATT_HENDELSE_PATH
-      value: /v1/hendelser/
+      value: /v1/hendelser
     - name: SKATT_HENDELSE_START_PATH
       value: /v1/hendelser/start
     - name: DELAY_IN_SECONDS_BEFORE_POLLING_SKATT
