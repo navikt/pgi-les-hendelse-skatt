@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.prometheus.client.Counter
+import net.logstash.logback.marker.Markers
 import no.nav.pensjon.samhandling.env.getVal
 import no.nav.pensjon.samhandling.maskfnr.maskFnr
 import org.slf4j.LoggerFactory
@@ -42,7 +43,7 @@ internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
     private fun logPolledHendelser(hendelser: List<HendelseDto>) {
         if (hendelser.isNotEmpty()){
             LOG.info("Polled ${hendelser.size} hendelser from skatt. Containing sekvensnummer from ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
-            hendelser.forEach { hendelse -> LOG.info("Lest hendelse: ${hendelse.mapToAvroHendelse().toString().maskFnr()}") }
+            hendelser.forEach { hendelse -> LOG.info(Markers.append("sekvensnummer",hendelse.sekvensnummer.toString()), "Lest hendelse: ${hendelse.mapToAvroHendelse().toString().maskFnr()}") }
         } else{
             LOG.info("Polled ${hendelser.size} hendelser from skatt.")
         }
