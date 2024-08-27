@@ -1,7 +1,5 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
-import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
-import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.pensjon.samhandling.env.getVal
 import org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
@@ -19,9 +17,6 @@ internal class KafkaConfig(
     private val securityStrategy: SecurityStrategy = SslStrategy()
 ) {
     private val bootstrapServers = environment.getVal(BOOTSTRAP_SERVERS)
-    private val schemaRegistryUrl = environment.getVal(SCHEMA_REGISTRY)
-    private val schemaRegUsername = environment.getVal(SCHEMA_REGISTRY_USERNAME)
-    private val schemaRegPassword = environment.getVal(SCHEMA_REGISTRY_PASSWORD)
 
     internal fun sekvensnummerConsumerConfig() = mapOf(
         KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
@@ -39,20 +34,14 @@ internal class KafkaConfig(
     )
 
     internal fun hendelseProducerConfig() = mapOf(
-        KEY_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
-        VALUE_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
+        KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
+        VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
         ACKS_CONFIG to "all",
         RETRIES_CONFIG to MAX_VALUE
     )
 
     internal fun commonConfig() =
         mapOf(BOOTSTRAP_SERVERS_CONFIG to bootstrapServers) + securityStrategy.securityConfig()
-
-    internal fun schemaRegistryConfig() = mapOf(
-        AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE to "USER_INFO",
-        AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG to "$schemaRegUsername:$schemaRegPassword",
-        AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to schemaRegistryUrl
-    )
 
     internal interface SecurityStrategy {
         fun securityConfig(): Map<String, String>

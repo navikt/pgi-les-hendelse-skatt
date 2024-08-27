@@ -1,5 +1,7 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
+import no.nav.pgi.domain.Hendelse
+import no.nav.pgi.domain.serialization.PgiDomainSerializer
 import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
 import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
@@ -28,9 +30,10 @@ internal class HendelseProducerTest {
 
         val record = kafkaTestEnvironment.getFirstRecordOnTopic()
 
-        assertEquals(hendelse.sekvensnummer, record.value().getSekvensnummer())
-        assertEquals(hendelse.identifikator, record.value().getIdentifikator())
-        assertEquals(hendelse.gjelderPeriode, record.value().getGjelderPeriode())
+        val value = PgiDomainSerializer().fromJson(Hendelse::class, record.value())
+        assertEquals(hendelse.sekvensnummer, value.sekvensnummer)
+        assertEquals(hendelse.identifikator, value.identifikator)
+        assertEquals(hendelse.gjelderPeriode, value.gjelderPeriode)
     }
 
     @Test
@@ -43,16 +46,20 @@ internal class HendelseProducerTest {
 
         val record = kafkaTestEnvironment.consumeHendelseTopic()
 
-        assertEquals(hendelse1.sekvensnummer, record[0].value().getSekvensnummer())
-        assertEquals(hendelse1.identifikator, record[0].value().getIdentifikator())
-        assertEquals(hendelse1.gjelderPeriode, record[0].value().getGjelderPeriode())
+        val value0 = PgiDomainSerializer().fromJson(Hendelse::class, record[0].value())
+        val value1 = PgiDomainSerializer().fromJson(Hendelse::class, record[1].value())
+        val value2 = PgiDomainSerializer().fromJson(Hendelse::class, record[2].value())
 
-        assertEquals(hendelse2.sekvensnummer, record[1].value().getSekvensnummer())
-        assertEquals(hendelse2.identifikator, record[1].value().getIdentifikator())
-        assertEquals(hendelse2.gjelderPeriode, record[1].value().getGjelderPeriode())
+        assertEquals(hendelse1.sekvensnummer, value0.sekvensnummer)
+        assertEquals(hendelse1.identifikator, value0.identifikator)
+        assertEquals(hendelse1.gjelderPeriode, value0.gjelderPeriode)
 
-        assertEquals(hendelse3.sekvensnummer, record[2].value().getSekvensnummer())
-        assertEquals(hendelse3.identifikator, record[2].value().getIdentifikator())
-        assertEquals(hendelse3.gjelderPeriode, record[2].value().getGjelderPeriode())
+        assertEquals(hendelse2.sekvensnummer, value1.sekvensnummer)
+        assertEquals(hendelse2.identifikator, value1.identifikator)
+        assertEquals(hendelse2.gjelderPeriode, value1.gjelderPeriode)
+
+        assertEquals(hendelse3.sekvensnummer, value2.sekvensnummer)
+        assertEquals(hendelse3.identifikator, value2.identifikator)
+        assertEquals(hendelse3.gjelderPeriode, value2.gjelderPeriode)
     }
 }

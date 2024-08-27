@@ -1,5 +1,7 @@
 package no.nav.pgi.skatt.leshendelse
 
+import no.nav.pgi.domain.Hendelse
+import no.nav.pgi.domain.serialization.PgiDomainSerializer
 import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
 import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import no.nav.pgi.skatt.leshendelse.kafka.*
@@ -15,8 +17,9 @@ import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_PATH_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
-import no.nav.pgi.skatt.leshendelse.skatt.mapToAvroHendelse
+import no.nav.pgi.skatt.leshendelse.skatt.mapToHendelse
 import org.apache.kafka.common.TopicPartition
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 
@@ -62,11 +65,9 @@ internal class ComponentTest {
         )
         application.startHendelseSkattLoop()
 
-        assertEquals(hendelser.getNextSekvensnummer(), sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
-        assertEquals(
-            hendelser[hendelser.size - 1].mapToAvroHendelse(),
-            kafkaTestEnvironment.getLastRecordOnTopic().value()
-        )
+        assertThat(sekvensnummerConsumer.getNextSekvensnummer()!!.toLong()).isEqualTo(hendelser.getNextSekvensnummer())
+        val hendelse = PgiDomainSerializer().fromJson(Hendelse::class, kafkaTestEnvironment.getLastRecordOnTopic().value())
+        assertThat(hendelse).isEqualTo(hendelser[hendelser.size - 1].mapToHendelse())
     }
 
     private fun createEnvVariables() = MASKINPORTEN_ENV_VARIABLES +

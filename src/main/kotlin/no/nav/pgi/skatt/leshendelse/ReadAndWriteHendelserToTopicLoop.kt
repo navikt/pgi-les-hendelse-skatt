@@ -23,7 +23,7 @@ internal class ReadAndWriteHendelserToTopicLoop(kafkaFactory: KafkaFactory, env:
     }
 
     private fun handleFailedHendelse(failedHendelse: FailedHendelse) {
-        sekvensnummer.addSekvensnummerToTopic(failedHendelse.hendelse.getSekvensnummer(), synchronous = true)
+        sekvensnummer.addSekvensnummerToTopic(failedHendelse.hendelse.sekvensnummer, synchronous = true)
         throw failedHendelse.exception
     }
 

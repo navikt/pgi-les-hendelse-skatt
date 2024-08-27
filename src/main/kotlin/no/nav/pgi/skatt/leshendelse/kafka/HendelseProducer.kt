@@ -1,9 +1,10 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
 import io.prometheus.client.Counter
+import no.nav.pgi.domain.Hendelse
+import no.nav.pgi.domain.HendelseKey
+import no.nav.pgi.domain.serialization.PgiDomainSerializer
 import no.nav.pgi.skatt.leshendelse.skatt.*
-import no.nav.samordning.pgi.schema.Hendelse
-import no.nav.samordning.pgi.schema.HendelseKey
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
 import org.slf4j.LoggerFactory
@@ -34,10 +35,13 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
 
     internal fun close() = hendelseProducer.close().also { LOG.info("closing hendelse hendelseProducer") }
 
-    private fun createRecord(hendelse: HendelseDto) =
-        ProducerRecord(PGI_HENDELSE_TOPIC, hendelse.mapToAvroHendelseKey(), hendelse.mapToAvroHendelse())
+    private fun createRecord(hendelse: HendelseDto): ProducerRecord<String, String> {
+        val key = PgiDomainSerializer().toJson(hendelse.mapToHendelseKey())
+        val value = PgiDomainSerializer().toJson(hendelse.mapToHendelse())
+        return ProducerRecord(PGI_HENDELSE_TOPIC, key, value)
+    }
 
-    private fun sendRecord(record: ProducerRecord<HendelseKey, Hendelse>) =
+    private fun sendRecord(record: ProducerRecord<String, String>) =
         SentRecord(hendelseProducer.send(record), record.value())
 
     private fun loggWrittenHendelser(failedHendelse: FailedHendelse?, hendelser: List<HendelseDto>) {
@@ -47,10 +51,10 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
                 LOG.info("Added ${hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. From sekvensnummer ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
             }
         } else {
-            val hendelserAdded = hendelser.amountOfHendelserBefore(failedHendelse.hendelse.getSekvensnummer())
+            val hendelserAdded = hendelser.amountOfHendelserBefore(failedHendelse.hendelse.sekvensnummer)
             addedToTopicCounter.inc(hendelserAdded.toDouble())
             failToAddToTopicCounter.inc((hendelser.size - hendelserAdded).toDouble())
-            LOG.info("Failed after adding $hendelserAdded hendelser to $PGI_HENDELSE_TOPIC at sekvensnummer ${failedHendelse.hendelse.getSekvensnummer()}")
+            LOG.info("Failed after adding $hendelserAdded hendelser to $PGI_HENDELSE_TOPIC at sekvensnummer ${failedHendelse.hendelse.sekvensnummer}")
         }
     }
 }
@@ -60,13 +64,14 @@ internal fun List<SentRecord>.verifyWritten(): FailedHendelse? {
         try {
             it.future.get()
         } catch (e: Exception) {
-            return FailedHendelse(HendelseProducerException("Feil ved henting av resultat fra kafka", e), it.hendelse)
+            val hendelse = PgiDomainSerializer().fromJson(Hendelse::class, it.hendelse)
+            return FailedHendelse(HendelseProducerException("Feil ved henting av resultat fra kafka", e), hendelse)
         }
     }
     return null
 }
 
-internal data class SentRecord(internal val future: Future<RecordMetadata>, internal val hendelse: Hendelse)
+internal data class SentRecord(internal val future: Future<RecordMetadata>, internal val hendelse: String)
 
 internal data class FailedHendelse(internal val exception: Exception, internal val hendelse: Hendelse)
 

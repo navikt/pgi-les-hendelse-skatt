@@ -8,12 +8,14 @@ val joseJwtVersion = "9.0.1"
 val micrometerVersion = "1.3.5"
 val slf4jVersion = "2.0.9"
 val kafkaVersion = "3.5.1"
-val kafkaAvroSerializerVersion = "7.1.0"
-val pgiSchemaVersion = "0.0.7"
-val junitJupiterVersion = "5.10.1"
+// val kafkaAvroSerializerVersion = "7.1.0"
+val junitJupiterVersion = "5.11.0"
+val assertJVersion = "3.26.3"
 val kafkaEmbeddedEnvVersion = "3.2.4"
 val wiremockVersion = "2.27.2"
 val javaxEl = "3.0.1-b06"
+
+val pgiDomainVersion = "0.0.5"
 
 group = "no.nav.pgi"
 
@@ -30,7 +32,6 @@ java {
 }
 
 repositories {
-    jcenter()
     mavenCentral()
     maven("https://packages.confluent.io/maven/")
     maven("https://jitpack.io")
@@ -65,8 +66,8 @@ dependencies {
     implementation("com.nimbusds:nimbus-jose-jwt:$joseJwtVersion")
 
     implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
-    implementation("io.confluent:kafka-avro-serializer:$kafkaAvroSerializerVersion")
-    implementation("no.nav.pgi:pgi-schema:$pgiSchemaVersion")
+    // implementation("io.confluent:kafka-avro-serializer:$kafkaAvroSerializerVersion")
+    implementation("no.nav.pgi:pgi-domain:$pgiDomainVersion")
 
     implementation("io.micrometer:micrometer-registry-prometheus:$micrometerVersion")
     implementation("ch.qos.logback:logback-classic:1.4.11")
@@ -76,6 +77,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
     testImplementation("com.github.tomakehurst:wiremock:$wiremockVersion")
+    testImplementation("org.assertj:assertj-core:$assertJVersion")
 
     testImplementation("no.nav:kafka-embedded-env:$kafkaEmbeddedEnvVersion") {
         exclude(group = "org.slf4j", module = "slf4j-log4j12")

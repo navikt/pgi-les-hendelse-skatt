@@ -1,5 +1,8 @@
 package no.nav.pgi.skatt.leshendelse
 
+import no.nav.pgi.domain.Hendelse
+import no.nav.pgi.domain.HendelseKey
+import no.nav.pgi.domain.serialization.PgiDomainSerializer
 import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducerException
 import no.nav.pgi.skatt.leshendelse.mock.ExceptionKafkaProducer
 import no.nav.pgi.skatt.leshendelse.mock.KafkaMockFactory
@@ -15,15 +18,13 @@ import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_PATH_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH_ENV_KEY
-import no.nav.samordning.pgi.schema.Hendelse
-import no.nav.samordning.pgi.schema.HendelseKey
 import org.apache.kafka.clients.consumer.MockConsumer
 import org.apache.kafka.clients.consumer.OffsetResetStrategy
 import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.errors.InterruptException
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import java.util.concurrent.ExecutionException
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -68,10 +69,11 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
         val hendelseProducerHistory = kafkaMockFactory.hendelseProducer.history()
         val nextSekvensnummerHistory = kafkaMockFactory.nextSekvensnummerProducer.history()
 
-        assertEquals(hendelseCount, hendelseProducerHistory.size)
+        assertThat(hendelseProducerHistory).hasSize(hendelseCount)
         assertEquals(fraSekvensnummer.toString(), nextSekvensnummerHistory[0].value())
+        val hendelse = PgiDomainSerializer().fromJson(Hendelse::class, hendelseProducerHistory.last().value())
         assertEquals(
-            (hendelseProducerHistory.last().value().getSekvensnummer() + 1).toString(),
+            (hendelse.sekvensnummer + 1).toString(),
             nextSekvensnummerHistory[1].value()
         )
     }
@@ -93,7 +95,7 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
 
     @Test
     fun `should use sekvensnummer of failing hendelse when exception is thrown while hendelser is added to topic`() {
-        val failingProducer = ExceptionKafkaProducer<HendelseKey, Hendelse>()
+        val failingProducer = ExceptionKafkaProducer()
 
         kafkaMockFactory = KafkaMockFactory(hendelseProducer = failingProducer)
         readAndWriteLoop = ReadAndWriteHendelserToTopicLoop(kafkaMockFactory, createEnvVariables())
