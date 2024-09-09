@@ -2,7 +2,6 @@ package no.nav.pgi.skatt.leshendelse.kafka
 
 import io.prometheus.client.Counter
 import no.nav.pgi.domain.Hendelse
-import no.nav.pgi.domain.HendelseKey
 import no.nav.pgi.domain.serialization.PgiDomainSerializer
 import no.nav.pgi.skatt.leshendelse.skatt.*
 import org.apache.kafka.clients.producer.ProducerRecord

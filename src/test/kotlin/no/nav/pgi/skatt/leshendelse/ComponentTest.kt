@@ -5,23 +5,12 @@ import no.nav.pgi.domain.serialization.PgiDomainSerializer
 import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
 import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import no.nav.pgi.skatt.leshendelse.kafka.*
-import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_HOST
-import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_PATH
-import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_HOST
-import no.nav.pgi.skatt.leshendelse.mock.HendelseMock
-import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
+import no.nav.pgi.skatt.leshendelse.mock.*
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock.Companion.MASKINPORTEN_ENV_VARIABLES
-import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_PATH
-import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
-import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_PATH_ENV_KEY
-import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
-import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH_ENV_KEY
-import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
-import no.nav.pgi.skatt.leshendelse.skatt.mapToHendelse
+import no.nav.pgi.skatt.leshendelse.skatt.*
 import org.apache.kafka.common.TopicPartition
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)

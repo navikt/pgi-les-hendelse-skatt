@@ -1,7 +1,6 @@
 package no.nav.pgi.skatt.leshendelse
 
 import no.nav.pgi.domain.Hendelse
-import no.nav.pgi.domain.HendelseKey
 import no.nav.pgi.domain.serialization.PgiDomainSerializer
 import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducerException
 import no.nav.pgi.skatt.leshendelse.mock.ExceptionKafkaProducer
@@ -49,7 +48,7 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
     }
 
     @AfterEach
-    internal fun AfterEach() {
+    internal fun afterEach() {
         hendelseMock.reset()
         kafkaMockFactory.close()
         readAndWriteLoop.close()

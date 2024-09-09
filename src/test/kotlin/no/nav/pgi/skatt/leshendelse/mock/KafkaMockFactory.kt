@@ -1,7 +1,5 @@
 package no.nav.pgi.skatt.leshendelse.mock
 
-import no.nav.pgi.domain.Hendelse
-import no.nav.pgi.domain.HendelseKey
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
 import no.nav.pgi.skatt.leshendelse.kafka.NEXT_SEKVENSNUMMER_TOPIC
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer

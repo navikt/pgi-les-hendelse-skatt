@@ -49,8 +49,5 @@ internal class KafkaConfig(
 
     internal companion object EnvironmentKeys {
         const val BOOTSTRAP_SERVERS = "KAFKA_BROKERS"
-        const val SCHEMA_REGISTRY = "KAFKA_SCHEMA_REGISTRY"
-        const val SCHEMA_REGISTRY_USERNAME = "KAFKA_SCHEMA_REGISTRY_USER"
-        const val SCHEMA_REGISTRY_PASSWORD = "KAFKA_SCHEMA_REGISTRY_PASSWORD"
     }
 }

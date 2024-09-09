@@ -2,8 +2,6 @@ package no.nav.pgi.skatt.leshendelse.common
 
 import no.nav.common.KafkaEnvironment
 import no.nav.common.KafkaEnvironment.TopicInfo
-import no.nav.pgi.domain.Hendelse
-import no.nav.pgi.domain.HendelseKey
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaConfig
 import no.nav.pgi.skatt.leshendelse.kafka.NEXT_SEKVENSNUMMER_TOPIC
 import no.nav.pgi.skatt.leshendelse.kafka.PGI_HENDELSE_TOPIC

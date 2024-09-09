@@ -29,7 +29,7 @@ internal class ShutdownTest {
     }
 
     @AfterEach
-    internal fun AfterEach() {
+    internal fun afterEach() {
         kafkaMockFactory.close()
         application.stopServer()
         hendelseMock.reset()

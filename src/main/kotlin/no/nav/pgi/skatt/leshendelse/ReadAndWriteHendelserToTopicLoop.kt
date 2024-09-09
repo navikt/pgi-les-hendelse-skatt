@@ -6,7 +6,6 @@ import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseClient
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
 import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
-import org.slf4j.LoggerFactory
 
 internal class ReadAndWriteHendelserToTopicLoop(kafkaFactory: KafkaFactory, env: Map<String, String>) {
     private val hendelseProducer = HendelseProducer(kafkaFactory)

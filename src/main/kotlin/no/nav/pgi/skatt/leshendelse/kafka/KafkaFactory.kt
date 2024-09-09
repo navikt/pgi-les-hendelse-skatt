@@ -1,7 +1,5 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
-import no.nav.pgi.domain.Hendelse
-import no.nav.pgi.domain.HendelseKey
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.clients.producer.KafkaProducer
