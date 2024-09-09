@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val ktorSupportVersion = "0.0.22"
@@ -7,8 +8,8 @@ val maskinportenClientVersion = "0.0.9"
 val joseJwtVersion = "9.0.1"
 val micrometerVersion = "1.3.5"
 val slf4jVersion = "2.0.9"
-val kafkaVersion = "3.5.1"
-val junitJupiterVersion = "5.11.0"
+val kafkaVersion = "3.7.1"
+val junitJupiterVersion = "5.10.3"
 val assertJVersion = "3.26.3"
 val kafkaEmbeddedEnvVersion = "3.2.4"
 val wiremockVersion = "3.9.1"
@@ -18,14 +19,18 @@ val pgiDomainVersion = "0.0.5"
 val jacksonVersion = "2.17.2"
 val kotlinxCoroutinesVersion = "1.8.1"
 val jerseyVersion = "3.1.8"
+val springBootVersion = "3.3.3"
 
 
 group = "no.nav.pgi"
 
 plugins {
-    kotlin("jvm") version "1.9.20"
-    kotlin("plugin.serialization") version "1.9.20"
-    id("com.github.ben-manes.versions") version "0.50.0"
+    val kotlinVersion = "2.0.20"
+    kotlin("jvm") version kotlinVersion
+    kotlin("plugin.serialization") version kotlinVersion
+    id("org.springframework.boot") version "3.3.2"
+    id("org.jetbrains.kotlin.plugin.spring") version kotlinVersion
+    id("com.github.ben-manes.versions") version "0.51.0"
 }
 
 java {
@@ -33,6 +38,8 @@ java {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
+
+apply(plugin = "io.spring.dependency-management")
 
 repositories {
     mavenCentral()
@@ -59,6 +66,12 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
+//    testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+//    testImplementation("org.springframework.kafka:spring-kafka-test:$springKafkaTestVersion")
+//    testImplementation("org.apache.kafka:kafka_2.13:$kafkaVersion")
+
+
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
 
@@ -78,7 +91,8 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
-    testImplementation("org.wiremock:wiremock:$wiremockVersion")
+//    testImplementation("org.wiremock:wiremock:$wiremockVersion")
+    testImplementation("org.wiremock:wiremock-jetty12:$wiremockVersion")
     testImplementation("org.assertj:assertj-core:$assertJVersion")
 
     testImplementation(("org.glassfish.jersey.core:jersey-server:$jerseyVersion"))
@@ -103,25 +117,8 @@ configurations {
 
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
-}
-
-tasks.named<Jar>("jar") {
-    archiveBaseName.set("app")
-
-    manifest {
-        attributes["Main-Class"] = "no.nav.pgi.skatt.leshendelse.ApplicationKt"
-        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(separator = " ") {
-            it.name
-        }
-    }
-
-    doLast {
-        configurations.runtimeClasspath.get().forEach {
-            val file = File("$buildDir/libs/${it.name}")
-            if (!file.exists())
-                it.copyTo(file)
-        }
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
     }
 }
 

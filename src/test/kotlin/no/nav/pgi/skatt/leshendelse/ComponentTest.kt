@@ -29,7 +29,7 @@ internal class ComponentTest {
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
 
-    private val application = Application(kafkaFactory = kafkaFactory, env = createEnvVariables(), loopForever = false)
+    private val applicationService = ApplicationService(kafkaFactory = kafkaFactory, env = createEnvVariables(), loopForever = false)
 
     @BeforeAll
     internal fun init() {
@@ -38,7 +38,7 @@ internal class ComponentTest {
 
     @AfterAll
     internal fun teardown() {
-        application.stopServer()
+        applicationService.stopServer()
         kafkaTestEnvironment.tearDown()
         hendelseMock.stop()
         maskinportenMock.stop()
@@ -57,7 +57,7 @@ internal class ComponentTest {
             currentSekvensnummer + antallHendelserFirstCall,
             antallHendelserSecondCall
         )
-        application.startHendelseSkattLoop()
+        applicationService.startHendelseSkattLoop()
 
         assertThat(sekvensnummerConsumer.getNextSekvensnummer()!!.toLong()).isEqualTo(hendelser.getNextSekvensnummer())
         val hendelse =

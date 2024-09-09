@@ -17,7 +17,7 @@ internal class ShutdownTest {
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
     private lateinit var kafkaMockFactory: KafkaMockFactory
-    private lateinit var application: Application
+    private lateinit var applicationService: ApplicationService
 
     @BeforeAll
     internal fun init() {
@@ -27,7 +27,7 @@ internal class ShutdownTest {
     @AfterEach
     internal fun afterEach() {
         kafkaMockFactory.close()
-        application.stopServer()
+        applicationService.stopServer()
         hendelseMock.reset()
     }
 
@@ -36,13 +36,13 @@ internal class ShutdownTest {
         kafkaMockFactory.close()
         hendelseMock.stop()
         maskinportenMock.stop()
-        application.stopServer()
+        applicationService.stopServer()
     }
 
     @Test
     fun `should close produsers and consumers when close is called from outside application`() {
         kafkaMockFactory = KafkaMockFactory()
-        application = Application(
+        applicationService = ApplicationService(
             kafkaFactory = kafkaMockFactory,
             env = createEnvVariables(),
             loopForever = true
@@ -51,11 +51,11 @@ internal class ShutdownTest {
 
         GlobalScope.async {
             delay(100)
-            application.stopServer()
+            applicationService.stopServer()
         }
 
         assertThatThrownBy {
-            application.startHendelseSkattLoop()
+            applicationService.startHendelseSkattLoop()
         }
             .isInstanceOf(Exception::class.java)
 
@@ -97,14 +97,14 @@ internal class ShutdownTest {
         kafkaMockFactory = KafkaMockFactory(
             hendelseProducer = ExceptionKafkaProducer()
         )
-        application = Application(
+        applicationService = ApplicationService(
             kafkaFactory = kafkaMockFactory,
             env = createEnvVariables(),
             loopForever = true
         )
 
         assertThatThrownBy {
-            application.startHendelseSkattLoop()
+            applicationService.startHendelseSkattLoop()
         }
             .isInstanceOf(Throwable::class.java)
     }
@@ -123,7 +123,7 @@ internal class ShutdownTest {
                 SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "180"
             ) + MaskinportenMock.MASKINPORTEN_ENV_VARIABLES
 
-        application = Application(
+        applicationService = ApplicationService(
             kafkaFactory = kafkaMockFactory,
             env = envVariables,
             loopForever = true
@@ -131,11 +131,11 @@ internal class ShutdownTest {
 
         GlobalScope.async {
             delay(100)
-            application.stopServer()
+            applicationService.stopServer()
         }
 
         assertThatThrownBy {
-            application.startHendelseSkattLoop()
+            applicationService.startHendelseSkattLoop()
         }
             .isInstanceOf(Throwable::class.java)
     }

@@ -7,7 +7,6 @@ import kotlin.math.absoluteValue
 
 
 internal class SkattTimer(env: Map<String, String>) {
-    private val LOG = LoggerFactory.getLogger(SkattTimer::class.java.simpleName)
     private val secondsDelay: Long = env.getVal(DELAY_IN_SECONDS_ENV_KEY, DEFAULT_DELAY).toLong().absoluteValue
     private var closed = false
 
@@ -21,6 +20,7 @@ internal class SkattTimer(env: Map<String, String>) {
     }
 
     companion object {
+        private val LOG = LoggerFactory.getLogger(SkattTimer::class.java.simpleName)
         internal const val DELAY_IN_SECONDS_ENV_KEY = "DELAY_IN_SECONDS_BEFORE_POLLING_SKATT"
         private const val DEFAULT_DELAY = "10"
     }
