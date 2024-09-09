@@ -4,6 +4,7 @@ import io.prometheus.client.Counter
 import no.nav.pgi.domain.Hendelse
 import no.nav.pgi.domain.serialization.PgiDomainSerializer
 import no.nav.pgi.skatt.leshendelse.skatt.*
+import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
 import org.slf4j.LoggerFactory
@@ -16,10 +17,7 @@ private val failToAddToTopicCounter = Counter.build(
     "Antall hendelser som feilet når de skulle legges til topic eller vil bli overskrevet"
 ).register()
 
-internal class HendelseProducer(kafkaFactory: KafkaFactory) {
-
-    private val LOG = LoggerFactory.getLogger(HendelseProducer::class.java)
-    private val hendelseProducer = kafkaFactory.hendelseProducer()
+internal class HendelseProducer(val hendelseProducer: Producer<String, String>) {
 
     internal fun writeHendelser(hendelser: List<HendelseDto>): FailedHendelse? {
         try {
@@ -55,6 +53,10 @@ internal class HendelseProducer(kafkaFactory: KafkaFactory) {
             failToAddToTopicCounter.inc((hendelser.size - hendelserAdded).toDouble())
             LOG.info("Failed after adding $hendelserAdded hendelser to $PGI_HENDELSE_TOPIC at sekvensnummer ${failedHendelse.hendelse.sekvensnummer}")
         }
+    }
+
+    companion object {
+        private val LOG = LoggerFactory.getLogger(HendelseProducer::class.java)!!
     }
 }
 

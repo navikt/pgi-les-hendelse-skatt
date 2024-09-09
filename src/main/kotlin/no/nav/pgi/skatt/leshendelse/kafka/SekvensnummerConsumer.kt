@@ -1,5 +1,6 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
+import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.TopicPartition
 import org.slf4j.LoggerFactory
@@ -9,11 +10,9 @@ import kotlin.math.max
 private val LOG = LoggerFactory.getLogger(SekvensnummerConsumer::class.java)
 
 internal class SekvensnummerConsumer(
-    kafkaFactory: KafkaFactory,
-    private val topicPartition: TopicPartition = defaultTopicPartition
+    private val consumer: Consumer<String, String>,
+    private val topicPartition: TopicPartition = defaultTopicPartition,
 ) {
-    private val consumer = kafkaFactory.nextSekvensnummerConsumer()
-
     init {
         consumer.assign(listOf(topicPartition))
     }

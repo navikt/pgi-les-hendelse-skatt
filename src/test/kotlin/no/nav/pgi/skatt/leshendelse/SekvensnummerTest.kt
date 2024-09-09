@@ -21,8 +21,13 @@ internal class SekvensnummerTest {
         KafkaHendelseFactory(KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy()))
     private val maskinportenMock = MaskinportenMock()
     private val firstSekvensnummerMock = SkattFirstSekvensnummerMock()
-    private val sekvensnummerProducer = SekvensnummerProducer(kafkaFactory)
-    private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaFactory, TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0))
+    private val sekvensnummerProducer = SekvensnummerProducer(
+        sekvensnummerProducer = kafkaFactory.nextSekvensnummerProducer()
+    )
+    private val sekvensnummerConsumer = SekvensnummerConsumer(
+        consumer = kafkaFactory.nextSekvensnummerConsumer(),
+        topicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
+    )
 
     private var sekvensnummer = Sekvensnummer(kafkaFactory, createEnvVariables())
 

@@ -17,7 +17,7 @@ import java.util.concurrent.Future
 
 
 internal class KafkaMockFactory(
-    internal val hendelseProducer: MockProducer<String,String> = defaultHendelseProducer(),
+    internal val hendelseProducer: MockProducer<String, String> = defaultHendelseProducer(),
     internal val nextSekvensnummerProducer: MockProducer<String, String> = defaultNextSekvensnummerProducer(),
     internal val nextSekvensnummerConsumer: MockConsumer<String, String> = defaultNextSekvensnummerConsumer(),
 ) : KafkaFactory {

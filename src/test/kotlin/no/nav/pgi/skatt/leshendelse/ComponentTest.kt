@@ -18,8 +18,13 @@ internal class ComponentTest {
     private val kafkaTestEnvironment = KafkaTestEnvironment()
     private val kafkaFactory =
         KafkaHendelseFactory(KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy()))
-    private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaFactory, TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0))
-    private val sekvensnummerProducer = SekvensnummerProducer(kafkaFactory)
+    private val sekvensnummerConsumer = SekvensnummerConsumer(
+        consumer = kafkaFactory.nextSekvensnummerConsumer(),
+        topicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
+    )
+    private val sekvensnummerProducer = SekvensnummerProducer(
+        sekvensnummerProducer = kafkaFactory.nextSekvensnummerProducer()
+    )
 
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
@@ -55,7 +60,8 @@ internal class ComponentTest {
         application.startHendelseSkattLoop()
 
         assertThat(sekvensnummerConsumer.getNextSekvensnummer()!!.toLong()).isEqualTo(hendelser.getNextSekvensnummer())
-        val hendelse = PgiDomainSerializer().fromJson(Hendelse::class, kafkaTestEnvironment.getLastRecordOnTopic().value())
+        val hendelse =
+            PgiDomainSerializer().fromJson(Hendelse::class, kafkaTestEnvironment.getLastRecordOnTopic().value())
         assertThat(hendelse).isEqualTo(hendelser[hendelser.size - 1].mapToHendelse())
     }
 

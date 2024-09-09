@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
 internal class Sekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String>) {
-    private val nextSekvensnummerProducer = SekvensnummerProducer(kafkaFactory)
+    private val nextSekvensnummerProducer = SekvensnummerProducer(
+        sekvensnummerProducer = kafkaFactory.nextSekvensnummerProducer()
+    )
     private val firstSekvensnummer: Long by lazy { getInitialSekvensnummer(kafkaFactory, env) }
     private var currentSekvensnummer = NOT_INITIALIZED
 
@@ -40,7 +42,7 @@ internal class Sekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String
 }
 
 private fun getInitialSekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String>): Long {
-    val consumer = SekvensnummerConsumer(kafkaFactory)
+    val consumer = SekvensnummerConsumer(kafkaFactory.nextSekvensnummerConsumer())
     val client = FirstSekvensnummerClient(env)
     val tilbakestillSekvensnummer = TilbakestillSekvensnummer(env)
     val sekvensnummer = if (tilbakestillSekvensnummer.skalTilbakestille()) {

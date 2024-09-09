@@ -1,14 +1,14 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
 import io.prometheus.client.Gauge
+import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
 import org.slf4j.LoggerFactory
 
 private val LOG = LoggerFactory.getLogger(SekvensnummerConsumer::class.java)
 
-internal class SekvensnummerProducer(kafkaFactory: KafkaFactory) {
-    private val sekvensnummerProducer = kafkaFactory.nextSekvensnummerProducer()
+internal class SekvensnummerProducer(private val sekvensnummerProducer: Producer<String, String>) {
 
     internal fun writeSekvensnummer(sekvensnummer: Long, synchronous: Boolean = false) {
         val record = ProducerRecord(NEXT_SEKVENSNUMMER_TOPIC, "sekvensnummer", sekvensnummer.toString())
