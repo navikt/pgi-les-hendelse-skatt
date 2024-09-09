@@ -1,9 +1,8 @@
 package no.nav.pgi.skatt.leshendelse
 
-import no.nav.pensjon.samhandling.maskfnr.maskFnr
-import no.nav.pensjon.samhandling.naisserver.naisServer
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactoryImpl
+import no.nav.pgi.skatt.leshendelse.util.maskFnr
 import org.slf4j.LoggerFactory
 
 private val LOG = LoggerFactory.getLogger(Application::class.java)
@@ -20,11 +19,9 @@ fun main() {
 }
 
 internal class Application(kafkaFactory: KafkaFactory, env: Map<String, String>, loopForever: Boolean = true) {
-    private val naisServer = naisServer()
     private val hendelseSkattLoop = HendelseSkattLoop(kafkaFactory, env, loopForever)
 
     init {
-        naisServer.start()
         addShutdownHook()
     }
 
@@ -38,7 +35,6 @@ internal class Application(kafkaFactory: KafkaFactory, env: Map<String, String>,
 
     internal fun stopServer() {
         try {
-            naisServer.stop(300, 300)
             LOG.info("naisServer stopped")
             hendelseSkattLoop.close()
             LOG.info("hendelseSkattLoop closed")

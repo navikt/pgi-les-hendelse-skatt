@@ -3,7 +3,6 @@ package no.nav.pgi.skatt.leshendelse
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import no.nav.pensjon.samhandling.liveness.IS_ALIVE_PATH
 import no.nav.pgi.skatt.leshendelse.mock.*
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_PATH_ENV_KEY
@@ -12,10 +11,6 @@ import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH_ENV_KEY
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.*
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse.BodyHandlers.ofString
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ShutdownTest {
@@ -69,6 +64,7 @@ internal class ShutdownTest {
         assertThat(kafkaMockFactory.hendelseProducer.closed()).isTrue()
     }
 
+    /*
     @Test
     fun `should close naisServer when close is called from outside application`() {
         kafkaMockFactory = KafkaMockFactory()
@@ -93,6 +89,7 @@ internal class ShutdownTest {
         }
             .isInstanceOf(Exception::class.java)
     }
+     */
 
     @Test
     fun `should throw unhandled exception out of application`() {
@@ -151,12 +148,13 @@ internal class ShutdownTest {
                 FIRST_SEKVENSNUMMER_PATH_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_PATH,
                 SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "0"
             )
-
+    /*
     private fun callIsAlive() =
         HttpClient.newHttpClient().send(
             HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:8080$IS_ALIVE_PATH")).GET().build(), ofString()
         )
+     */
 
 }
 

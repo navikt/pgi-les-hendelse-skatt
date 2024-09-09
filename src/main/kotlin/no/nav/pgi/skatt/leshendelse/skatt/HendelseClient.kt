@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.prometheus.client.Counter
 import net.logstash.logback.marker.Markers
-import no.nav.pensjon.samhandling.env.getVal
-import no.nav.pensjon.samhandling.maskfnr.maskFnr
+import no.nav.pgi.skatt.leshendelse.util.getVal
+import no.nav.pgi.skatt.leshendelse.util.maskFnr
 import org.slf4j.LoggerFactory
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString
@@ -45,7 +45,7 @@ internal class HendelseClient(env: Map<String, String>) : SkattClient(env) {
             LOG.info("Polled ${hendelser.size} hendelser from skatt. Containing sekvensnummer from ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
             hendelser.forEach { hendelse -> LOG.info(Markers.append("sekvensnummer",hendelse.sekvensnummer.toString()), "Lest hendelse: ${hendelse.mapToHendelse().toString().maskFnr()}") }
         } else{
-            LOG.info("Polled ${hendelser.size} hendelser from skatt.")
+            LOG.info("Polled 0 hendelser from skatt.")
         }
         polledFromSkattCounter.inc(hendelser.size.toDouble())
     }

@@ -3,8 +3,8 @@ package no.nav.pgi.skatt.leshendelse.skatt
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import no.nav.pensjon.samhandling.env.getVal
 import no.nav.pgi.skatt.leshendelse.HentSekvensnummer
+import no.nav.pgi.skatt.leshendelse.util.getVal
 import org.slf4j.LoggerFactory
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers.ofString

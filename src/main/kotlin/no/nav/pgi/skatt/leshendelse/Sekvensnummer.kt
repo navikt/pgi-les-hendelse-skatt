@@ -1,10 +1,10 @@
 package no.nav.pgi.skatt.leshendelse
 
-import no.nav.pensjon.samhandling.env.getVal
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerProducer
 import no.nav.pgi.skatt.leshendelse.skatt.FirstSekvensnummerClient
+import no.nav.pgi.skatt.leshendelse.util.getVal
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 

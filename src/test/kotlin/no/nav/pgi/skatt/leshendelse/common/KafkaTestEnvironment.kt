@@ -15,7 +15,7 @@ import java.time.Duration
 class KafkaTestEnvironment {
 
     private val kafkaTestEnvironment: KafkaEnvironment = KafkaEnvironment(
-        withSchemaRegistry = true,
+        withSchemaRegistry = false,
         topicInfos = listOf(
             TopicInfo(NEXT_SEKVENSNUMMER_TOPIC, partitions = 1),
             TopicInfo(PGI_HENDELSE_TOPIC, partitions = 1)
@@ -43,7 +43,6 @@ class KafkaTestEnvironment {
             GROUP_ID_CONFIG to "LOL",
             AUTO_OFFSET_RESET_CONFIG to "earliest",
             ENABLE_AUTO_COMMIT_CONFIG to false,
-            "schema.registry.url" to kafkaTestEnvironment.schemaRegistry!!.url
         )
     )
 

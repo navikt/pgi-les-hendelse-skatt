@@ -1,6 +1,6 @@
 package no.nav.pgi.skatt.leshendelse
 
-import no.nav.pensjon.samhandling.env.getVal
+import no.nav.pgi.skatt.leshendelse.util.getVal
 import org.slf4j.LoggerFactory
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
