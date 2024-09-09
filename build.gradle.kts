@@ -71,6 +71,8 @@ dependencies {
 //    testImplementation("org.springframework.kafka:spring-kafka-test:$springKafkaTestVersion")
 //    testImplementation("org.apache.kafka:kafka_2.13:$kafkaVersion")
 
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus")
 
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")

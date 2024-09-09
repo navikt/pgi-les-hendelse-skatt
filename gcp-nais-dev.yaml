@@ -8,9 +8,6 @@ metadata:
 spec:
   image: {{ image }}
   port: 8080
-  prometheus:
-    enabled: true
-    path: /metrics
   kafka:
     pool: nav-dev
   maskinporten:
@@ -19,11 +16,20 @@ spec:
       consumes:
         - name: "skatteetaten:pensjonsgivendeinntektforfolketrygden"
   liveness:
-    path: isAlive
-    initialDelay: 5
+    path: /actuator/health/liveness
+    port: 8080
+    initialDelay: 50
   readiness:
-    path: isReady
-    initialDelay: 5
+    path: /actuator/health/readiness
+    port: 8080
+    initialDelay: 50
+  prometheus:
+    enabled: true
+    path: /actuator/prometheus
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
   replicas:
     min: 1
     max: 1
