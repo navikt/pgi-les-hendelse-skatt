@@ -13,7 +13,7 @@ import org.junit.jupiter.api.TestInstance
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class HendelseProducerTest {
     private val kafkaTestEnvironment = KafkaTestEnvironment()
-    private val kafkaFactory = KafkaHendelseFactory(
+    private val kafkaFactory = KafkaFactoryImpl(
         KafkaConfig(
             kafkaTestEnvironment.kafkaTestEnvironmentVariables(),
             PlaintextStrategy()

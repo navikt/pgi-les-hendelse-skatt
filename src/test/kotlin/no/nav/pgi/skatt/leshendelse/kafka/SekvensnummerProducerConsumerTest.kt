@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class SekvensnummerProducerConsumerTest {
     private val kafkaTestEnvironment = KafkaTestEnvironment()
-    private val kafkaFactory = KafkaHendelseFactory(
+    private val kafkaFactory = KafkaFactoryImpl(
         KafkaConfig(
             kafkaTestEnvironment.kafkaTestEnvironmentVariables(),
             PlaintextStrategy()

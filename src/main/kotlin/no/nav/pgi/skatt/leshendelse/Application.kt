@@ -3,13 +3,13 @@ package no.nav.pgi.skatt.leshendelse
 import no.nav.pensjon.samhandling.maskfnr.maskFnr
 import no.nav.pensjon.samhandling.naisserver.naisServer
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
-import no.nav.pgi.skatt.leshendelse.kafka.KafkaHendelseFactory
+import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactoryImpl
 import org.slf4j.LoggerFactory
 
 private val LOG = LoggerFactory.getLogger(Application::class.java)
 
 fun main() {
-    val application = Application(KafkaHendelseFactory(), System.getenv())
+    val application = Application(KafkaFactoryImpl(), System.getenv())
     try {
         application.startHendelseSkattLoop()
     } catch (e: Throwable) {

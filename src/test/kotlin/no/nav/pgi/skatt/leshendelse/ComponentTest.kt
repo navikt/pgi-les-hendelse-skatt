@@ -17,7 +17,7 @@ import org.junit.jupiter.api.*
 internal class ComponentTest {
     private val kafkaTestEnvironment = KafkaTestEnvironment()
     private val kafkaFactory =
-        KafkaHendelseFactory(KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy()))
+        KafkaFactoryImpl(KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy()))
     private val sekvensnummerConsumer = SekvensnummerConsumer(
         consumer = kafkaFactory.nextSekvensnummerConsumer(),
         topicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
