@@ -28,7 +28,7 @@ internal class ShutdownTest {
     @AfterEach
     internal fun afterEach() {
         kafkaMockFactory.close()
-        applicationService.stopServer()
+        applicationService.stopHendelseSkattService()
         hendelseMock.reset()
     }
 
@@ -37,7 +37,7 @@ internal class ShutdownTest {
         kafkaMockFactory.close()
         hendelseMock.stop()
         maskinportenMock.stop()
-        applicationService.stopServer()
+        applicationService.stopHendelseSkattService()
     }
 
     @Test
@@ -47,17 +47,16 @@ internal class ShutdownTest {
             counters = Counters(SimpleMeterRegistry()),
             kafkaFactory = kafkaMockFactory,
             env = createEnvVariables(),
-            loopForever = true
         )
         hendelseMock.`stub hendelse endpoint skatt`()
 
         GlobalScope.async {
             delay(100)
-            applicationService.stopServer()
+            applicationService.stopHendelseSkattService()
         }
 
         assertThatThrownBy {
-            applicationService.startHendelseSkattLoop()
+            applicationService.lesOgSkrivHendelser()
         }
             .isInstanceOf(Exception::class.java)
 
@@ -103,11 +102,10 @@ internal class ShutdownTest {
             counters = Counters(SimpleMeterRegistry()),
             kafkaFactory = kafkaMockFactory,
             env = createEnvVariables(),
-            loopForever = true
         )
 
         assertThatThrownBy {
-            applicationService.startHendelseSkattLoop()
+            applicationService.lesOgSkrivHendelser()
         }
             .isInstanceOf(Throwable::class.java)
     }
@@ -130,16 +128,15 @@ internal class ShutdownTest {
             counters = Counters(SimpleMeterRegistry()),
             kafkaFactory = kafkaMockFactory,
             env = envVariables,
-            loopForever = true
         )
 
         GlobalScope.async {
             delay(100)
-            applicationService.stopServer()
+            applicationService.stopHendelseSkattService()
         }
 
         assertThatThrownBy {
-            applicationService.startHendelseSkattLoop()
+            applicationService.lesOgSkrivHendelser()
         }
             .isInstanceOf(Throwable::class.java)
     }

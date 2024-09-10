@@ -26,10 +26,13 @@ internal class ReadAndWriteHendelserToTopicLoop(
         env = env
     )
 
-    internal fun start() {
+    internal fun processHendelserFromSkattWhileAboveThreshold() {
         var hendelser: List<HendelseDto>
         do {
-            hendelser = hendelseClient.getHendelserSkatt(ANTALL_HENDELSER, sekvensnummer.getSekvensnummer())
+            hendelser = hendelseClient.getHendelserSkatt(
+                antall = ANTALL_HENDELSER,
+                fraSekvensnummer = sekvensnummer.getSekvensnummer()
+            )
             hendelseProducer.writeHendelser(hendelser)?.let { handleFailedHendelse(it) }
             sekvensnummer.setSekvensnummer(hendelser.getNextSekvensnummer())
         } while (hendelser.size >= ANTALL_HENDELSER)

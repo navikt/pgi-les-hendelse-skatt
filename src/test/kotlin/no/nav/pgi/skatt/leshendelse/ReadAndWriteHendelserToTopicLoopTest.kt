@@ -68,7 +68,7 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
         )
         hendelseMock.`stub hendelse endpoint skatt`(fraSekvensnummer, hendelseCount)
 
-        assertDoesNotThrow { readAndWriteLoop.start() }
+        assertDoesNotThrow { readAndWriteLoop.processHendelserFromSkattWhileAboveThreshold() }
 
         val hendelseProducerHistory = kafkaMockFactory.hendelseProducer.history()
         val nextSekvensnummerHistory = kafkaMockFactory.nextSekvensnummerProducer.history()
@@ -98,7 +98,7 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
             createEnvVariables()
         )
 
-        assertThrows<InterruptException> { readAndWriteLoop.start() }
+        assertThrows<InterruptException> { readAndWriteLoop.processHendelserFromSkattWhileAboveThreshold() }
     }
 
     @Test
@@ -114,7 +114,7 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
 
         val hendelser = hendelseMock.`stub hendelse endpoint skatt`(1, 15)
 
-        assertThrows<HendelseProducerException> { readAndWriteLoop.start() }
+        assertThrows<HendelseProducerException> { readAndWriteLoop.processHendelserFromSkattWhileAboveThreshold() }
 
         assertEquals(
             hendelser[0].sekvensnummer.toString(),

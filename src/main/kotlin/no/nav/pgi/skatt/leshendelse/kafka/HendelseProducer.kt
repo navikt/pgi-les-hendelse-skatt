@@ -12,7 +12,8 @@ import java.util.concurrent.Future
 
 internal class HendelseProducer(
     val counters: Counters,
-    val hendelseProducer: Producer<String, String>) {
+    val hendelseProducer: Producer<String, String>
+) {
 
     internal fun writeHendelser(hendelser: List<HendelseDto>): FailedHendelse? {
         try {
@@ -25,7 +26,10 @@ internal class HendelseProducer(
         }
     }
 
-    internal fun close() = hendelseProducer.close().also { LOG.info("closing hendelse hendelseProducer") }
+    internal fun close() {
+        LOG.info("closing hendelse hendelseProducer")
+        hendelseProducer.close()
+    }
 
     private fun createRecord(hendelse: HendelseDto): ProducerRecord<String, String> {
         val key = PgiDomainSerializer().toJson(hendelse.mapToHendelseKey())

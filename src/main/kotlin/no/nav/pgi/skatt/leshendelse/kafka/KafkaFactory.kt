@@ -4,7 +4,7 @@ import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.producer.Producer
 
 
-internal interface KafkaFactory {
+interface KafkaFactory {
     fun nextSekvensnummerProducer(): Producer<String, String>
 
     fun nextSekvensnummerConsumer(): Consumer<String, String>

@@ -35,7 +35,6 @@ internal class ComponentTest {
         counters = Counters(SimpleMeterRegistry()),
         kafkaFactory = kafkaFactory,
         env = createEnvVariables(),
-        loopForever = false,
     )
 
     @BeforeAll
@@ -45,7 +44,7 @@ internal class ComponentTest {
 
     @AfterAll
     internal fun teardown() {
-        applicationService.stopServer()
+        applicationService.stopHendelseSkattService()
         kafkaTestEnvironment.tearDown()
         hendelseMock.stop()
         maskinportenMock.stop()
@@ -64,7 +63,7 @@ internal class ComponentTest {
             currentSekvensnummer + antallHendelserFirstCall,
             antallHendelserSecondCall
         )
-        applicationService.startHendelseSkattLoop()
+        applicationService.lesOgSkrivHendelser()
 
         assertThat(sekvensnummerConsumer.getNextSekvensnummer()!!.toLong()).isEqualTo(hendelser.getNextSekvensnummer())
         val hendelse =
