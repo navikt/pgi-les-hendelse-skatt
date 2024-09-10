@@ -1,5 +1,6 @@
 package no.nav.pgi.skatt.leshendelse
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
 import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import no.nav.pgi.skatt.leshendelse.kafka.*
@@ -22,14 +23,19 @@ internal class SekvensnummerTest {
     private val maskinportenMock = MaskinportenMock()
     private val firstSekvensnummerMock = SkattFirstSekvensnummerMock()
     private val sekvensnummerProducer = SekvensnummerProducer(
-        sekvensnummerProducer = kafkaFactory.nextSekvensnummerProducer()
+        counters = Counters(SimpleMeterRegistry()),
+        sekvensnummerProducer = kafkaFactory.nextSekvensnummerProducer(),
     )
     private val sekvensnummerConsumer = SekvensnummerConsumer(
         consumer = kafkaFactory.nextSekvensnummerConsumer(),
         topicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
     )
 
-    private var sekvensnummer = Sekvensnummer(kafkaFactory, createEnvVariables())
+    private var sekvensnummer = Sekvensnummer(
+        counters = Counters(SimpleMeterRegistry()),
+        kafkaFactory = kafkaFactory,
+        env = createEnvVariables()
+    )
 
     @BeforeAll
     internal fun init() {
@@ -40,7 +46,11 @@ internal class SekvensnummerTest {
     internal fun beforeEach() {
         firstSekvensnummerMock.reset()
         sekvensnummer.close()
-        sekvensnummer = Sekvensnummer(kafkaFactory, createEnvVariables())
+        sekvensnummer = Sekvensnummer(
+            counters = Counters(SimpleMeterRegistry()),
+            kafkaFactory = kafkaFactory,
+            env = createEnvVariables()
+        )
     }
 
     @AfterAll
@@ -135,7 +145,11 @@ internal class SekvensnummerTest {
         addSekvensnummerToTopic(listOf(sekvensnummerOnTopic))
         assertEquals(sekvensnummerOnTopic, sekvensnummer.getSekvensnummer())
 
-        sekvensnummer = Sekvensnummer(kafkaFactory, env)
+        sekvensnummer = Sekvensnummer(
+            counters = Counters(SimpleMeterRegistry()),
+            kafkaFactory = kafkaFactory,
+            env = env
+        )
 
         assertEquals(14, sekvensnummer.getSekvensnummer())
     }
@@ -153,7 +167,11 @@ internal class SekvensnummerTest {
         addSekvensnummerToTopic(listOf(sekvensnummerOnTopic))
         assertEquals(sekvensnummerOnTopic, sekvensnummer.getSekvensnummer())
 
-        sekvensnummer = Sekvensnummer(kafkaFactory, env)
+        sekvensnummer = Sekvensnummer(
+            counters = Counters(SimpleMeterRegistry()),
+            kafkaFactory = kafkaFactory,
+            env = env
+        )
 
         assertEquals(15, sekvensnummer.getSekvensnummer())
     }
@@ -170,7 +188,7 @@ internal class SekvensnummerTest {
         addSekvensnummerToTopic(listOf(sekvensnummerOnTopic))
         assertEquals(sekvensnummerOnTopic, sekvensnummer.getSekvensnummer())
 
-        sekvensnummer = Sekvensnummer(kafkaFactory, env)
+        sekvensnummer = Sekvensnummer(Counters(SimpleMeterRegistry()), kafkaFactory, env)
 
         assertEquals(20, sekvensnummer.getSekvensnummer())
     }

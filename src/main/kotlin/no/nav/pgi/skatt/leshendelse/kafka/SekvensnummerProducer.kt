@@ -1,6 +1,6 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
-import io.prometheus.client.Gauge
+import no.nav.pgi.skatt.leshendelse.Counters
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
@@ -8,7 +8,10 @@ import org.slf4j.LoggerFactory
 
 private val LOG = LoggerFactory.getLogger(SekvensnummerConsumer::class.java)
 
-internal class SekvensnummerProducer(private val sekvensnummerProducer: Producer<String, String>) {
+internal class SekvensnummerProducer(
+    private val counters: Counters,
+    private val sekvensnummerProducer: Producer<String, String>
+) {
 
     internal fun writeSekvensnummer(sekvensnummer: Long, synchronous: Boolean = false) {
         val record = ProducerRecord(NEXT_SEKVENSNUMMER_TOPIC, "sekvensnummer", sekvensnummer.toString())
@@ -34,11 +37,7 @@ internal class SekvensnummerProducer(private val sekvensnummerProducer: Producer
 
     private fun logAddedSekvensnummer(record: ProducerRecord<String, String>) {
         LOG.info("""Added sekvensnummer ${record.value()} to topic ${record.topic()}""")
-        persistedSekvensnummerGauge.set(record.value().toDouble())
+        counters.setPersistredSekvensnummer(record.value().toLong())
     }
 }
 
-private val persistedSekvensnummerGauge = Gauge.build()
-    .name("persistedSekvensnummer")
-    .help("Siste persisterte som brukes når det hentes pgi-hendelser fra skatt")
-    .register()

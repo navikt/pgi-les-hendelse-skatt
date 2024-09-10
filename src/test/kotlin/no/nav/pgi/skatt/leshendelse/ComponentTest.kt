@@ -1,5 +1,6 @@
 package no.nav.pgi.skatt.leshendelse
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import no.nav.pgi.domain.Hendelse
 import no.nav.pgi.domain.serialization.PgiDomainSerializer
 import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
@@ -23,13 +24,19 @@ internal class ComponentTest {
         topicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
     )
     private val sekvensnummerProducer = SekvensnummerProducer(
+        Counters(SimpleMeterRegistry()),
         sekvensnummerProducer = kafkaFactory.nextSekvensnummerProducer()
     )
 
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
 
-    private val applicationService = ApplicationService(kafkaFactory = kafkaFactory, env = createEnvVariables(), loopForever = false)
+    private val applicationService = ApplicationService(
+        counters = Counters(SimpleMeterRegistry()),
+        kafkaFactory = kafkaFactory,
+        env = createEnvVariables(),
+        loopForever = false,
+    )
 
     @BeforeAll
     internal fun init() {

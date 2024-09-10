@@ -1,5 +1,6 @@
 package no.nav.pgi.skatt.leshendelse
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -43,6 +44,7 @@ internal class ShutdownTest {
     fun `should close produsers and consumers when close is called from outside application`() {
         kafkaMockFactory = KafkaMockFactory()
         applicationService = ApplicationService(
+            counters = Counters(SimpleMeterRegistry()),
             kafkaFactory = kafkaMockFactory,
             env = createEnvVariables(),
             loopForever = true
@@ -98,6 +100,7 @@ internal class ShutdownTest {
             hendelseProducer = ExceptionKafkaProducer()
         )
         applicationService = ApplicationService(
+            counters = Counters(SimpleMeterRegistry()),
             kafkaFactory = kafkaMockFactory,
             env = createEnvVariables(),
             loopForever = true
@@ -124,6 +127,7 @@ internal class ShutdownTest {
             ) + MaskinportenMock.MASKINPORTEN_ENV_VARIABLES
 
         applicationService = ApplicationService(
+            counters = Counters(SimpleMeterRegistry()),
             kafkaFactory = kafkaMockFactory,
             env = envVariables,
             loopForever = true

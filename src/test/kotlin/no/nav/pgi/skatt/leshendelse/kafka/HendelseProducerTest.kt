@@ -1,7 +1,9 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import no.nav.pgi.domain.Hendelse
 import no.nav.pgi.domain.serialization.PgiDomainSerializer
+import no.nav.pgi.skatt.leshendelse.Counters
 import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
 import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
@@ -19,7 +21,10 @@ internal class HendelseProducerTest {
             PlaintextStrategy()
         )
     )
-    private val hendelseProducer = HendelseProducer(kafkaFactory.hendelseProducer())
+    private val hendelseProducer = HendelseProducer(
+        counters = Counters(SimpleMeterRegistry()),
+        hendelseProducer = kafkaFactory.hendelseProducer()
+    )
 
     @AfterAll
     internal fun teardown() {

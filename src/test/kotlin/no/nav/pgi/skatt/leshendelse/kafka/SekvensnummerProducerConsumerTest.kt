@@ -1,5 +1,7 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+import no.nav.pgi.skatt.leshendelse.Counters
 import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
 import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import org.apache.kafka.common.TopicPartition
@@ -17,6 +19,7 @@ internal class SekvensnummerProducerConsumerTest {
         )
     )
     private val sekvensnummerProducer = SekvensnummerProducer(
+        counters = Counters(SimpleMeterRegistry()),
         sekvensnummerProducer = kafkaFactory.nextSekvensnummerProducer()
     )
     private val sekvensnummerConsumer = SekvensnummerConsumer(

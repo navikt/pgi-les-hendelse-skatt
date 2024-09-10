@@ -8,8 +8,13 @@ import no.nav.pgi.skatt.leshendelse.util.getVal
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
-internal class Sekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String>) {
+internal class Sekvensnummer(
+    private val counters: Counters,
+    kafkaFactory: KafkaFactory,
+    env: Map<String, String>,
+) {
     private val nextSekvensnummerProducer = SekvensnummerProducer(
+        counters = counters,
         sekvensnummerProducer = kafkaFactory.nextSekvensnummerProducer()
     )
     private val firstSekvensnummer: Long by lazy { getInitialSekvensnummer(kafkaFactory, env) }

@@ -7,10 +7,24 @@ import no.nav.pgi.skatt.leshendelse.skatt.HendelseClient
 import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
 import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
 
-internal class ReadAndWriteHendelserToTopicLoop(kafkaFactory: KafkaFactory, env: Map<String, String>) {
-    private val hendelseProducer = HendelseProducer(kafkaFactory.hendelseProducer())
-    private val sekvensnummer = Sekvensnummer(kafkaFactory, env)
-    private val hendelseClient = HendelseClient(env)
+internal class ReadAndWriteHendelserToTopicLoop(
+    private val counters: Counters,
+    kafkaFactory: KafkaFactory,
+    env: Map<String, String>,
+) {
+    private val hendelseProducer = HendelseProducer(
+        counters = counters,
+        hendelseProducer = kafkaFactory.hendelseProducer()
+    )
+    private val sekvensnummer = Sekvensnummer(
+        counters = counters,
+        kafkaFactory = kafkaFactory,
+        env = env
+    )
+    private val hendelseClient = HendelseClient(
+        counters = counters,
+        env = env
+    )
 
     internal fun start() {
         var hendelser: List<HendelseDto>

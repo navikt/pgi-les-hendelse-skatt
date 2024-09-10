@@ -1,5 +1,6 @@
 package no.nav.pgi.skatt.leshendelse
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import no.nav.pgi.domain.Hendelse
 import no.nav.pgi.domain.serialization.PgiDomainSerializer
 import no.nav.pgi.skatt.leshendelse.kafka.HendelseProducerException
@@ -60,7 +61,11 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
         val fraSekvensnummer = 1L
 
         kafkaMockFactory = KafkaMockFactory()
-        readAndWriteLoop = ReadAndWriteHendelserToTopicLoop(kafkaMockFactory, createEnvVariables())
+        readAndWriteLoop = ReadAndWriteHendelserToTopicLoop(
+            counters = Counters(SimpleMeterRegistry()),
+            kafkaFactory = kafkaMockFactory,
+            env = createEnvVariables()
+        )
         hendelseMock.`stub hendelse endpoint skatt`(fraSekvensnummer, hendelseCount)
 
         assertDoesNotThrow { readAndWriteLoop.start() }
@@ -87,7 +92,11 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
             }
 
         kafkaMockFactory = KafkaMockFactory(nextSekvensnummerConsumer = failingConsumer)
-        readAndWriteLoop = ReadAndWriteHendelserToTopicLoop(kafkaMockFactory, createEnvVariables())
+        readAndWriteLoop = ReadAndWriteHendelserToTopicLoop(
+            Counters(meterRegistry = SimpleMeterRegistry()),
+            kafkaMockFactory,
+            createEnvVariables()
+        )
 
         assertThrows<InterruptException> { readAndWriteLoop.start() }
     }
@@ -97,7 +106,11 @@ internal class ReadAndWriteHendelserToTopicLoopTest {
         val failingProducer = ExceptionKafkaProducer()
 
         kafkaMockFactory = KafkaMockFactory(hendelseProducer = failingProducer)
-        readAndWriteLoop = ReadAndWriteHendelserToTopicLoop(kafkaMockFactory, createEnvVariables())
+        readAndWriteLoop = ReadAndWriteHendelserToTopicLoop(
+            counters = Counters(meterRegistry = SimpleMeterRegistry()),
+            kafkaFactory = kafkaMockFactory,
+            env = createEnvVariables()
+        )
 
         val hendelser = hendelseMock.`stub hendelse endpoint skatt`(1, 15)
 

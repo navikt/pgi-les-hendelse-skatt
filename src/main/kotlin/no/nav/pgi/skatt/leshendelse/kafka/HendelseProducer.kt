@@ -1,8 +1,8 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
-import io.prometheus.client.Counter
 import no.nav.pgi.domain.Hendelse
 import no.nav.pgi.domain.serialization.PgiDomainSerializer
+import no.nav.pgi.skatt.leshendelse.Counters
 import no.nav.pgi.skatt.leshendelse.skatt.*
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -10,14 +10,9 @@ import org.apache.kafka.clients.producer.RecordMetadata
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Future
 
-private val addedToTopicCounter =
-    Counter.build("pgi_hendelser_added_to_topic", "Antall hendelser lagt til topic").register()
-private val failToAddToTopicCounter = Counter.build(
-    "pgi_hendelser_failed_to_topic",
-    "Antall hendelser som feilet når de skulle legges til topic eller vil bli overskrevet"
-).register()
-
-internal class HendelseProducer(val hendelseProducer: Producer<String, String>) {
+internal class HendelseProducer(
+    val counters: Counters,
+    val hendelseProducer: Producer<String, String>) {
 
     internal fun writeHendelser(hendelser: List<HendelseDto>): FailedHendelse? {
         try {
@@ -43,14 +38,14 @@ internal class HendelseProducer(val hendelseProducer: Producer<String, String>) 
 
     private fun loggWrittenHendelser(failedHendelse: FailedHendelse?, hendelser: List<HendelseDto>) {
         if (failedHendelse == null) {
-            addedToTopicCounter.inc(hendelser.size.toDouble())
+            counters.incrementHendelserTopTopic(hendelser.size)
             if (hendelser.isNotEmpty()) {
                 LOG.info("Added ${hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. From sekvensnummer ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
             }
         } else {
             val hendelserAdded = hendelser.amountOfHendelserBefore(failedHendelse.hendelse.sekvensnummer)
-            addedToTopicCounter.inc(hendelserAdded.toDouble())
-            failToAddToTopicCounter.inc((hendelser.size - hendelserAdded).toDouble())
+            counters.incrementHendelserTopTopic(hendelserAdded)
+            counters.incrementFailedToTopic(hendelser.size - hendelserAdded)
             LOG.info("Failed after adding $hendelserAdded hendelser to $PGI_HENDELSE_TOPIC at sekvensnummer ${failedHendelse.hendelse.sekvensnummer}")
         }
     }
