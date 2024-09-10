@@ -65,33 +65,6 @@ internal class ShutdownTest {
         assertThat(kafkaMockFactory.hendelseProducer.closed()).isTrue()
     }
 
-    /*
-    @Test
-    fun `should close naisServer when close is called from outside application`() {
-        kafkaMockFactory = KafkaMockFactory()
-        application = Application(
-            kafkaFactory = kafkaMockFactory,
-            env = createEnvVariables(),
-            loopForever = true
-        )
-        hendelseMock.`stub hendelse endpoint skatt`()
-
-        GlobalScope.async {
-            application.startHendelseSkattLoop()
-        }
-
-        Thread.sleep(100)
-        assertThat(callIsAlive().statusCode()).isEqualTo(200)
-
-        application.stopServer()
-        Thread.sleep(100)
-        assertThatThrownBy {
-            callIsAlive()
-        }
-            .isInstanceOf(Exception::class.java)
-    }
-     */
-
     @Test
     fun `should throw unhandled exception out of application`() {
         hendelseMock.`stub hendelse endpoint skatt`()
@@ -109,7 +82,6 @@ internal class ShutdownTest {
         }
             .isInstanceOf(Throwable::class.java)
     }
-
 
     @Test
     fun `should close when waiting to call skatt`() {
@@ -149,13 +121,5 @@ internal class ShutdownTest {
                 FIRST_SEKVENSNUMMER_PATH_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_PATH,
                 SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "0"
             )
-    /*
-    private fun callIsAlive() =
-        HttpClient.newHttpClient().send(
-            HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080$IS_ALIVE_PATH")).GET().build(), ofString()
-        )
-     */
-
 }
 
