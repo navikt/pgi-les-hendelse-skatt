@@ -15,28 +15,18 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @Profile("dev-gcp", "prod-gcp")
 class Configuration {
 
-    /*
     @Bean
     fun applicationService(
         meterRegistry: MeterRegistry,
     ): ApplicationService {
-        val applicationService = ApplicationService(
-            Counters(SimpleMeterRegistry()), // TODO: midlertidig, frem til spring-wiring er på plass
+        return ApplicationService(
+            Counters(meterRegistry),
             KafkaFactoryImpl(),
             System.getenv()
         )
-        try {
-            applicationService.startHendelseSkattLoop()
-        } catch (e: Throwable) {
-            val causeString = e.cause?.let { "Cause: ${it::class.simpleName}" }?:""
-            LOG.warn("${e::class.simpleName} ${e.message?.maskFnr()} $causeString")
-            applicationService.stopHendelseSkattService()
-        }
-        return applicationService
     }
 
     companion object {
         private val LOG = LoggerFactory.getLogger(Configuration::class.java)
     }
-     */
 }

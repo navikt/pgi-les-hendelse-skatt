@@ -4,7 +4,9 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactoryImpl
 import no.nav.pgi.skatt.leshendelse.util.maskFnr
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import kotlin.system.exitProcess
 
 fun serviceMain() {
     val LOG = LoggerFactory.getLogger(ApplicationService::class.java)
@@ -14,14 +16,9 @@ fun serviceMain() {
         KafkaFactoryImpl(),
         System.getenv()
     )
-    try {
-        do {
-            applicationService.lesOgSkrivHendelser()
-        } while (true)
-    } catch (e: Throwable) {
-        val causeString = e.cause?.let { "Cause: ${it::class.simpleName}" }?:""
-        LOG.warn("${e::class.simpleName} ${e.message?.maskFnr()} $causeString")
-        applicationService.stopHendelseSkattService()
+
+    while (true) {
+        applicationService.runIteration(applicationService)
     }
 }
 
@@ -41,8 +38,18 @@ class ApplicationService(
         addShutdownHook()
     }
 
+    fun runIteration(applicationService: ApplicationService) {
+        try {
+            applicationService.lesOgSkrivHendelser()
+        } catch (e: Throwable) {
+            applicationService.stopApplicationFromException(e) {
+                exitProcess(1)
+            }
+        }
+    }
+
     internal fun lesOgSkrivHendelser() {
-            hendelseSkattService.readAndWriteAvailableHendelserToTopicAndDelay()
+        hendelseSkattService.readAndWriteAvailableHendelserToTopicAndDelay()
     }
 
     private fun addShutdownHook() {
@@ -60,6 +67,14 @@ class ApplicationService(
             LOG.error(e.message)
         }
     }
+
+    fun stopApplicationFromException(e: Throwable, stopApplication: () -> Unit) {
+        val causeString = e.cause?.let { "Cause: ${it::class.simpleName}" } ?: ""
+        LOG.warn("${e::class.simpleName} ${e.message?.maskFnr()} $causeString")
+        stopHendelseSkattService()
+        stopApplication()
+    }
+
 
     companion object {
         private val LOG = LoggerFactory.getLogger(ApplicationService::class.java)
