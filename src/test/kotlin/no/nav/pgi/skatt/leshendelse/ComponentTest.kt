@@ -35,7 +35,7 @@ internal class ComponentTest {
         counters = Counters(SimpleMeterRegistry()),
         kafkaFactory = kafkaFactory,
         env = createEnvVariables(),
-    )
+    ) {}
 
     @BeforeAll
     internal fun init() {

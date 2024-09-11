@@ -47,7 +47,7 @@ internal class ShutdownTest {
             counters = Counters(SimpleMeterRegistry()),
             kafkaFactory = kafkaMockFactory,
             env = createEnvVariables(),
-        )
+        ) {}
         hendelseMock.`stub hendelse endpoint skatt`()
 
         GlobalScope.async {
@@ -75,7 +75,7 @@ internal class ShutdownTest {
             counters = Counters(SimpleMeterRegistry()),
             kafkaFactory = kafkaMockFactory,
             env = createEnvVariables(),
-        )
+        ) {}
 
         assertThatThrownBy {
             applicationService.lesOgSkrivHendelser()
@@ -100,7 +100,7 @@ internal class ShutdownTest {
             counters = Counters(SimpleMeterRegistry()),
             kafkaFactory = kafkaMockFactory,
             env = envVariables,
-        )
+        ) {}
 
         GlobalScope.async {
             delay(100)

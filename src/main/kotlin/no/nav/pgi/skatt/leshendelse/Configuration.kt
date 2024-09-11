@@ -1,14 +1,13 @@
 package no.nav.pgi.skatt.leshendelse
 
 import io.micrometer.core.instrument.MeterRegistry
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactoryImpl
-import no.nav.pgi.skatt.leshendelse.util.maskFnr
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.EnableScheduling
+import kotlin.system.exitProcess
 
 @Configuration
 @EnableScheduling
@@ -23,10 +22,13 @@ class Configuration {
             Counters(meterRegistry),
             KafkaFactoryImpl(),
             System.getenv()
-        )
+        ) {
+            log.info("Terminating ApplicationService")
+            exitProcess(1)
+        }
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(Configuration::class.java)
+        private val log = LoggerFactory.getLogger(Configuration::class.java)
     }
 }

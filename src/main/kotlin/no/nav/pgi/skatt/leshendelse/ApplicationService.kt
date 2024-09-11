@@ -1,32 +1,15 @@
 package no.nav.pgi.skatt.leshendelse
 
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
-import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactoryImpl
 import no.nav.pgi.skatt.leshendelse.util.maskFnr
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import kotlin.system.exitProcess
-
-fun serviceMain() {
-    val LOG = LoggerFactory.getLogger(ApplicationService::class.java)
-
-    val applicationService = ApplicationService(
-        Counters(SimpleMeterRegistry()), // TODO: midlertidig, frem til spring-wiring er på plass
-        KafkaFactoryImpl(),
-        System.getenv()
-    )
-
-    while (true) {
-        applicationService.runIteration(applicationService)
-    }
-}
-
+import org.springframework.scheduling.annotation.Scheduled
 
 class ApplicationService(
     private val counters: Counters,
     kafkaFactory: KafkaFactory,
     env: Map<String, String>,
+    val stopApplication: () -> Unit,
 ) {
     private val hendelseSkattService = HendelseSkattService(
         counters = counters,
@@ -38,13 +21,12 @@ class ApplicationService(
         addShutdownHook()
     }
 
+    @Scheduled(fixedDelay = 3_000) // sover 3 sekunder mellom hver iterasjon
     fun runIteration(applicationService: ApplicationService) {
         try {
             applicationService.lesOgSkrivHendelser()
         } catch (e: Throwable) {
-            applicationService.stopApplicationFromException(e) {
-                exitProcess(1)
-            }
+            applicationService.stopApplicationFromException(e)
         }
     }
 
@@ -61,23 +43,22 @@ class ApplicationService(
     internal fun stopHendelseSkattService() {
         try {
             hendelseSkattService.close()
-            LOG.info("hendelseSkattLoop closed")
+            log.info("hendelseSkattLoop closed")
         } catch (e: Exception) {
-            LOG.error("Error when when stopping hendelseSkattService")
-            LOG.error(e.message)
+            log.error("Error when when stopping hendelseSkattService")
+            log.error(e.message)
         }
     }
 
-    fun stopApplicationFromException(e: Throwable, stopApplication: () -> Unit) {
+    private fun stopApplicationFromException(e: Throwable) {
         val causeString = e.cause?.let { "Cause: ${it::class.simpleName}" } ?: ""
-        LOG.warn("${e::class.simpleName} ${e.message?.maskFnr()} $causeString")
+        log.warn("${e::class.simpleName} ${e.message?.maskFnr()} $causeString")
         stopHendelseSkattService()
         stopApplication()
     }
 
-
     companion object {
-        private val LOG = LoggerFactory.getLogger(ApplicationService::class.java)
+        private val log = LoggerFactory.getLogger(ApplicationService::class.java)
     }
 }
 
