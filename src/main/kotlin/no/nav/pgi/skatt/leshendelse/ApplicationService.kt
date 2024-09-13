@@ -22,11 +22,11 @@ class ApplicationService(
     }
 
     @Scheduled(fixedDelay = 3_000) // sover 3 sekunder mellom hver iterasjon
-    fun runIteration(applicationService: ApplicationService) {
+    fun runIteration() {
         try {
-            applicationService.lesOgSkrivHendelser()
+            lesOgSkrivHendelser()
         } catch (e: Throwable) {
-            applicationService.stopApplicationFromException(e)
+            stopApplicationFromException(e)
         }
     }
 
