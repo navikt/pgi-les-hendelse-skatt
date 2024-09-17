@@ -51,7 +51,7 @@ spec:
 #    - name: TILBAKESTILL_SEKVENSNUMMER
 #      value: "false"
     - name: TILBAKESTILL_SEKVENSNUMMER_TIL
-      value: "2024-06-01"
+      value: "2023-06-01"
   accessPolicy:
     outbound:
       external:
