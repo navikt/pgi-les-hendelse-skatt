@@ -26,6 +26,10 @@ internal class HendelseClient(
     private val url: String = """$host${env.getVal(HENDELSE_PATH_ENV_KEY)}"""
 
     fun getHendelserSkatt(antall: Int, fraSekvensnummer: Long): List<HendelseDto> {
+        LOG.info(
+            Markers.append("sekvensnummer", fraSekvensnummer.toString()),
+            "Kaller skatt"
+        )
         val response = send(createGetRequest(url, createQueryParameters(antall, fraSekvensnummer)), ofString())
         return when (response.statusCode()) {
             200 -> mapResponse(response.body()).also { logPolledHendelser(it) }
