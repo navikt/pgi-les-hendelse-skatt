@@ -34,22 +34,18 @@ class Counters(private val meterRegistry: MeterRegistry) {
     )
 
     fun incrementHendelserTopTopic(count: Int) {
-        log.info("Counters.incrementHendelserTopTopic:$count")
         hendelserToTopic.increment(count.toDouble())
     }
 
     fun incrementFailedToTopic(count: Int) {
-        log.info("Counters.incrementFailedToTopic:$count")
         hendelserFailedToTopic.increment(count.toDouble())
     }
 
     fun incrementPolledFromSkatt(count: Int) {
-        log.info("Counters.incrementPolledFromSkattTopic:$count")
         polledFromSkattCounter.increment(count.toDouble())
     }
 
     fun setPersistredSekvensnummer(sekvensnummer: Long) {
-        log.info("Counters.setPersistredSekvensnummer:$sekvensnummer")
         persistedSekvensnummer.set(sekvensnummer)
     }
 
