@@ -35,7 +35,7 @@ spec:
     max: 1
   env:
     - name: SPRING_PROFILES_ACTIVE
-      value: dev-gcp
+      value: prod-gcp
     - name: APP_TEAM
       value: pensjonopptjening
     - name: GRUNNLAG_PGI_HENDELSE_HOST
