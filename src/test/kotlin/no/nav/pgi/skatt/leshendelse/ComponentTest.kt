@@ -1,38 +1,41 @@
 package no.nav.pgi.skatt.leshendelse
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+import no.nav.pgi.domain.Hendelse
+import no.nav.pgi.domain.serialization.PgiDomainSerializer
 import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
 import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import no.nav.pgi.skatt.leshendelse.kafka.*
-import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_HOST
-import no.nav.pgi.skatt.leshendelse.mock.FIRST_SEKVENSNUMMER_MOCK_PATH
-import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_HOST
-import no.nav.pgi.skatt.leshendelse.mock.HendelseMock
-import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock
+import no.nav.pgi.skatt.leshendelse.mock.*
 import no.nav.pgi.skatt.leshendelse.mock.MaskinportenMock.Companion.MASKINPORTEN_ENV_VARIABLES
-import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_PATH
-import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
-import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_PATH_ENV_KEY
-import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
-import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH_ENV_KEY
-import no.nav.pgi.skatt.leshendelse.skatt.getNextSekvensnummer
-import no.nav.pgi.skatt.leshendelse.skatt.mapToAvroHendelse
+import no.nav.pgi.skatt.leshendelse.skatt.*
 import org.apache.kafka.common.TopicPartition
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.assertEquals
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class ComponentTest {
     private val kafkaTestEnvironment = KafkaTestEnvironment()
     private val kafkaFactory =
-        KafkaHendelseFactory(KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy()))
-    private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaFactory, TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0))
-    private val sekvensnummerProducer = SekvensnummerProducer(kafkaFactory)
+        KafkaFactoryImpl(KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy()))
+    private val sekvensnummerConsumer = SekvensnummerConsumer(
+        consumer = kafkaFactory.nextSekvensnummerConsumer(),
+        topicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
+    )
+    private val sekvensnummerProducer = SekvensnummerProducer(
+        Counters(SimpleMeterRegistry()),
+        sekvensnummerProducer = kafkaFactory.nextSekvensnummerProducer()
+    )
 
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
 
-    private val application = Application(kafkaFactory = kafkaFactory, env = createEnvVariables(), loopForever = false)
+    private val applicationService = ApplicationService(
+        counters = Counters(SimpleMeterRegistry()),
+        kafkaFactory = kafkaFactory,
+        env = createEnvVariables(),
+    ) {}
 
     @BeforeAll
     internal fun init() {
@@ -41,7 +44,7 @@ internal class ComponentTest {
 
     @AfterAll
     internal fun teardown() {
-        application.stopServer()
+        applicationService.stopHendelseSkattService()
         kafkaTestEnvironment.tearDown()
         hendelseMock.stop()
         maskinportenMock.stop()
@@ -60,13 +63,12 @@ internal class ComponentTest {
             currentSekvensnummer + antallHendelserFirstCall,
             antallHendelserSecondCall
         )
-        application.startHendelseSkattLoop()
+        applicationService.lesOgSkrivHendelser()
 
-        assertEquals(hendelser.getNextSekvensnummer(), sekvensnummerConsumer.getNextSekvensnummer()!!.toLong())
-        assertEquals(
-            hendelser[hendelser.size - 1].mapToAvroHendelse(),
-            kafkaTestEnvironment.getLastRecordOnTopic().value()
-        )
+        assertThat(sekvensnummerConsumer.getNextSekvensnummer()!!.toLong()).isEqualTo(hendelser.getNextSekvensnummer())
+        val hendelse =
+            PgiDomainSerializer().fromJson(Hendelse::class, kafkaTestEnvironment.getLastRecordOnTopic().value())
+        assertThat(hendelse).isEqualTo(hendelser[hendelser.size - 1].mapToHendelse())
     }
 
     private fun createEnvVariables() = MASKINPORTEN_ENV_VARIABLES +

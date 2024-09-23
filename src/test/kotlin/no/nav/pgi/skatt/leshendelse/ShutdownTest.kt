@@ -1,27 +1,24 @@
 package no.nav.pgi.skatt.leshendelse
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import no.nav.pensjon.samhandling.liveness.IS_ALIVE_PATH
 import no.nav.pgi.skatt.leshendelse.mock.*
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.FIRST_SEKVENSNUMMER_PATH_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_HOST_ENV_KEY
 import no.nav.pgi.skatt.leshendelse.skatt.HENDELSE_PATH_ENV_KEY
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.*
-import org.junit.jupiter.api.Assertions.assertEquals
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse.BodyHandlers.ofString
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ShutdownTest {
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
     private lateinit var kafkaMockFactory: KafkaMockFactory
-    private lateinit var application: Application
+    private lateinit var applicationService: ApplicationService
 
     @BeforeAll
     internal fun init() {
@@ -29,9 +26,9 @@ internal class ShutdownTest {
     }
 
     @AfterEach
-    internal fun AfterEach() {
+    internal fun afterEach() {
         kafkaMockFactory.close()
-        application.stopServer()
+        applicationService.stopHendelseSkattService()
         hendelseMock.reset()
     }
 
@@ -40,54 +37,51 @@ internal class ShutdownTest {
         kafkaMockFactory.close()
         hendelseMock.stop()
         maskinportenMock.stop()
-        application.stopServer()
+        applicationService.stopHendelseSkattService()
     }
 
     @Test
     fun `should close produsers and consumers when close is called from outside application`() {
         kafkaMockFactory = KafkaMockFactory()
-        application = Application(kafkaFactory = kafkaMockFactory, env = createEnvVariables(), loopForever = true)
+        applicationService = ApplicationService(
+            counters = Counters(SimpleMeterRegistry()),
+            kafkaFactory = kafkaMockFactory,
+            env = createEnvVariables(),
+        ) {}
         hendelseMock.`stub hendelse endpoint skatt`()
 
         GlobalScope.async {
             delay(100)
-            application.stopServer()
+            applicationService.stopHendelseSkattService()
         }
 
-        assertThrows<Exception> { application.startHendelseSkattLoop() }
-
-        Assertions.assertTrue(kafkaMockFactory.nextSekvensnummerConsumer.closed())
-        Assertions.assertTrue(kafkaMockFactory.nextSekvensnummerProducer.closed())
-        Assertions.assertTrue(kafkaMockFactory.hendelseProducer.closed())
-    }
-
-    @Test
-    fun `should close naisServer when close is called from outside application`() {
-        kafkaMockFactory = KafkaMockFactory()
-        application = Application(kafkaFactory = kafkaMockFactory, env = createEnvVariables(), loopForever = true)
-        hendelseMock.`stub hendelse endpoint skatt`()
-
-        GlobalScope.async {
-            application.startHendelseSkattLoop()
+        assertThatThrownBy {
+            applicationService.lesOgSkrivHendelser()
         }
+            .isInstanceOf(Exception::class.java)
 
-        Thread.sleep(100)
-        assertEquals(200, callIsAlive().statusCode())
-
-        application.stopServer()
-        Thread.sleep(100)
-        assertThrows<Exception> { callIsAlive() }
+        assertThat(kafkaMockFactory.nextSekvensnummerConsumer.closed()).isTrue()
+        assertThat(kafkaMockFactory.nextSekvensnummerProducer.closed()).isTrue()
+        assertThat(kafkaMockFactory.hendelseProducer.closed()).isTrue()
     }
 
     @Test
     fun `should throw unhandled exception out of application`() {
         hendelseMock.`stub hendelse endpoint skatt`()
-        kafkaMockFactory = KafkaMockFactory(hendelseProducer = ExceptionKafkaProducer())
-        application = Application(kafkaFactory = kafkaMockFactory, env = createEnvVariables(), loopForever = true)
+        kafkaMockFactory = KafkaMockFactory(
+            hendelseProducer = ExceptionKafkaProducer()
+        )
+        applicationService = ApplicationService(
+            counters = Counters(SimpleMeterRegistry()),
+            kafkaFactory = kafkaMockFactory,
+            env = createEnvVariables(),
+        ) {}
 
-        assertThrows<Throwable> { application.startHendelseSkattLoop() }
+        assertThatThrownBy {
+            applicationService.lesOgSkrivHendelser()
+        }
+            .isInstanceOf(Throwable::class.java)
     }
-
 
     @Test
     fun `should close when waiting to call skatt`() {
@@ -102,14 +96,21 @@ internal class ShutdownTest {
                 SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "180"
             ) + MaskinportenMock.MASKINPORTEN_ENV_VARIABLES
 
-        application = Application(kafkaFactory = kafkaMockFactory, env = envVariables, loopForever = true)
+        applicationService = ApplicationService(
+            counters = Counters(SimpleMeterRegistry()),
+            kafkaFactory = kafkaMockFactory,
+            env = envVariables,
+        ) {}
 
         GlobalScope.async {
             delay(100)
-            application.stopServer()
+            applicationService.stopHendelseSkattService()
         }
 
-        assertThrows<Exception> { application.startHendelseSkattLoop() }
+        assertThatThrownBy {
+            applicationService.lesOgSkrivHendelser()
+        }
+            .isInstanceOf(Throwable::class.java)
     }
 
     private fun createEnvVariables() = MaskinportenMock.MASKINPORTEN_ENV_VARIABLES +
@@ -120,12 +121,5 @@ internal class ShutdownTest {
                 FIRST_SEKVENSNUMMER_PATH_ENV_KEY to FIRST_SEKVENSNUMMER_MOCK_PATH,
                 SkattTimer.DELAY_IN_SECONDS_ENV_KEY to "0"
             )
-
-    private fun callIsAlive() =
-        HttpClient.newHttpClient().send(
-            HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080$IS_ALIVE_PATH")).GET().build(), ofString()
-        )
-
 }
 

@@ -1,15 +1,22 @@
 package no.nav.pgi.skatt.leshendelse
 
-import no.nav.pensjon.samhandling.env.getVal
 import no.nav.pgi.skatt.leshendelse.kafka.KafkaFactory
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerConsumer
 import no.nav.pgi.skatt.leshendelse.kafka.SekvensnummerProducer
 import no.nav.pgi.skatt.leshendelse.skatt.FirstSekvensnummerClient
+import no.nav.pgi.skatt.leshendelse.util.getVal
 import org.slf4j.LoggerFactory
 import java.time.LocalDate
 
-internal class Sekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String>) {
-    private val nextSekvensnummerProducer = SekvensnummerProducer(kafkaFactory)
+internal class Sekvensnummer(
+    private val counters: Counters,
+    kafkaFactory: KafkaFactory,
+    env: Map<String, String>,
+) {
+    private val nextSekvensnummerProducer = SekvensnummerProducer(
+        counters = counters,
+        sekvensnummerProducer = kafkaFactory.nextSekvensnummerProducer()
+    )
     private val firstSekvensnummer: Long by lazy { getInitialSekvensnummer(kafkaFactory, env) }
     private var currentSekvensnummer = NOT_INITIALIZED
 
@@ -40,7 +47,7 @@ internal class Sekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String
 }
 
 private fun getInitialSekvensnummer(kafkaFactory: KafkaFactory, env: Map<String, String>): Long {
-    val consumer = SekvensnummerConsumer(kafkaFactory)
+    val consumer = SekvensnummerConsumer(kafkaFactory.nextSekvensnummerConsumer())
     val client = FirstSekvensnummerClient(env)
     val tilbakestillSekvensnummer = TilbakestillSekvensnummer(env)
     val sekvensnummer = if (tilbakestillSekvensnummer.skalTilbakestille()) {

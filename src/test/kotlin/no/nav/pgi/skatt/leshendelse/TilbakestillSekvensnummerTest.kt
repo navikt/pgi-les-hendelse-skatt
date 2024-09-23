@@ -1,17 +1,20 @@
 package no.nav.pgi.skatt.leshendelse
 
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import java.time.Month
 
 class TilbakestillSekvensnummerTest {
     @Test
     fun `reset fra første mulige hvis ingen dato spesifisert`() {
-        val reset = TilbakestillSekvensnummer(env = mapOf("TILBAKESTILL_SEKVENSNUMMER" to "true"))
-        assertEquals(true, reset.skalTilbakestille())
-        assertEquals(HentSekvensnummer.FørsteMulige, reset.hentFra())
+        val reset = TilbakestillSekvensnummer(
+            env = mapOf("TILBAKESTILL_SEKVENSNUMMER" to "true")
+        )
+        assertThat(reset.skalTilbakestille()).isTrue()
+        assertThat(reset.hentFra()).isEqualTo(HentSekvensnummer.FørsteMulige)
     }
 
     @Test
@@ -28,8 +31,11 @@ class TilbakestillSekvensnummerTest {
 
     @Test
     fun `reset er disabled by default`() {
-        val reset = TilbakestillSekvensnummer(env = mapOf())
-        assertEquals(false, reset.skalTilbakestille())
-        assertThrows<IllegalArgumentException> { reset.hentFra() }
+        val reset = TilbakestillSekvensnummer(env = emptyMap())
+        assertThat(reset.skalTilbakestille()).isFalse()
+        assertThatThrownBy {
+            reset.hentFra()
+        }
+            .isInstanceOf(IllegalArgumentException::class.java)
     }
 }

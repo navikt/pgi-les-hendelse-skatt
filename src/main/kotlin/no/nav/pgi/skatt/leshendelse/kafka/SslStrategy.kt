@@ -1,6 +1,6 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
-import no.nav.pensjon.samhandling.env.getVal
+import no.nav.pgi.skatt.leshendelse.util.getVal
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.security.auth.SecurityProtocol

@@ -1,6 +1,8 @@
 package no.nav.pgi.skatt.leshendelse.skatt
 
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+import no.nav.pgi.skatt.leshendelse.Counters
 import no.nav.pgi.skatt.leshendelse.Sekvensnummer
 import no.nav.pgi.skatt.leshendelse.mock.HENDELSE_MOCK_HOST
 import no.nav.pgi.skatt.leshendelse.mock.HendelseMock
@@ -18,7 +20,10 @@ private const val FRA_SEKVENSNUMMER = 1L
 internal class GrunnlagPgiHendelseDtoClientTest {
     private val hendelseMock = HendelseMock()
     private val maskinportenMock = MaskinportenMock()
-    private val client = HendelseClient(MASKINPORTEN_ENV_VARIABLES + createEnvVariables())
+    private val client = HendelseClient(
+        counters = Counters(SimpleMeterRegistry()),
+        env = MASKINPORTEN_ENV_VARIABLES + createEnvVariables()
+    )
 
     @BeforeAll
     internal fun init() {

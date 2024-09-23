@@ -1,5 +1,7 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+import no.nav.pgi.skatt.leshendelse.Counters
 import no.nav.pgi.skatt.leshendelse.common.KafkaTestEnvironment
 import no.nav.pgi.skatt.leshendelse.common.PlaintextStrategy
 import org.apache.kafka.common.TopicPartition
@@ -10,10 +12,20 @@ import org.junit.jupiter.api.Assertions.assertEquals
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 internal class SekvensnummerProducerConsumerTest {
     private val kafkaTestEnvironment = KafkaTestEnvironment()
-    private val kafkaFactory =
-        KafkaHendelseFactory(KafkaConfig(kafkaTestEnvironment.kafkaTestEnvironmentVariables(), PlaintextStrategy()))
-    private val sekvensnummerProducer = SekvensnummerProducer(kafkaFactory)
-    private val sekvensnummerConsumer = SekvensnummerConsumer(kafkaFactory, TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0))
+    private val kafkaFactory = KafkaFactoryImpl(
+        KafkaConfig(
+            kafkaTestEnvironment.kafkaTestEnvironmentVariables(),
+            PlaintextStrategy()
+        )
+    )
+    private val sekvensnummerProducer = SekvensnummerProducer(
+        counters = Counters(SimpleMeterRegistry()),
+        sekvensnummerProducer = kafkaFactory.nextSekvensnummerProducer()
+    )
+    private val sekvensnummerConsumer = SekvensnummerConsumer(
+        consumer = kafkaFactory.nextSekvensnummerConsumer(),
+        topicPartition = TopicPartition(NEXT_SEKVENSNUMMER_TOPIC, 0)
+    )
 
     @AfterAll
     internal fun teardown() {
