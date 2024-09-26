@@ -44,7 +44,7 @@ internal class HendelseProducer(
         if (failedHendelse == null) {
             counters.incrementHendelserTopTopic(hendelser.size)
             if (hendelser.isNotEmpty()) {
-                LOG.info("Added ${hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. From sekvensnummer ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
+                LOG.info("Added ${hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. From sekvensnummer ${hendelser.firstSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
             }
         } else {
             val hendelserAdded = hendelser.amountOfHendelserBefore(failedHendelse.hendelse.sekvensnummer)

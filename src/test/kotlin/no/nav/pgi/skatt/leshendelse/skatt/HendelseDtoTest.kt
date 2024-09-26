@@ -25,7 +25,7 @@ internal class HendelseDtoTest {
             HendelseDto("12345678901", "2020", 4L)
         )
 
-        assertEquals(firstSekvensnummer, hendelseList.fistSekvensnummer())
+        assertEquals(firstSekvensnummer, hendelseList.firstSekvensnummer())
     }
 
     @Test
@@ -42,7 +42,7 @@ internal class HendelseDtoTest {
 
     @Test
     fun `HendelseDto list fistSekvensnummer returns null when empty`() {
-        assertEquals(null, emptyList<HendelseDto>().fistSekvensnummer())
+        assertEquals(null, emptyList<HendelseDto>().firstSekvensnummer())
     }
 
     @Test

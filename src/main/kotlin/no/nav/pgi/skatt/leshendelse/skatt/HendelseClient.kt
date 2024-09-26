@@ -49,7 +49,7 @@ internal class HendelseClient(
 
     private fun logPolledHendelser(hendelser: List<HendelseDto>) {
         if (hendelser.isNotEmpty()) {
-            LOG.info("Polled ${hendelser.size} hendelser from skatt. Containing sekvensnummer from ${hendelser.fistSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
+            LOG.info("Polled ${hendelser.size} hendelser from skatt. Containing sekvensnummer from ${hendelser.firstSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
             hendelser.forEach { hendelse ->
                 LOG.info(
                     Markers.append("sekvensnummer", hendelse.sekvensnummer.toString()),
