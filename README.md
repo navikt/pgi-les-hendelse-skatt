@@ -2,8 +2,9 @@
 Les hendelser om pensjonsgivende inntekter fra SKE, og publiser hendelser til kafka topicen ```privat-pgi-hendelse```.
 Tilstanden til sekvensnummeret blir lagret på ```privat-pgi-nextSekvensnummer```.
 
-Dokumentasjon REST tjenester til SKE: [Skatteetatens API-er - Hendelser](https://skatteetaten.github.io/api-dokumentasjon/api/hendelser )
-Pensjonsgivende inntekt for folketrygden hendelser API:_ [SwaggerHub](https://app.swaggerhub.com/apis/skatteetaten/pensjonsgivende-inntekt-for-folketrygden-hendelser-api) 
+Dokumentasjon REST tjenester til SKE: [Skatteetatens API-er - Hendelser](https://skatteetaten.github.io/api-dokumentasjon/api/hendelser)
+
+Pensjonsgivende inntekt for folketrygden hendelser API: [SwaggerHub](https://app.swaggerhub.com/apis/skatteetaten/pensjonsgivende-inntekt-for-folketrygden-hendelser-api) 
 
 
 ### Hente hendelser på nytt
