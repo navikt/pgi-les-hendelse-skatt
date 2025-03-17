@@ -128,7 +128,3 @@ tasks.withType<Test> {
         exceptionFormat = FULL
     }
 }
-
-tasks.withType<Wrapper> {
-    gradleVersion = "8.10"
-}
