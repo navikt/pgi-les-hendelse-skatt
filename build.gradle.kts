@@ -44,12 +44,6 @@ repositories {
     mavenCentral()
     maven("https://packages.confluent.io/maven/")
     maven("https://jitpack.io")
-    maven("https://maven.pkg.github.com/navikt/pensjon-samhandling-ktor-support") {
-        credentials {
-            username = System.getenv("GITHUB_ACTOR")
-            password = System.getenv("GITHUB_TOKEN")
-        }
-    }
     maven("https://maven.pkg.github.com/navikt/pgi-domain") {
         credentials {
             username = System.getenv("GITHUB_ACTOR")
@@ -66,9 +60,6 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
-//    testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
-//    testImplementation("org.springframework.kafka:spring-kafka-test:$springKafkaTestVersion")
-//    testImplementation("org.apache.kafka:kafka_2.13:$kafkaVersion")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
