@@ -52,10 +52,10 @@ spec:
       value: /v1/hendelser/start
     - name: DELAY_IN_SECONDS_BEFORE_POLLING_SKATT
       value: "30"
-    - name: TILBAKESTILL_SEKVENSNUMMER
-      value: "true"
-    - name: TILBAKESTILL_SEKVENSNUMMER_TIL
-      value: "2025-09-01"
+#    - name: TILBAKESTILL_SEKVENSNUMMER
+#      value: "true"
+#    - name: TILBAKESTILL_SEKVENSNUMMER_TIL
+#      value: "2025-09-01"
   accessPolicy:
     outbound:
       external:
