@@ -10,7 +10,7 @@ import java.lang.Integer.MAX_VALUE
 
 internal const val GROUP_ID = "pgi-sekvensnummer-consumer-group"
 const val NEXT_SEKVENSNUMMER_TOPIC = "pensjonopptjening.privat-pgi-nextsekvensnummer"
-const val PGI_HENDELSE_TOPIC = "pensjonopptjening.privat-pgi-hendelse"
+const val PGI_HENDELSE_TOPIC = "pensjonopptjening.privat-pgi-hendelse-ny"
 
 internal class KafkaConfig(
     environment: Map<String, String> = System.getenv(),

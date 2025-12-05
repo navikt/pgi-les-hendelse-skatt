@@ -24,12 +24,12 @@ val springBootVersion = "3.3.3"
 group = "no.nav.pgi"
 
 plugins {
-    val kotlinVersion = "2.0.20"
+    val kotlinVersion = "2.2.21"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
     id("org.springframework.boot") version "3.3.2"
     id("org.jetbrains.kotlin.plugin.spring") version kotlinVersion
-    id("com.github.ben-manes.versions") version "0.51.0"
+    id("com.github.ben-manes.versions") version "0.53.0"
 }
 
 java {
