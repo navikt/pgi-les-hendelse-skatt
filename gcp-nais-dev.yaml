@@ -58,5 +58,8 @@ spec:
 #      value: "2023-06-01"
   accessPolicy:
     outbound:
+      rules:
+        - application: logging
+          namespace: nais-system
       external:
         - host: pgiforfolketrygdenhendelser.api.skatteetaten-test.no

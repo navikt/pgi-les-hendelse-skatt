@@ -1,9 +1,16 @@
 package no.nav.pgi.skatt.leshendelse.kafka
 
+import net.logstash.logback.marker.Markers
 import no.nav.pgi.domain.Hendelse
 import no.nav.pgi.domain.serialization.PgiDomainSerializer
 import no.nav.pgi.skatt.leshendelse.Counters
-import no.nav.pgi.skatt.leshendelse.skatt.*
+import no.nav.pgi.skatt.leshendelse.skatt.HendelseDto
+import no.nav.pgi.skatt.leshendelse.skatt.amountOfHendelserBefore
+import no.nav.pgi.skatt.leshendelse.skatt.firstSekvensnummer
+import no.nav.pgi.skatt.leshendelse.skatt.lastSekvensnummer
+import no.nav.pgi.skatt.leshendelse.skatt.mapToHendelse
+import no.nav.pgi.skatt.leshendelse.skatt.mapToHendelseKey
+import no.nav.pgi.skatt.leshendelse.util.maskFnr
 import org.apache.kafka.clients.producer.Producer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
@@ -45,6 +52,19 @@ internal class HendelseProducer(
             counters.incrementHendelserTopTopic(hendelser.size)
             if (hendelser.isNotEmpty()) {
                 LOG.info("Added ${hendelser.size} hendelser to $PGI_HENDELSE_TOPIC. From sekvensnummer ${hendelser.firstSekvensnummer()} to ${hendelser.lastSekvensnummer()}")
+
+                for (hendelse in hendelser) {
+                    val sekvensnummer = hendelse.sekvensnummer
+                    val marker = Markers.append("sekvensnummer", sekvensnummer.toString())
+                    LOG.info(
+                        marker,
+                        "Added hendelse: ${hendelse.mapToHendelse().toString().maskFnr()}. Sekvensnummer: $sekvensnummer"
+                    )
+                    SECURE_LOG.info(
+                        marker,
+                        "Added hendelse: ${hendelse.mapToHendelse()}. Sekvensnummer: $sekvensnummer"
+                    )
+                }
             }
         } else {
             val hendelserAdded = hendelser.amountOfHendelserBefore(failedHendelse.hendelse.sekvensnummer)
@@ -55,7 +75,8 @@ internal class HendelseProducer(
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(HendelseProducer::class.java)!!
+        private val LOG = LoggerFactory.getLogger(HendelseProducer::class.java)
+        private val SECURE_LOG = LoggerFactory.getLogger("team")
     }
 }
 
