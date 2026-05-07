@@ -1,4 +1,4 @@
-name: GCP NAIS Deploy dev
+name: Build and deploy
 
 on:
   workflow_dispatch:
@@ -7,8 +7,8 @@ on:
       - master
 
 jobs:
-  deploy-to-dev:
-    name: 'Bygg og deploy til test'
+  build-and-deploy:
+    name: 'Bygg og deploy'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -16,7 +16,7 @@ jobs:
       id-token: write
     steps:
       - name: 'Checkout repository'
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: 'Java 21'
         uses: actions/setup-java@v5
@@ -61,5 +61,14 @@ jobs:
         env:
           CLUSTER: dev-gcp
           RESOURCE: gcp-nais-dev.yaml,alerts.yaml
+          IMAGE: ${{ steps.docker-push.outputs.image }}
+          TELEMETRY: ${{ steps.docker-push.outputs.telemetry }}
+
+      - name: 'Deploy to prod-gcp'
+        if: ${{github.ref == 'refs/heads/master' }}
+        uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: prod-gcp
+          RESOURCE: gcp-nais-prod.yaml,alerts.yaml
           IMAGE: ${{ steps.docker-push.outputs.image }}
           TELEMETRY: ${{ steps.docker-push.outputs.telemetry }}

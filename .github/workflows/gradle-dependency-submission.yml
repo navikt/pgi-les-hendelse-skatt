@@ -3,6 +3,8 @@ on:
   schedule:
     - cron: '25 8,13 * * 1,2,3,4,5'
     - cron: '25 13 * * 0,6'
+  workflow_dispatch:
+
 jobs:
   dependabot:
     name: Monitor dependencies with Dependabot
