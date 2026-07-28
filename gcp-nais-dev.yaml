@@ -56,6 +56,11 @@ spec:
 #      value: "true"
 #    - name: TILBAKESTILL_SEKVENSNUMMER_TIL
 #      value: "2023-06-01"
+    - name: JAVA_TRUSTSTORE_OPTIONS
+      value: "-Djavax.net.ssl.trustStore=$(NAV_TRUSTSTORE_PATH)
+              -Djavax.net.ssl.trustStorePassword=$(NAV_TRUSTSTORE_PASSWORD)"
+    - name: JDK_JAVA_OPTIONS
+      value: "-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/ -Xmx256m -Djdk.tls.client.protocols=TLSv1.2 $(JAVA_TRUSTSTORE_OPTIONS)"
   accessPolicy:
     outbound:
       rules:
